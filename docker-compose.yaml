@@ -1,0 +1,29 @@
+version: "3"
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: cs24-p2-dukkho_backend
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      - cs24-p2-dukkho_postgres
+    restart: always
+
+  cs24-p2-dukkho_postgres:
+    image: postgres:16.1
+    container_name: cs24-p2-dukkho_postgres
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "5432:5432"
+    volumes:
+      - cs24-p2-dukkho_postgres_data:/var/lib/postgresql/data
+
+volumes:
+  cs24-p2-dukkho_postgres_data:
