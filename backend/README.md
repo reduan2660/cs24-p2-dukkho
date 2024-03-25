@@ -2,7 +2,7 @@ How to run?
 
 To test:
 
-Go to root directory containg the docker-compose.yaml file.
+Go to root directory containing the docker-compose.yaml file.
 
 ```
 sudo docker compose up -d --build
