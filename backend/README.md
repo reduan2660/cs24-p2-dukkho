@@ -8,6 +8,8 @@ Go to root directory containing the docker-compose.yaml file.
 sudo docker compose up -d --build
 ```
 
+Backend is configured to run at port `8000`.
+
 To develop:
 
 1. Run a postgres db:
