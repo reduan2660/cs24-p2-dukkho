@@ -13,7 +13,8 @@ fi
 
 # Run the server
 echo "Running Server at port $EXPOSE_PORT"
-gunicorn main:app \
+cd .. && \
+gunicorn app.main:app \
     --log-level debug \
     --workers=${GUNICORN_WORKERS} \
     --worker-class="uvicorn.workers.UvicornWorker" \

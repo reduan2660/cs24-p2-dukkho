@@ -17,7 +17,7 @@ To develop:
 ```
 sudo docker run --detach \
 --name cs24-p2-local-postgres  \
--p 5432:5432 \
+-p 5432:5433 \
 -e POSTGRES_DB=postgres \
 -e POSTGRES_USER=admin \
 -e POSTGRES_PASSWORD=password \
