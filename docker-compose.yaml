@@ -1,6 +1,18 @@
 version: "3"
 
 services:
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: cs24-p2-dukkho_frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+    restart: always
+
   backend:
     build:
       context: ./backend
