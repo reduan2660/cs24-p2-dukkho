@@ -9,7 +9,7 @@ How to run?
 docker compose up -d --build
 ```
 
-Frontend is configured to run at port `5173`.
+Frontend is configured to run at port `3000`.
 
 2. To develop
 
@@ -20,5 +20,5 @@ npm run dev
 
 ---
 
-- Node version: ```20.11.1```
-- NPM version: ```10.2.4```
+- Node version: `20.11.1`
+- NPM version: `10.2.4`
