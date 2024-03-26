@@ -1,7 +1,14 @@
 from sqlalchemy import Column, Integer, String, Float, ForeignKey
 from sqlalchemy.orm import relationship
 
-from config import Base
+from app.config import Base
+
+class Session(Base):
+    __tablename__ = "sessions"
+
+    id = Column(String, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    expires = Column(Float, nullable=False)
 
 class Role(Base):
     __tablename__ = "roles"

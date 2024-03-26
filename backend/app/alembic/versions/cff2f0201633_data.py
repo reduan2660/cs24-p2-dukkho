@@ -1,8 +1,8 @@
 """Data
 
-Revision ID: 34c3ba7cc84c
-Revises: 542fdb703e5a
-Create Date: 2024-03-26 02:07:05.263719
+Revision ID: cff2f0201633
+Revises: 04281393d383
+Create Date: 2024-03-26 10:14:20.937622
 
 """
 from typing import Sequence, Union
@@ -11,28 +11,20 @@ from alembic import op
 import sqlalchemy as sa
 
 import os
-from passlib.context import CryptContext
+from app.config import HASHED_SUPERADMIN_PASSWORD
 
 from dotenv import load_dotenv
 load_dotenv()
 
+
 # revision identifiers, used by Alembic.
-revision: str = '34c3ba7cc84c'
-down_revision: Union[str, None] = '542fdb703e5a'
+revision: str = 'cff2f0201633'
+down_revision: Union[str, None] = '04281393d383'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
 
-# PASSWORD HASH
-SECRET_KEY     = os.getenv("SECRET_KEY")
-HASH_ALGORITHM = "HS256"
-SUPERADMIN_PASSWORD = os.getenv("SUPERADMIN_PASSWORD")
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-HASHED_SUPERADMIN_PASSWORD = pwd_context.hash(SUPERADMIN_PASSWORD)
-
-
 def upgrade() -> None:
-
     meta = sa.MetaData()
     
     
@@ -61,10 +53,7 @@ def upgrade() -> None:
     ])
 
 
-
 def downgrade() -> None:
-    
-    # Data
     op.execute("DELETE FROM users")
     op.execute("DELETE FROM roles_permissions")
     op.execute("DELETE FROM permissions")
