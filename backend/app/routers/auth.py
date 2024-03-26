@@ -18,7 +18,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 router = APIRouter(
     prefix="/auth",
     tags=["auth"],
-    responses={404: {"description": "Not found"}},
+    responses={404: {"description": "Route not found"}},
 )
 
 
@@ -101,3 +101,55 @@ async def logout(user: User = Depends(get_user_from_session)):
     response.delete_cookie('SESSION')
 
     return response
+
+
+class ChangePasswordRequest(BaseModel):
+    old_password: str
+    new_password: str
+@router.post("/change-password")
+async def change_password(request: ChangePasswordRequest, user: User = Depends(get_user_from_session)):
+    with SessionLocal() as db:
+        user = db.query(User).filter(User.id == user['id']).first()
+        if not pwd_context.verify(request.old_password, user.password):
+            return JSONResponse(status_code=401, content={"message": "Invalid credentials"})
+        
+        user.password = pwd_context.hash(request.new_password)
+        db.commit()
+
+        return JSONResponse(status_code=200, content={"message": "Password changed"})
+    
+class ResetPasswordRequest(BaseModel):
+    email: str
+@router.post("/reset-password/initiate")
+async def reset_password(request: ResetPasswordRequest):
+    with SessionLocal() as db:
+        user = db.query(User).filter(User.email == request.email).first()
+        if user is None:
+            return JSONResponse(status_code=401, content={"message": "User not found"})
+        
+        # STATIC TOKEN
+        token = "1234"
+        # TODO: SEND EMAIL
+
+        return JSONResponse(status_code=200, content={"message": "Token sent to email."})
+    
+
+class ResetPasswordConfirmRequest(BaseModel):
+    email: str
+    token: str
+    new_password: str
+@router.post("/reset-password/confirm")
+async def reset_password_confirm(request: ResetPasswordConfirmRequest):
+    with SessionLocal() as db:
+        user = db.query(User).filter(User.email == request.email).first()
+        if user is None:
+            return JSONResponse(status_code=404, content={"message": "User not found"})
+        
+        # STATIC TOKEN
+        if request.token == "1234":
+
+            user.password = pwd_context.hash(request.new_password)
+            db.commit()
+            return JSONResponse(status_code=200, content={"message": "Password reset"})
+        
+        return JSONResponse(status_code=401, content={"message": "Invalid token"})
