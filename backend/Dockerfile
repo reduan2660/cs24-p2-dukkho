@@ -17,6 +17,7 @@ RUN chmod +x wait-for-it.sh
 COPY run.sh /app/
 RUN chmod +x run.sh
 
+COPY alembic.ini /
 COPY app .
 
 EXPOSE 8000
