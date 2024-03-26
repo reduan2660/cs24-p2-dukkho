@@ -4,8 +4,6 @@ echo "Waiting for Database to start"
 ./wait-for-it.sh $DB_HOST:$DB_PORT --timeout=0
 echo "Database started"
 
-cd ../
-
 # if DEPLOYMENT_ENV != "production" then migrate the db
 if [ "$DEPLOYMENT_ENV" != "production" ]; then
     echo "Running Migration"
