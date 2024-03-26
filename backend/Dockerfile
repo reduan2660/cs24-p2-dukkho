@@ -21,4 +21,4 @@ COPY alembic.ini /
 COPY app .
 
 EXPOSE 8000
-CMD [ "./run.sh" ]
+CMD [ "/app/run.sh" ]
