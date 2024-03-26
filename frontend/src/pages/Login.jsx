@@ -1,7 +1,10 @@
 import { useState } from "react";
 import auth from "../auth";
+import { useNavigate } from "react-router-dom";
+import { BiSolidLeaf } from "react-icons/bi";
 
 const Login = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -12,17 +15,14 @@ const Login = () => {
         password: password,
       })
       .then((res) => {
-        console.log(res.data);
+        if (res.status === 200) navigate("/admin/users");
       });
   };
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center gap-y-8">
       <div className="fixed top-8 flex items-center gap-x-4 lg:top-16">
-        <img
-          src="src/assets/logo.png"
-          className="h-[40px] w-[40px] lg:h-[60px] lg:w-[60px]"
-        />
+        <BiSolidLeaf className="text-5xl text-green-600" />
         <p className="text-3xl font-bold text-xdark lg:text-5xl">EcoSync</p>
       </div>
       <div className="flex flex-col items-center gap-y-2">

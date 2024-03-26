@@ -1,9 +1,17 @@
-import React from 'react'
+import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
+  const navigate = useNavigate();
   return (
-    <div>Home</div>
-  )
-}
+    <button
+      onClick={() => {
+        navigate("admin/users");
+      }}
+    >
+      Admin
+    </button>
+  );
+};
 
-export default Home
+export default Home;
