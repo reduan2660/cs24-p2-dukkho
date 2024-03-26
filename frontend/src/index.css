@@ -1,3 +1,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+  font-family: "Nunito Sans", sans-serif;
+}
+
+/* Optionally, you can apply the font to other elements */
+h1,
+h2,
+h3,
+p {
+  font-family: "Nunito Sans", sans-serif;
+}
