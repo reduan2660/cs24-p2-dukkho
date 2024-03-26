@@ -79,7 +79,7 @@ async def login(request: LoginRequest):
         return response
 
 @router.get("/me")
-async def check_cookie(user: User = Depends(get_user_from_session)):
+async def get_profile(user: User = Depends(get_user_from_session)):
     return user
 
 

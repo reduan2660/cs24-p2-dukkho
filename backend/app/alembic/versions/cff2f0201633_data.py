@@ -39,12 +39,16 @@ def upgrade() -> None:
 
     permissions_tbl = sa.Table('permissions', meta, autoload_with=op.get_bind())
     op.bulk_insert(permissions_tbl, [
-        {"id": 0, "name": "create_user", "category": "user"}
+        {"id": 0, "name": "create_user", "category": "user"},
+        {"id": 1, "name": "list_all_users", "category": "user"},
+        {"id": 2, "name": "delete_user", "category": "user"},
     ])
 
     roles_permissions_tbl = sa.Table('roles_permissions', meta, autoload_with=op.get_bind())
     op.bulk_insert(roles_permissions_tbl, [
-        {"id": 0, "role_id": 1, "permission_id": 0}
+        {"id": 0, "role_id": 1, "permission_id": 0},
+        {"id": 1, "role_id": 1, "permission_id": 1},
+        {"id": 2, "role_id": 1, "permission_id": 2},
     ])
 
     users_tbl = sa.Table('users', meta, autoload_with=op.get_bind())
@@ -54,6 +58,7 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
+    op.execute("DELETE FROM sessions")
     op.execute("DELETE FROM users")
     op.execute("DELETE FROM roles_permissions")
     op.execute("DELETE FROM permissions")
