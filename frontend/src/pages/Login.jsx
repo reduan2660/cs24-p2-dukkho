@@ -17,29 +17,34 @@ const Login = () => {
 
   return (
     <div className="flex flex-col justify-center items-center min-h-screen gap-y-8">
-      <div className="flex items-center gap-x-4 fixed top-16">
-        <img src="src/assets/logo.png" width={60} height={60} />
-        <p className="text-5xl font-bold text-xdark">EcoSync</p>
+      <div className="flex items-center gap-x-4 fixed top-8 lg:top-16">
+        <img
+          src="src/assets/logo.png"
+          className="w-[40px] h-[40px] lg:w-[60px] lg:h-[60px]"
+        />
+        <p className="text-3xl lg:text-5xl font-bold text-xdark">EcoSync</p>
       </div>
       <div className="flex flex-col items-center gap-y-2">
-        <p className="text-4xl font-black text-xgray">Login to your account</p>
-        <p className="text-md text-xgray">
+        <p className="text-3xl lg:text-4xl font-black text-xgray">
+          Login to your account
+        </p>
+        <p className="text-sm lg:text-md text-xgray">
           Together, let&apos;s build a cleaner, greener future.
         </p>
       </div>
-      <div className="flex flex-col gap-y-8">
+      <div className="flex flex-col gap-y-8 w-[350px] lg:w-[400px]">
         <div className="flex flex-col gap-y-6">
           <input
             type="email"
             placeholder="Email"
-            className="border border-[#DED2D9] rounded-md px-2 py-3 w-[400px] focus:outline-none focus:ring-1 focus:ring-xblue focus:border-transparent"
+            className="border border-[#DED2D9] rounded-md px-2 py-3 w-full focus:outline-none focus:ring-1 focus:ring-xblue focus:border-transparent"
             onChange={(e) => setEmail(e.target.value)}
           />
           <div className="flex flex-col gap-y-2">
             <input
               type="password"
               placeholder="Password"
-              className="border border-[#DED2D9] rounded-md px-2 py-3 w-[400px] focus:outline-none focus:ring-1 focus:ring-xblue focus:border-transparent"
+              className="border border-[#DED2D9] rounded-md px-2 py-3 w-full focus:outline-none focus:ring-1 focus:ring-xblue focus:border-transparent"
               onChange={(e) => setPassword(e.target.value)}
             />
             <div className="flex justify-end">
