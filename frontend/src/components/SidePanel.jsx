@@ -9,6 +9,7 @@ import { FaTruck } from "react-icons/fa";
 import { FiUser } from "react-icons/fi";
 import { BsTools } from "react-icons/bs";
 import { MdLogout } from "react-icons/md";
+import { RiShieldKeyholeLine } from "react-icons/ri";
 
 const SidePanel = () => {
   const navigate = useNavigate();
@@ -67,6 +68,20 @@ const SidePanel = () => {
           >
             <MenuItem icon={<GoGraph className="text-xgray" />}>
               <div className="font-medium text-xgray">Dashboard</div>
+            </MenuItem>
+          </div>
+          <div
+            className={`w-full ${
+              location.pathname === "/admin/roles" ? "bg-blue-100" : ""
+            }`}
+            onClick={() => {
+              if (location.pathname !== "/admin/roles")
+                navigate("/admin/roles");
+              else setCollapsed(!collapsed);
+            }}
+          >
+            <MenuItem icon={<RiShieldKeyholeLine className="text-xgray" />}>
+              <div className="font-medium text-xgray">Roles & Permissions</div>
             </MenuItem>
           </div>
           {!collapsed && (
