@@ -127,17 +127,12 @@ const Users = () => {
 
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
-      console.log(
-        `selectedRowKeys: ${selectedRowKeys}`,
-        "selectedRows: ",
-        selectedRows,
-      );
+      // console.log(
+      //   `selectedRowKeys: ${selectedRowKeys}`,
+      //   "selectedRows: ",
+      //   selectedRows,
+      // );
     },
-    // getCheckboxProps: (record) => ({
-    //   disabled: record.name === "Disabled User",
-    //   // Column configuration not to be checked
-    //   name: record.name,
-    // }),
   };
 
   const getUsers = () => {
@@ -221,7 +216,7 @@ const Users = () => {
                     <button
                       type="button"
                       onClick={showModal}
-                      className="rounded-md bg-xblue px-3 py-1 font-medium text-white hover:bg-blue-600 lg:rounded-lg lg:px-5 lg:py-2"
+                      className="rounded-md bg-xblue px-3 py-1 font-medium text-white hover:bg-blue-600 lg:rounded-lg lg:px-5 lg:py-2 transition-all duration-300"
                     >
                       Create User
                     </button>
@@ -311,13 +306,13 @@ const Users = () => {
                         <div className="flex items-center gap-x-4">
                           <button
                             onClick={() => setEditingUserId(record.id)}
-                            className="rounded-md bg-xblue px-4 py-1 text-sm font-medium text-white hover:bg-blue-600"
+                            className="rounded-md bg-xblue px-4 py-1 text-sm font-medium text-white hover:bg-blue-600 transition-all duration-300"
                           >
                             Edit
                           </button>
                           <button
                             onClick={() => deleteModal(record.id, record.name)}
-                            className="rounded-md bg-xred px-4 py-1 text-sm font-medium text-white hover:bg-red-600"
+                            className="rounded-md bg-xred px-4 py-1 text-sm font-medium text-white hover:bg-red-600 transition-all duration-300"
                           >
                             Delete
                           </button>
