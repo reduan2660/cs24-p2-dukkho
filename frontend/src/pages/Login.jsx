@@ -1,21 +1,38 @@
 import { useState } from "react";
-import auth from "../auth";
 import { useNavigate } from "react-router-dom";
 import { BiSolidLeaf } from "react-icons/bi";
+import api from "../api";
+import { useGlobalState } from "../GlobalStateProvider";
 
 const Login = () => {
   const navigate = useNavigate();
+  const { globalState, setGlobalState } = useGlobalState();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter") {
+      login();
+    }
+  };
+
   const login = () => {
-    auth
-      .post("/login", {
+    api
+      .post("/auth/login", {
         email: email,
         password: password,
       })
       .then((res) => {
-        if (res.status === 200) navigate("/admin/users");
+        if (res.status === 200) {
+          navigate("/admin/users");
+          setGlobalState((prevState) => ({
+            ...prevState,
+            user: res.data,
+          }));
+        }
+      })
+      .catch((err) => {
+        console.log(err);
       });
   };
 
@@ -47,6 +64,7 @@ const Login = () => {
               placeholder="Password"
               className="w-full rounded-md border border-[#DED2D9] px-2 py-3 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
               onChange={(e) => setPassword(e.target.value)}
+              onKeyDown={handleKeyPress}
             />
             <div className="flex justify-end">
               <button className="text-sm font-medium text-xblue">
