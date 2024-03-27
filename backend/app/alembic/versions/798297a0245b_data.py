@@ -1,8 +1,8 @@
 """Data
 
-Revision ID: dc7b584f6ec8
-Revises: ff03159118ae
-Create Date: 2024-03-27 23:48:14.985056
+Revision ID: 798297a0245b
+Revises: 4f841ae14e12
+Create Date: 2024-03-28 00:13:39.633131
 
 """
 from typing import Sequence, Union
@@ -12,11 +12,10 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'dc7b584f6ec8'
-down_revision: Union[str, None] = 'ff03159118ae'
+revision: str = '798297a0245b'
+down_revision: Union[str, None] = '4f841ae14e12'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
-
 
 from app.config import HASHED_SUPERADMIN_PASSWORD
 
@@ -49,6 +48,11 @@ def upgrade() -> None:
         {"id": 10, "name": "create_sts", "category": "sts"},
         {"id": 11, "name": "delete_sts", "category": "sts"},
         {"id": 12, "name": "edit_sts", "category": "sts"},
+
+        {"id": 13, "name": "list_landfill", "category": "landfill"},
+        {"id": 14, "name": "create_landfill", "category": "landfill"},
+        {"id": 15, "name": "edit_landfill", "category": "landfill"},
+        {"id": 16, "name": "delete_landfill", "category": "landfill"},
     ])
 
     roles_permissions_tbl = sa.Table('roles_permissions', meta, autoload_with=op.get_bind())
@@ -72,6 +76,12 @@ def upgrade() -> None:
         {"id": 10, "role_id": 1, "permission_id": 10},
         {"id": 11, "role_id": 1, "permission_id": 11},
         {"id": 12, "role_id": 1, "permission_id": 12},
+
+        # System Admin - Landfill
+        {"id": 13, "role_id": 1, "permission_id": 13},
+        {"id": 14, "role_id": 1, "permission_id": 14},
+        {"id": 15, "role_id": 1, "permission_id": 15},
+        {"id": 16, "role_id": 1, "permission_id": 16},
         
     ])
 

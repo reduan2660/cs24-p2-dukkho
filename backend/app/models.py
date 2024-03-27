@@ -80,8 +80,10 @@ class Landfill(Base):
     __tablename__ = "landfills"
 
     id = Column(Integer, primary_key=True, index=True)
+    name= Column(String, nullable=False)
     latitude = Column(Float, nullable=False)
     longitude = Column(Float, nullable=False)
+    capacity = Column(Float, nullable=False)
 
     landfill_manager = relationship("LandfillManager", back_populates="landfill")
 
