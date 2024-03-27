@@ -1,8 +1,8 @@
 """Schema
 
-Revision ID: 4f841ae14e12
+Revision ID: e82652a5da70
 Revises: 
-Create Date: 2024-03-28 00:13:30.125643
+Create Date: 2024-03-28 00:32:53.080840
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '4f841ae14e12'
+revision: str = 'e82652a5da70'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -76,9 +76,11 @@ def upgrade() -> None:
     op.create_index(op.f('ix_users_name'), 'users', ['name'], unique=False)
     op.create_table('vehicles',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('capacity', sa.Integer(), nullable=False),
     sa.Column('reg_no', sa.String(), nullable=False),
+    sa.Column('capacity', sa.Integer(), nullable=False),
     sa.Column('vtype', sa.String(), nullable=False),
+    sa.Column('loaded_cost', sa.Float(), nullable=False),
+    sa.Column('empty_cost', sa.Float(), nullable=False),
     sa.Column('sts_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['sts_id'], ['sts.id'], ),
     sa.PrimaryKeyConstraint('id')

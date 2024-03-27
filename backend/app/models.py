@@ -102,9 +102,11 @@ class Vehicle(Base):
     __tablename__ = "vehicles"
 
     id = Column(Integer, primary_key=True, index=True)
-    capacity = Column(Integer, nullable=False)
     reg_no = Column(String, unique=True, index=True, nullable=False)
+    capacity = Column(Integer, nullable=False)
     vtype = Column(String, nullable=False)
+    loaded_cost = Column(Float, nullable=False)
+    empty_cost = Column(Float, nullable=False)
     
     sts_id = Column(Integer, ForeignKey("sts.id"))
     sts = relationship("STS", back_populates="vehicle")
