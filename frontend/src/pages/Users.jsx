@@ -1,10 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import SidePanel from "../components/SidePanel";
 import api from "../api";
-import { Button, Modal, Table } from "antd";
+import { Modal, Table } from "antd";
 import Column from "antd/es/table/Column";
 import Navbar from "../components/Navbar";
-import { DownOutlined, SmileOutlined } from "@ant-design/icons";
 import { Select } from "antd";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -18,17 +17,15 @@ const Users = () => {
   const [password, setPassword] = useState("");
   const [updateUser, setUpdateUser] = useState({});
   const [UpdateRole, setUpdateRole] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [editingUserId, setEditingUserId] = useState(null);
   const [openCreate, setOpenCreate] = useState(false);
   const [openConfirm, setOpenConfirm] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [profileLoading, setProfileLoading] = useState(false);
   const { globalState, setGlobalState } = useGlobalState();
-  const [editingUserId, setEditingUserId] = useState(null);
   const nameInputRef = useRef(null);
-
-  console.log(globalState);
 
   const showModal = () => {
     setEmail("");
@@ -52,12 +49,6 @@ const Users = () => {
       });
     setEditingUserId(null);
   };
-
-  useEffect(() => {
-    if (editingUserId !== null) {
-      nameInputRef.current.focus();
-    }
-  }, [editingUserId]);
 
   const deleteModal = (id, name) => {
     setOpenDelete(true);
@@ -189,6 +180,12 @@ const Users = () => {
   };
 
   useEffect(() => {
+    if (editingUserId !== null) {
+      nameInputRef.current.focus();
+    }
+  }, [editingUserId]);
+
+  useEffect(() => {
     getRoles();
     getUsers();
     getProfile();
@@ -281,7 +278,7 @@ const Users = () => {
                       <div>
                         {globalState.user?.role.permissions.includes(
                           "assign_role_to_user",
-                        ) ? (
+                        ) && globalState.user?.id !== record.id ? (
                           <Select
                             showSearch
                             placeholder="Select a role"
@@ -298,7 +295,7 @@ const Users = () => {
                             className="w-full"
                           />
                         ) : (
-                          <div>{record.role.name}</div>
+                          <div className="ml-3">{record.role.name}</div>
                         )}
                       </div>
                     )}
