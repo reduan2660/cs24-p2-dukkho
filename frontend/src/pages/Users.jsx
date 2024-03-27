@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import SidePanel from "../components/SidePanel";
 import api from "../api";
 import { Button, Modal, Table } from "antd";
@@ -24,6 +24,10 @@ const Users = () => {
   const [openDelete, setOpenDelete] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const { globalState } = useGlobalState();
+  const [editingUserId, setEditingUserId] = useState(null);
+  const nameInputRef = useRef(null);
+
+  console.log(globalState);
 
   const showModal = () => {
     setEmail("");
@@ -32,16 +36,42 @@ const Users = () => {
     setOpenCreate(true);
   };
 
-  const onChange = (id, name, role_id) => {
+  const handleNameUpdate = (userId, newName) => {
+    api
+      .put(`/users/${userId}`, { name: newName })
+      .then((res) => {
+        if (res.status === 200) {
+          toast.success("Name updated successfully");
+          getUsers();
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error("Error occurred while updating name");
+      });
+    setEditingUserId(null);
+  };
+
+  useEffect(() => {
+    if (editingUserId !== null) {
+      nameInputRef.current.focus();
+    }
+  }, [editingUserId]);
+
+  const deleteModal = (id, name) => {
+    setOpenDelete(true);
+    setUpdateUser({ id: id, name: name });
+  };
+
+  const onChange = (id, name) => {
     setOpenConfirm(true);
     setUpdateUser({ id: id, name: name });
-    setUpdateRole(role_id);
   };
 
   const ConfirmRole = () => {
     api
-      .put("/users", {
-        role: UpdateRole,
+      .patch(`/users/${updateUser.id}`, {
+        role_id: UpdateRole,
       })
       .then((res) => {
         if (res.status === 200) {
@@ -85,9 +115,9 @@ const Users = () => {
       });
   };
 
-  const deleteUser = (id) => {
+  const deleteUser = () => {
     api
-      .delete(`/users/${id}`)
+      .delete(`/users/${updateUser.id}`)
       .then((res) => {
         if (res.status === 200) {
           toast.success("User deleted successfully");
@@ -97,6 +127,9 @@ const Users = () => {
       .catch((err) => {
         console.log(err);
         toast.error("Error occurred while deleting user");
+      })
+      .finally(() => {
+        setOpenDelete(false);
       });
   };
 
@@ -129,7 +162,7 @@ const Users = () => {
 
   const getRoles = () => {
     api
-      .get("/roles")
+      .get("/rbac")
       .then((res) => setRoles(res.data))
       .catch((err) => console.log(err));
   };
@@ -191,6 +224,21 @@ const Users = () => {
                   title="Name"
                   dataIndex="name"
                   sorter={(a, b) => a.name.localeCompare(b.name)}
+                  render={(name, record) => {
+                    return editingUserId === record.id ? (
+                      <input
+                        type="text"
+                        defaultValue={record.name}
+                        ref={nameInputRef}
+                        onBlur={(e) =>
+                          handleNameUpdate(record.id, e.target.value)
+                        }
+                        className="w-fit rounded-md border border-[#DED2D9] px-1 py-0.5 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
+                      />
+                    ) : (
+                      <div>{record.name}</div>
+                    );
+                  }}
                 ></Column>
                 <Column
                   title="Email"
@@ -202,22 +250,27 @@ const Users = () => {
                   dataIndex="role"
                   render={(approved, record) => (
                     <div>
-                      <Select
-                        showSearch
-                        placeholder="Select a role"
-                        variant="borderless"
-                        defaultValue={record.role.name}
-                        optionFilterProp="children"
-                        onChange={() =>
-                          onChange(record.id, record.name, record.role.id)
-                        }
-                        filterOption={filterOption}
-                        options={roles.map((role) => ({
-                          value: role.id,
-                          label: role.name,
-                        }))}
-                        className="w-full"
-                      />
+                      {globalState.user.role.permissions.includes(
+                        "edit_role_permission",
+                      ) ? (
+                        <Select
+                          showSearch
+                          placeholder="Select a role"
+                          variant="borderless"
+                          defaultValue={record.role.name}
+                          optionFilterProp="children"
+                          onChange={() => onChange(record.id, record.name)}
+                          onSelect={setUpdateRole}
+                          filterOption={filterOption}
+                          options={roles.map((role) => ({
+                            value: role.id,
+                            label: role.name,
+                          }))}
+                          className="w-full"
+                        />
+                      ) : (
+                        <div>{record.role.name}</div>
+                      )}
                     </div>
                   )}
                   sorter={(a, b) => a.role.name.localeCompare(b.role.name)}
@@ -227,11 +280,14 @@ const Users = () => {
                   dataIndex="name"
                   render={(actions, record) => (
                     <div className="flex items-center gap-x-4">
-                      <button className="rounded-md bg-xblue px-4 py-1 text-sm font-medium text-white hover:bg-blue-600">
+                      <button
+                        onClick={() => setEditingUserId(record.id)}
+                        className="rounded-md bg-xblue px-4 py-1 text-sm font-medium text-white hover:bg-blue-600"
+                      >
                         Edit
                       </button>
                       <button
-                        onClick={() => deleteUser(record.id)}
+                        onClick={() => deleteModal(record.id, record.name)}
                         className="rounded-md bg-xred px-4 py-1 text-sm font-medium text-white hover:bg-red-600"
                       >
                         Delete
