@@ -1,11 +1,14 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { BiSolidLeaf } from "react-icons/bi";
 import api from "../api";
 import { useGlobalState } from "../GlobalStateProvider";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Login = () => {
   const navigate = useNavigate();
+  const { state } = useLocation();
   const { globalState, setGlobalState } = useGlobalState();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -36,8 +39,28 @@ const Login = () => {
       });
   };
 
+  useEffect(() => {
+    if (state === "password_changed")
+      toast.success("Password changed successfully");
+    else if (state === "reset_password")
+      toast.success("Password has been reset successfully");
+    else if (state === "logout") toast.success("Logged out successfully");
+  }, []);
+
   return (
     <div className="flex min-h-screen flex-col items-center justify-center gap-y-8">
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable={false}
+        pauseOnHover={false}
+        theme="colored"
+      />
       <div className="fixed top-8 flex items-center gap-x-4 lg:top-16">
         <BiSolidLeaf className="text-5xl text-green-600" />
         <p className="text-3xl font-bold text-xdark lg:text-5xl">EcoSync</p>
@@ -67,7 +90,10 @@ const Login = () => {
               onKeyDown={handleKeyPress}
             />
             <div className="flex justify-end">
-              <button className="text-sm font-medium text-xblue">
+              <button
+                onClick={() => navigate("/auth/reset-password")}
+                className="text-sm font-medium text-xblue"
+              >
                 Forgot Password?
               </button>
             </div>
