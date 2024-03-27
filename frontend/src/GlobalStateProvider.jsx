@@ -5,7 +5,6 @@ const GlobalStateContext = createContext();
 export const GlobalStateProvider = ({ children }) => {
   const [globalState, setGlobalState] = useState({
     user: null,
-    theme: "light",
   });
 
   return (
