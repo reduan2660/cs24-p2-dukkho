@@ -48,6 +48,7 @@ def upgrade() -> None:
         {"id": 5, "name": "view_role_permission", "category": "role"},
         {"id": 6, "name": "edit_role_permission", "category": "role"},
         {"id": 7, "name": "list_all_permissions", "category": "role"},
+        {"id": 8, "name": "assign_role_to_user", "category": "role"}
     ])
 
     roles_permissions_tbl = sa.Table('roles_permissions', meta, autoload_with=op.get_bind())
@@ -60,6 +61,7 @@ def upgrade() -> None:
         {"id": 5, "role_id": 1, "permission_id": 5},
         {"id": 6, "role_id": 1, "permission_id": 6},
         {"id": 7, "role_id": 1, "permission_id": 7},
+        {"id": 8, "role_id": 1, "permission_id": 8},
     ])
 
     users_tbl = sa.Table('users', meta, autoload_with=op.get_bind())

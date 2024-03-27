@@ -7,7 +7,7 @@ from app.models import User, Role, Permission, RolePermission
 from app.config import SessionLocal
 
 router = APIRouter(
-    prefix="/roles",
+    prefix="/rbac",
     tags=["roles"],
     responses={404: {"description": "Route not found"}},
 )

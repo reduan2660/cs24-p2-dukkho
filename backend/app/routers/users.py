@@ -140,3 +140,25 @@ async def update_user(user_id: int, userRequest: UpdateUserRequest, user: User =
         # user.email = userRequest.email
         db.commit()
         return JSONResponse(status_code=200, content={"message": "User updated"})
+    
+# Assign roles to user
+class AssignRoleRequest(BaseModel):
+    role_id: int
+
+@router.patch("/{user_id}")
+async def assign_role(user_id: int, assignRoleRequest: AssignRoleRequest, user: User = Depends(get_user_from_session)):
+    if "assign_role_to_user" not in user["role"]["permissions"]:
+        return JSONResponse(status_code=401, content={"message": "Not enough permissions"})
+    
+    with SessionLocal() as db:
+        user = db.query(User).filter(User.id == user_id).first()
+        if user is None:
+            return JSONResponse(status_code=404, content={"message": "User not found"})
+        
+        role = db.query(Role).filter(Role.id == assignRoleRequest.role_id).first()
+        if role is None:
+            return JSONResponse(status_code=404, content={"message": "Role not found"})
+        
+        user.role_id = role.id
+        db.commit()
+        return JSONResponse(status_code=200, content={"message": "Role assigned to user"})
