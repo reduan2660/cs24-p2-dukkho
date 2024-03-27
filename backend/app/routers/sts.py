@@ -97,7 +97,10 @@ class STSManagerRequest(BaseModel):
 
 @router.post("/manager")
 async def assign_manager(stsManager: STSManagerRequest, user: User = Depends(get_user_from_session)):
-
+    """
+    Assign only for STS managers and Unassigned users.
+    Will reassign the managers of existing STS manager.
+    """
     if "assign_role_to_user" not in user["role"]["permissions"]:
         return JSONResponse(status_code=401, content={"message": "Not enough permissions"})
 
@@ -112,7 +115,19 @@ async def assign_manager(stsManager: STSManagerRequest, user: User = Depends(get
                 return JSONResponse(status_code=404, content={"message": "User not found"})
 
             if user.role_id != 2 and user.role_id != 0:
-                return JSONResponse(status_code=400, content={"message": "User is not a STS manager"})
+                return JSONResponse(status_code=400, content={"message": "User is not a STS manager or Unassigned"})
+
+            if user.role_id == 2:
+                # check if user is already a STS manager of another STS
+                # if yes, then remove that sts manager and assign to this sts
+                sts = db.query(STSmanager).filter(STSmanager.user_id == user_id).first()
+                if sts is not None:
+                    db.query(STSmanager).filter(STSmanager.user_id == user_id).delete()
+                    
+            if user.role_id == 0:
+                # update the role to STS manager
+                db.query(User).filter(User.id == user_id).update({"role_id": 2})
+
 
             db.add(STSmanager(
                 sts_id=stsManager.sts_id,
