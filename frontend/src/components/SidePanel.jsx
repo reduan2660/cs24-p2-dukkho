@@ -10,7 +10,7 @@ import { FiUser } from "react-icons/fi";
 import { BsTools } from "react-icons/bs";
 import { MdLogout } from "react-icons/md";
 
-const SidePanel = ({ onCategoryChange }) => {
+const SidePanel = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
@@ -76,10 +76,12 @@ const SidePanel = ({ onCategoryChange }) => {
           )}
           <div
             className={`w-full ${
-              location.pathname === "/" ? "bg-blue-100" : ""
+              location.pathname === "/admin/users" ? "bg-blue-100" : ""
             }`}
             onClick={() => {
-              if (location.pathname !== "/") navigate("/");
+              if (location.pathname !== "/admin/users")
+                navigate("/admin/users");
+              else setCollapsed(!collapsed);
             }}
           >
             <MenuItem icon={<PiUsersThree className="text-lg text-xgray" />}>
