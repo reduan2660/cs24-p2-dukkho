@@ -27,7 +27,14 @@ async def get_sts(user: User = Depends(get_user_from_session)):
                 "name": st.name,
                 "ward_no": st.ward_no,
                 "latitude": st.latitude,
-                "longitude": st.longitude
+                "longitude": st.longitude,
+                "managers": [
+                    {
+                        "id": m.user_id,
+                        "name": m.user.name,
+                        "email": m.user.email
+                    } for m in db.query(STSmanager).filter(STSmanager.sts_id == st.id).all()
+                ]
             })
 
         return JSONResponse(status_code=200, content=response)
