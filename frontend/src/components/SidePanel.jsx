@@ -9,12 +9,26 @@ import { FaTruck } from "react-icons/fa";
 import { FiUser } from "react-icons/fi";
 import { BsTools } from "react-icons/bs";
 import { MdLogout } from "react-icons/md";
-import { RiShieldKeyholeLine } from "react-icons/ri";
+import { RiShieldKeyholeLine, RiKeyLine } from "react-icons/ri";
+import api from "../api";
 
 const SidePanel = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
+
+  const logout = () => {
+    api
+      .get("/auth/logout")
+      .then((res) => {
+        if (res.status === 200) {
+          navigate("/login", { state: "logout" });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   return (
     <div className="hidden min-h-screen lg:block">
@@ -132,6 +146,7 @@ const SidePanel = () => {
               Settings
             </div>
           )}
+
           <div
             className={`w-full ${
               location.pathname === "/" ? "bg-blue-100" : ""
@@ -158,12 +173,18 @@ const SidePanel = () => {
           </div>
           <div
             className={`w-full ${
-              location.pathname === "/" ? "bg-blue-100" : ""
-            } absolute bottom-0`}
+              location.pathname === "/auth/change-password" ? "bg-blue-100" : ""
+            }`}
             onClick={() => {
-              if (location.pathname !== "/") navigate("/");
+              if (location.pathname !== "/auth/change-password")
+                navigate("/auth/change-password");
             }}
           >
+            <MenuItem icon={<RiKeyLine className="text-lg text-xgray" />}>
+              <div className="font-medium text-xgray">Change Password</div>
+            </MenuItem>
+          </div>
+          <div className={`absolute bottom-0 w-full`} onClick={logout}>
             <hr />
             <MenuItem
               icon={<MdLogout className="text-xgray" />}
