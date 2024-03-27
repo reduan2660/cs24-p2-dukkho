@@ -13,3 +13,11 @@ h3,
 p {
   font-family: "Nunito Sans", sans-serif;
 }
+
+.ant-btn-primary:not([disabled]) {
+  background: #1a73e8 !important;
+}
+
+.ant-btn-primary:not([disabled]):hover {
+  background: #086cee !important;
+}
