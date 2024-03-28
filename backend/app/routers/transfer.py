@@ -133,7 +133,7 @@ async def sts_departure(transfer: STSdeparture, user: User = Depends(get_user_fr
             return JSONResponse(status_code=400, content={"message": "Not enough capacity for landfill."})
         
         newTransfer = Transfer(
-            sts_id=transfer.sts_id,
+            sts_id=user_sts.sts_id,
             vehicle_id=transfer.vehicle_id,
             landfill_id=transfer.landfill_id,
             sts_departure_time=int(datetime.now().timestamp()),
