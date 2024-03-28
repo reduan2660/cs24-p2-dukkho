@@ -65,6 +65,7 @@ class STS(Base):
     
     vehicle = relationship("Vehicle", back_populates="sts")
     sts_manager = relationship("STSmanager", back_populates="sts")
+    transfer = relationship("Transfer", back_populates="sts")
 
 class STSmanager(Base):
     __tablename__ = "sts_managers"
@@ -87,6 +88,7 @@ class Landfill(Base):
     current_capacity = Column(Float, nullable=False)
 
     landfill_manager = relationship("LandfillManager", back_populates="landfill")
+    transfer = relationship("Transfer", back_populates="landfill")
 
 class LandfillManager(Base):
     __tablename__ = "landfill_managers"
@@ -111,6 +113,8 @@ class Vehicle(Base):
     
     sts_id = Column(Integer, ForeignKey("sts.id"))
     sts = relationship("STS", back_populates="vehicle")
+    transfer = relationship("Transfer", back_populates="vehicle")
+
 
 
 class Transfer(Base):
@@ -140,6 +144,11 @@ class Transfer(Base):
     # 3. arrived at landfill
     # 4. departed from landfill
     status = Column(Integer, nullable=False)
+
+    sts = relationship("STS", back_populates="transfer")
+    vehicle = relationship("Vehicle", back_populates="transfer")
+    landfill = relationship("Landfill", back_populates="transfer")
+
 
 # arrival vehicle options = all vehicles of sts - status with 1, 2, 3
 # landfill options = all landfills with current_capacity >= weight of waste
