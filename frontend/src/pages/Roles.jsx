@@ -57,16 +57,16 @@ const Roles = () => {
 
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
-    //   console.log(
-    //     `selectedRowKeys: ${selectedRowKeys}`,
-    //     "selectedRows: ",
-    //     selectedRows,
-    //   );
+      //   console.log(
+      //     `selectedRowKeys: ${selectedRowKeys}`,
+      //     "selectedRows: ",
+      //     selectedRows,
+      //   );
     },
   };
 
-  const filterPermissions = (role) => {
-    const newAssignedPermissions = role.permissions;
+  const filterPermissions = (assignedPermissions) => {
+    const newAssignedPermissions = assignedPermissions;
     const newUnassignedPermissions = [];
 
     permissions.forEach((category) => {
@@ -272,7 +272,7 @@ const Roles = () => {
                         return record.permissions.length > 0 ? (
                           <button
                             onClick={() => {
-                              filterPermissions(record);
+                              filterPermissions(record.permissions);
                             }}
                             className="w-fit rounded-md border border-xblue px-2 py-1 text-xblue transition-all duration-300 hover:bg-xblue hover:text-white"
                           >
@@ -345,6 +345,11 @@ const Roles = () => {
                             ),
                           };
                         })}
+                        onChange={(value) => {
+                          setAssignedPermissions(value);
+                          filterPermissions(value);
+                          console.log(value);
+                        }}
                       />
                     ) : (
                       <div className="flex flex-wrap gap-2">
