@@ -1,8 +1,9 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from fastapi.responses import JSONResponse
+from typing import List
 from pydantic import BaseModel
 from app.dependencies import get_user_from_session
-from app.models import User, Role, Permission, RolePermission
+from app.models import User, Role, Permission, RolePermission, STSmanager, LandfillManager
 from app.config import SessionLocal
 import os
 
@@ -20,16 +21,20 @@ router = APIRouter(
 )
 
 @router.get("/")
-async def get_users(user: User = Depends(get_user_from_session)):
+async def get_users(roles: List[int] = Query([]),  user: User = Depends(get_user_from_session)):
 
     if "list_all_users" not in user["role"]["permissions"]:
         return JSONResponse(status_code=401, content={"message": "Not enough permissions"})
-    
+
     with SessionLocal() as db:
         users = db.query(User).all()
         response = []
         for user in users:
             role = db.query(Role).filter(Role.id == user.role_id).first()
+
+            if role.id not in roles and len(roles) > 0:
+                continue
+
             role_permissions = db.query(RolePermission).filter(RolePermission.role_id == role.id).all()
             permissions = []
             for rp in role_permissions:
@@ -160,5 +165,10 @@ async def assign_role(user_id: int, assignRoleRequest: AssignRoleRequest, user: 
             return JSONResponse(status_code=404, content={"message": "Role not found"})
         
         user.role_id = role.id
+
+
+        # remove the user from all sts and landfill
+        db.query(STSmanager).filter(STSmanager.user_id == user_id).delete()
+        db.query(LandfillManager).filter(LandfillManager.user_id == user_id).delete()
         db.commit()
         return JSONResponse(status_code=200, content={"message": "Role assigned to user"})
