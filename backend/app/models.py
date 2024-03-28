@@ -84,6 +84,7 @@ class Landfill(Base):
     latitude = Column(Float, nullable=False)
     longitude = Column(Float, nullable=False)
     capacity = Column(Float, nullable=False)
+    current_capacity = Column(Float, nullable=False)
 
     landfill_manager = relationship("LandfillManager", back_populates="landfill")
 
@@ -110,3 +111,35 @@ class Vehicle(Base):
     
     sts_id = Column(Integer, ForeignKey("sts.id"))
     sts = relationship("STS", back_populates="vehicle")
+
+
+class Transfer(Base):
+    __tablename__ = "transfers"
+
+    id = Column(Integer, primary_key=True, index=True)
+
+    sts_id = Column(Integer, ForeignKey("sts.id"))
+    vehicle_id = Column(Integer, ForeignKey("vehicles.id"))
+
+    sts_arrival_time = Column(Integer, nullable=False) # utc timestamp
+
+    sts_departure_time = Column(Integer)  # utc timestamp
+    sts_departure_weight = Column(Float) # in tons
+
+    oil = Column(Float) # in liters
+    
+    landfill_id = Column(Integer, ForeignKey("landfills.id"))
+    landfill_arrival_time = Column(Integer) # utc timestamp
+    landfill_arrival_weight = Column(Float)
+
+    landfill_departure_time = Column(Integer) # utc timestamp
+
+    # status with options:
+    # 1. arrived at sts
+    # 2. departed from sts
+    # 3. arrived at landfill
+    # 4. departed from landfill
+    status = Column(Integer, nullable=False)
+
+# arrival vehicle options = all vehicles of sts - status with 1, 2, 3
+# landfill options = all landfills with current_capacity >= weight of waste
