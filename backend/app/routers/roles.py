@@ -75,7 +75,17 @@ async def delete_role(role_id: int, user: User = Depends(get_user_from_session))
     if "create_role" not in user["role"]["permissions"]:
         return JSONResponse(status_code=401, content={"message": "Not enough permissions"})
     
+    # if role is 0,1,2,3 then it cannot be deleted
+    if role_id in [0, 1, 2, 3]:
+        return JSONResponse(status_code=400, content={"message": "Cannot delete default roles"})
+    
     with SessionLocal() as db:
+        # before deleting the role, delete all role permissions associated with the role
+        # and set the role_id of all users with the role to 0 (unassigned)
+
+        db.query(RolePermission).filter(RolePermission.role_id == role_id).delete()
+        db.query(User).filter(User.role_id == role_id).update({"role_id": 0})
+
         db.query(Role).filter(Role.id == role_id).delete()
         db.commit()
         return JSONResponse(status_code=200, content={"message": "Role deleted successfully"})
