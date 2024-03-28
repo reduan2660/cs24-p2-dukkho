@@ -110,6 +110,7 @@ class Vehicle(Base):
     vtype = Column(String, nullable=False)
     loaded_cost = Column(Float, nullable=False)
     empty_cost = Column(Float, nullable=False)
+    available = Column(Integer, nullable=False)
     
     sts_id = Column(Integer, ForeignKey("sts.id"))
     sts = relationship("STS", back_populates="vehicle")
@@ -124,25 +125,26 @@ class Transfer(Base):
 
     sts_id = Column(Integer, ForeignKey("sts.id"))
     vehicle_id = Column(Integer, ForeignKey("vehicles.id"))
-
-    sts_arrival_time = Column(Integer, nullable=False) # utc timestamp
-
-    sts_departure_time = Column(Integer)  # utc timestamp
-    sts_departure_weight = Column(Float) # in tons
-
-    oil = Column(Float) # in liters
-    
     landfill_id = Column(Integer, ForeignKey("landfills.id"))
+
+    sts_departure_time = Column(Integer, nullable=False)  # utc timestamp
+    sts_departure_weight = Column(Float, nullable=False) # in tons
+
+    oil = Column(Float, nullable=False) # in liters
+    
+    
     landfill_arrival_time = Column(Integer) # utc timestamp
     landfill_arrival_weight = Column(Float)
 
     landfill_departure_time = Column(Integer) # utc timestamp
 
+    sts_arrival_time = Column(Integer) # utc timestamp
+
     # status with options:
-    # 1. arrived at sts
-    # 2. departed from sts
-    # 3. arrived at landfill
-    # 4. departed from landfill
+    # 1. Departed from sts
+    # 2. Arrived at landfill
+    # 3. Departed from landfill
+    # 4. Trip completed
     status = Column(Integer, nullable=False)
 
     sts = relationship("STS", back_populates="transfer")

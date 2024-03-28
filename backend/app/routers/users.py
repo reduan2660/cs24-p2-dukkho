@@ -94,7 +94,12 @@ async def create_user(userRequest: NewUserRequest, user: User = Depends(get_user
         return JSONResponse(status_code=401, content={"message": "Not enough permissions"})
     
     with SessionLocal() as db:
+
+        latest_user_id = db.query(User).order_by(User.id.desc()).first().id
+
+
         newUser = User(
+            id=latest_user_id + 1,
             name=userRequest.name,
             email=userRequest.email,
             password=pwd_context.hash(userRequest.password),

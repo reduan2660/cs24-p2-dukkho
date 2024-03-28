@@ -1,8 +1,8 @@
 """Schema
 
-Revision ID: 1ac2b1a334a5
+Revision ID: 39ea86417ab3
 Revises: 
-Create Date: 2024-03-28 16:40:43.186909
+Create Date: 2024-03-28 23:25:44.263115
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '1ac2b1a334a5'
+revision: str = '39ea86417ab3'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -82,6 +82,7 @@ def upgrade() -> None:
     sa.Column('vtype', sa.String(), nullable=False),
     sa.Column('loaded_cost', sa.Float(), nullable=False),
     sa.Column('empty_cost', sa.Float(), nullable=False),
+    sa.Column('available', sa.Integer(), nullable=False),
     sa.Column('sts_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['sts_id'], ['sts.id'], ),
     sa.PrimaryKeyConstraint('id')
@@ -118,14 +119,14 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('sts_id', sa.Integer(), nullable=True),
     sa.Column('vehicle_id', sa.Integer(), nullable=True),
-    sa.Column('sts_arrival_time', sa.Integer(), nullable=False),
-    sa.Column('sts_departure_time', sa.Integer(), nullable=True),
-    sa.Column('sts_departure_weight', sa.Float(), nullable=True),
-    sa.Column('oil', sa.Float(), nullable=True),
     sa.Column('landfill_id', sa.Integer(), nullable=True),
+    sa.Column('sts_departure_time', sa.Integer(), nullable=False),
+    sa.Column('sts_departure_weight', sa.Float(), nullable=False),
+    sa.Column('oil', sa.Float(), nullable=False),
     sa.Column('landfill_arrival_time', sa.Integer(), nullable=True),
     sa.Column('landfill_arrival_weight', sa.Float(), nullable=True),
     sa.Column('landfill_departure_time', sa.Integer(), nullable=True),
+    sa.Column('sts_arrival_time', sa.Integer(), nullable=True),
     sa.Column('status', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['landfill_id'], ['landfills.id'], ),
     sa.ForeignKeyConstraint(['sts_id'], ['sts.id'], ),
