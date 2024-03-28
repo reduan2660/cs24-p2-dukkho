@@ -24,6 +24,8 @@ const Roles = () => {
   const [openCreate, setOpenCreate] = useState(false);
   const [updateRole, setUpdateRole] = useState({});
   const [openDelete, setOpenDelete] = useState(false);
+  const [permissionIds, setPermissionIds] = useState([]);
+  const [openUpdate, setOpenUpdate] = useState(false);
 
   const [roles, setRoles] = useState([]);
   const nameInputRef = useRef(null);
@@ -31,6 +33,26 @@ const Roles = () => {
   const showModal = () => {
     setName("");
     setOpenCreate(true);
+  };
+
+  const updatePermissions = () => {
+    api
+      .put(`/rbac/${updateRole.id}/permissions`, { permissions: permissionIds })
+      .then((res) => {
+        if (res.status === 200) {
+          console.log(permissionIds);
+          toast.success("Permissions updated successfully");
+          getRoles();
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error("Error occurred while updating permissions");
+      })
+      .finally(() => {
+        setOpenUpdate(false);
+        setOpenPermission(false);
+      });
   };
 
   const CreateRole = () => {
@@ -53,6 +75,20 @@ const Roles = () => {
         setOpenCreate(false);
         setConfirmLoading(false);
       });
+  };
+
+  const convertPermissions = (permissionsNames) => {
+    const permissionIds = permissionsNames.map((permissionName) => {
+      for (const category of permissions) {
+        for (const permission of category.permissions) {
+          if (permission.name === permissionName) {
+            return permission.id;
+          }
+        }
+      }
+    });
+    console.log(permissionIds);
+    setPermissionIds(permissionIds);
   };
 
   const rowSelection = {
@@ -85,6 +121,15 @@ const Roles = () => {
     setAssignedPermissions([...newAssignedPermissions]);
     setUnassignedPermissions([...newUnassignedPermissions]);
     setOpenPermission(true);
+    console.log(
+      newAssignedPermissions,
+      newUnassignedPermissions,
+      assignedPermissions,
+    );
+  };
+
+  const updateModal = (id, name) => {
+    setUpdateRole({ id: id, name: name });
   };
 
   const deleteModal = (id, name) => {
@@ -269,17 +314,16 @@ const Roles = () => {
                       dataIndex="permissions"
                       sorter={(a, b) => a.email.localeCompare(b.email)}
                       render={(permission, record) => {
-                        return record.permissions.length > 0 ? (
+                        return (
                           <button
                             onClick={() => {
+                              updateModal(record.id, record.name);
                               filterPermissions(record.permissions);
                             }}
                             className="w-fit rounded-md border border-xblue px-2 py-1 text-xblue transition-all duration-300 hover:bg-xblue hover:text-white"
                           >
                             Permissions
                           </button>
-                        ) : (
-                          <div>No Permissions Assigned</div>
                         );
                       }}
                     ></Column>
@@ -311,9 +355,9 @@ const Roles = () => {
                   )}
                 </Table>
                 <Modal
-                  title={`Permissions for '${selectedRole.name}'`}
+                  title={`Permissions for '${updateRole.name}'`}
                   open={openPermission}
-                  onOk={() => setOpenPermission(false)}
+                  onOk={() => setOpenUpdate(true)}
                   okText="Save"
                   onCancel={() => {
                     setOpenPermission(false);
@@ -338,8 +382,8 @@ const Roles = () => {
                             options: permission.permissions.map(
                               (permission) => {
                                 return {
-                                  label: permission,
-                                  value: permission,
+                                  label: permission.name,
+                                  value: permission.name,
                                 };
                               },
                             ),
@@ -348,18 +392,25 @@ const Roles = () => {
                         onChange={(value) => {
                           setAssignedPermissions(value);
                           filterPermissions(value);
-                          console.log(value);
+                          convertPermissions(value);
                         }}
                       />
                     ) : (
                       <div className="flex flex-wrap gap-2">
-                        {assignedPermissions.map((permission) => {
-                          return (
-                            <div className="inline space-x-1 rounded-md bg-gray-100 px-2 py-1">
-                              {permission}
-                            </div>
-                          );
-                        })}
+                        {assignedPermissions.length > 0 ? (
+                          assignedPermissions.map((permission, i) => {
+                            return (
+                              <div
+                                key={i}
+                                className="inline space-x-1 rounded-md bg-gray-100 px-2 py-1"
+                              >
+                                {permission}
+                              </div>
+                            );
+                          })
+                        ) : (
+                          <div>No permissions assigned</div>
+                        )}
                       </div>
                     )}
                   </div>
@@ -374,6 +425,21 @@ const Roles = () => {
                 >
                   <div className="mx-2 my-4">
                     Are you sure you want to delete{" "}
+                    <p className="inline font-semibold">{updateRole.name}</p>?
+                  </div>
+                </Modal>
+                <Modal
+                  title="Update Role"
+                  open={openUpdate}
+                  onOk={updatePermissions}
+                  okText="Update"
+                  onCancel={() => {
+                    setOpenUpdate(false);
+                  }}
+                  centered
+                >
+                  <div className="mx-2 my-4">
+                    Are you sure you want to update the roles for{" "}
                     <p className="inline font-semibold">{updateRole.name}</p>?
                   </div>
                 </Modal>
