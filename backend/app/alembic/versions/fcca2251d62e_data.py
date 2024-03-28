@@ -50,20 +50,21 @@ def upgrade() -> None:
         {"id": 12, "name": "edit_sts", "category": "sts"},
 
         {"id": 13, "name": "list_landfill", "category": "landfill"},
-        {"id": 14, "name": "create_landfill", "category": "landfill"},
-        {"id": 15, "name": "edit_landfill", "category": "landfill"},
-        {"id": 16, "name": "delete_landfill", "category": "landfill"},
+        {"id": 14, "name": "list_available_landfill", "category": "landfill"},
+        {"id": 15, "name": "create_landfill", "category": "landfill"},
+        {"id": 16, "name": "edit_landfill", "category": "landfill"},
+        {"id": 17, "name": "delete_landfill", "category": "landfill"},
 
-        {"id": 17, "name": "list_vehicle", "category": "vehicle"},
-        {"id": 18, "name": "list_available_vehicle", "category": "vehicle"},
-        {"id": 19, "name": "create_vehicle", "category": "vehicle"},
-        {"id": 20, "name": "edit_vehicle", "category": "vehicle"},
-        {"id": 21, "name": "delete_vehicle", "category": "vehicle"},
+        {"id": 18, "name": "list_vehicle", "category": "vehicle"},
+        {"id": 19, "name": "list_available_vehicle", "category": "vehicle"},
+        {"id": 20, "name": "create_vehicle", "category": "vehicle"},
+        {"id": 21, "name": "edit_vehicle", "category": "vehicle"},
+        {"id": 22, "name": "delete_vehicle", "category": "vehicle"},
 
 
-        {"id": 22, "name": "view_transfer", "category": "transfer"},
-        {"id": 23, "name": "update_transfer_sts", "category": "transfer"},
-        {"id": 24, "name": "update_transfer_landfill", "category": "transfer"},
+        {"id": 23, "name": "view_transfer", "category": "transfer"},
+        {"id": 24, "name": "update_transfer_sts", "category": "transfer"},
+        {"id": 25, "name": "update_transfer_landfill", "category": "transfer"},
     ])
 
     roles_permissions_tbl = sa.Table('roles_permissions', meta, autoload_with=op.get_bind())
@@ -95,15 +96,16 @@ def upgrade() -> None:
         {"role_id": 1, "permission_id": 14},
         {"role_id": 1, "permission_id": 15},
         {"role_id": 1, "permission_id": 16},
+        {"role_id": 1, "permission_id": 17},
 
         # System Admin - Vehicle
-        {"role_id": 1, "permission_id": 17},
-        {"role_id": 1, "permission_id": 19},
+        {"role_id": 1, "permission_id": 18},
         {"role_id": 1, "permission_id": 20},
         {"role_id": 1, "permission_id": 21},
+        {"role_id": 1, "permission_id": 22},
 
         # System Admin - Transfer
-        {"role_id": 1, "permission_id": 22},
+        {"role_id": 1, "permission_id": 23},
 
         # -------------------------------------
 
@@ -111,21 +113,28 @@ def upgrade() -> None:
         # -------------------------------------
 
         # STS Manager - Vehicle
-        {"role_id": 2, "permission_id": 17},
         {"role_id": 2, "permission_id": 18},
+        {"role_id": 2, "permission_id": 19},
+
+        # STS Manager - Landfil
+        {"role_id": 2, "permission_id": 14},
 
         # STS Manager - Transfer
-        {"role_id": 2, "permission_id": 22},
         {"role_id": 2, "permission_id": 23},
+        {"role_id": 2, "permission_id": 24},
 
         # -------------------------------------
 
         # Landfill Manager 
         # -------------------------------------
 
+        # Landfill Manager - Landfil
+        {"role_id": 3, "permission_id": 13},
+        {"role_id": 3, "permission_id": 16},
+
         # Landfill Manager - Transfer
-        {"role_id": 3, "permission_id": 22},
-        {"role_id": 3, "permission_id": 24},  
+        {"role_id": 3, "permission_id": 23},
+        {"role_id": 3, "permission_id": 25},  
 
         # -------------------------------------
     ])
@@ -153,7 +162,7 @@ def upgrade() -> None:
     # Landfill
     landfill_tbl = sa.Table('landfills', meta, autoload_with=op.get_bind())
     op.bulk_insert(landfill_tbl, [
-        {"id": 0, "name": "Landfill 1", "latitude": 27.7172, "longitude": 85.3240, "capacity": 1000, "current_capacity": 0}
+        {"id": 0, "name": "Landfill 1", "latitude": 27.7172, "longitude": 85.3240, "capacity": 1000, "current_capacity": 100}
     ])
 
     # Landfill Manager

@@ -122,7 +122,11 @@ async def sts_departure(transfer: STSdeparture, user: User = Depends(get_user_fr
         if landfill is None:
             return JSONResponse(status_code=404, content={"message": "Landfill not found"})
         
-        transfer = Transfer(
+        # check if landfil has capacity
+        if landfill.current_capacity < transfer.weight:
+            return JSONResponse(status_code=400, content={"message": "Not enough capacity for landfill."})
+        
+        newTransfer = Transfer(
             sts_id=transfer.sts_id,
             vehicle_id=transfer.vehicle_id,
             landfill_id=transfer.landfill_id,
@@ -131,10 +135,14 @@ async def sts_departure(transfer: STSdeparture, user: User = Depends(get_user_fr
             oil=transfer.oil,
             status=1 # Departed from sts
         )
-        db.add(transfer)
+        db.add(newTransfer)
 
         # Update vehicle availability
         vehicle.available = 0
+
+        # Update landfil capacity
+        landfill.current_capacity = landfill.current_capacity - transfer.weight
+        
         db.commit()
         return JSONResponse(status_code=200, content={"message": "Transfer added successfully"})
     
