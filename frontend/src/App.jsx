@@ -6,6 +6,7 @@ import { GlobalStateProvider } from "./GlobalStateProvider";
 import Roles from "./pages/Roles";
 import ResetPassword from "./pages/ResetPassword";
 import ChangePassword from "./pages/ChangePassword";
+import Vehicles from "./pages/Vehicles";
 
 const App = () => {
   return (
@@ -18,6 +19,7 @@ const App = () => {
           <Route path="/auth/change-password" element={<ChangePassword />} />
           <Route path="/admin/users" element={<Users />} />
           <Route path="/admin/roles" element={<Roles />} />
+          <Route path="/admin/vehicles" element={<Vehicles />} />
         </Routes>
       </BrowserRouter>
     </GlobalStateProvider>

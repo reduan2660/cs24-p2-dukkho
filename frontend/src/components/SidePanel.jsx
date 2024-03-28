@@ -136,10 +136,12 @@ const SidePanel = () => {
           </div>
           <div
             className={`w-full ${
-              location.pathname === "/" ? "bg-blue-100" : ""
+              location.pathname === "/admin/vehicles" ? "bg-blue-100" : ""
             }`}
             onClick={() => {
-              if (location.pathname !== "/") navigate("/");
+              if (location.pathname !== "/admin/vehicles")
+                navigate("/admin/vehicles");
+              else setCollapsed(!collapsed);
             }}
           >
             <MenuItem icon={<FaTruck className="text-xgray" />}>
