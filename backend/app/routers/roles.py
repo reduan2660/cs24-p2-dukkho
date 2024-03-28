@@ -101,9 +101,17 @@ async def list_permissions(user: User = Depends(get_user_from_session)):
         categories = set([p.category for p in permissions])
         category_response = []
         for category in categories:
+            category_permission = []
+            for p in permissions:
+                if p.category == category:
+                    category_permission.append({
+                        "id": p.id,
+                        "name": p.name
+                    })
+
             category_response.append({
                 "category": category,
-                "permissions": [p.name for p in permissions if p.category == category]
+                "permissions": category_permission
             })
 
         return JSONResponse(status_code=200, content=category_response)
