@@ -27,7 +27,7 @@ const Login = () => {
       })
       .then((res) => {
         if (res.status === 200) {
-          navigate("/admin/users");
+          navigate("/users");
           setGlobalState((prevState) => ({
             ...prevState,
             user: res.data,

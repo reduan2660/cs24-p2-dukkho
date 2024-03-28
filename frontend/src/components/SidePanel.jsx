@@ -212,21 +212,42 @@ const SidePanel = () => {
               </MenuItem>
             </div>
           )}
-          {globalState.user?.role.permissions.includes("view_transfer") && (
-            <div
-              className={`w-full ${
-                location.pathname === "/transfer" ? "bg-blue-100" : ""
-              }`}
-              onClick={() => {
-                if (location.pathname !== "/transfer") navigate("/transfer");
-                else setCollapsed(!collapsed);
-              }}
-            >
-              <MenuItem icon={<BiTransfer className="text-xgray" />}>
-                <div className="font-medium text-xgray">Transfer Records</div>
-              </MenuItem>
-            </div>
-          )}
+          {globalState.user?.role.permissions.includes("view_transfer") &&
+            (globalState.user?.role.name === "STS Manager" ? (
+              <div
+                className={`w-full ${
+                  location.pathname === "/transfer/sts" ? "bg-blue-100" : ""
+                }`}
+                onClick={() => {
+                  if (location.pathname !== "/transfer/sts")
+                    navigate("/transfer/sts");
+                  else setCollapsed(!collapsed);
+                }}
+              >
+                <MenuItem icon={<BiTransfer className="text-xgray" />}>
+                  <div className="font-medium text-xgray">Transfer Records</div>
+                </MenuItem>
+              </div>
+            ) : globalState.user?.role.name === "Landfill Manager" ? (
+              <div
+                className={`w-full ${
+                  location.pathname === "/transfer/landfill"
+                    ? "bg-blue-100"
+                    : ""
+                }`}
+                onClick={() => {
+                  if (location.pathname !== "/transfer/landfill")
+                    navigate("/transfer/landfill");
+                  else setCollapsed(!collapsed);
+                }}
+              >
+                <MenuItem icon={<BiTransfer className="text-xgray" />}>
+                  <div className="font-medium text-xgray">Transfer Records</div>
+                </MenuItem>
+              </div>
+            ) : (
+              <div></div>
+            ))}
 
           {!collapsed && (
             <div className="text-md ml-6 mt-7 font-medium text-xlightgray">

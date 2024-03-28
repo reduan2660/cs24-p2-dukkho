@@ -9,7 +9,8 @@ import ChangePassword from "./pages/ChangePassword";
 import Vehicles from "./pages/Vehicles";
 import STS from "./pages/STS";
 import Landfills from "./pages/Landfills";
-import Transfer from "./pages/Transfer";
+import TransferSTS from "./pages/TransferSTS";
+import TransferLandfill from "./pages/TransferLandfill";
 
 const App = () => {
   return (
@@ -25,7 +26,8 @@ const App = () => {
           <Route path="/vehicles" element={<Vehicles />} />
           <Route path="/sts" element={<STS />} />
           <Route path="/landfills" element={<Landfills />} />
-          <Route path="/transfer" element={<Transfer />} />
+          <Route path="/transfer/sts" element={<TransferSTS />} />
+          <Route path="/transfer/landfill" element={<TransferLandfill />} />
         </Routes>
       </BrowserRouter>
     </GlobalStateProvider>
