@@ -9,6 +9,7 @@ import ChangePassword from "./pages/ChangePassword";
 import Vehicles from "./pages/Vehicles";
 import STS from "./pages/STS";
 import Landfills from "./pages/Landfills";
+import Transfer from "./pages/Transfer";
 
 const App = () => {
   return (
@@ -19,11 +20,12 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/auth/reset-password" element={<ResetPassword />} />
           <Route path="/auth/change-password" element={<ChangePassword />} />
-          <Route path="/admin/users" element={<Users />} />
-          <Route path="/admin/roles" element={<Roles />} />
-          <Route path="/admin/vehicles" element={<Vehicles />} />
-          <Route path="/admin/sts" element={<STS />} />
-          <Route path="/admin/landfills" element={<Landfills />} />
+          <Route path="/users" element={<Users />} />
+          <Route path="/roles" element={<Roles />} />
+          <Route path="/vehicles" element={<Vehicles />} />
+          <Route path="/sts" element={<STS />} />
+          <Route path="/landfills" element={<Landfills />} />
+          <Route path="/transfer" element={<Transfer />} />
         </Routes>
       </BrowserRouter>
     </GlobalStateProvider>

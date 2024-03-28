@@ -47,8 +47,8 @@ const Roles = () => {
       })
       .catch((err) => {
         console.log(err);
-        if (err.status === 400) {
-          toast.error(err.data?.message);
+        if (err.response.status === 400) {
+          toast.error(err.response.data?.message);
         }
         toast.error("Error occurred while updating permissions");
       })
@@ -72,8 +72,8 @@ const Roles = () => {
       })
       .catch((err) => {
         console.log(err);
-        if (err.status === 400) {
-          toast.error(err.data?.message);
+        if (err.response.status === 400) {
+          toast.error(err.response.data?.message);
         }
         toast.error("Error occurred while creating role");
       })
@@ -149,11 +149,10 @@ const Roles = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
-        if (err.status === 400) {
-          toast.error(err.data?.message);
-        }
-        toast.error("Error occurred while deleting role");
+        console.log(err.response.data.message);
+        if (err.response.status === 400) {
+          toast.error(err.response.data?.message);
+        } else toast.error("Error occurred while deleting role");
       })
       .finally(() => {
         setOpenDelete(false);
@@ -171,8 +170,8 @@ const Roles = () => {
       })
       .catch((err) => {
         console.log(err);
-        if (err.status === 400) {
-          toast.error(err.data?.message);
+        if (err.response.status === 400) {
+          toast.error(err.response.data?.message);
         }
         toast.error("Error occurred while updating name");
       });
@@ -187,8 +186,8 @@ const Roles = () => {
       })
       .catch((err) => {
         console.log(err);
-        if (err.status === 400) {
-          toast.error(err.data?.message);
+        if (err.response.status === 400) {
+          toast.error(err.response.data?.message);
         }
       });
   };
@@ -204,8 +203,8 @@ const Roles = () => {
       })
       .catch((err) => {
         console.log(err);
-        if (err.status === 400) {
-          toast.error(err.data?.message);
+        if (err.response.status === 400) {
+          toast.error(err.response.data?.message);
         }
       })
       .finally(() => {
@@ -227,8 +226,8 @@ const Roles = () => {
       })
       .catch((err) => {
         console.log(err);
-        if (err.status === 400) {
-          toast.error(err.data?.message);
+        if (err.response.status === 400) {
+          toast.error(err.response.data?.message);
         }
       })
       .finally(() => {

@@ -45,8 +45,8 @@ const Users = () => {
       })
       .catch((err) => {
         console.log(err);
-        if (err.status === 400) {
-          toast.error(err.data?.message);
+        if (err.response.status === 400) {
+          toast.error(err.response.data?.message);
         }
         toast.error("Error occurred while updating name");
       });
@@ -76,8 +76,8 @@ const Users = () => {
       })
       .catch((err) => {
         console.log(err);
-        if (err.status === 400) {
-          toast.error(err.data?.message);
+        if (err.response.status === 400) {
+          toast.error(err.response.data?.message);
         }
         toast.error("Error occurred while updating role");
       })
@@ -105,8 +105,8 @@ const Users = () => {
       })
       .catch((err) => {
         console.log(err);
-        if (err.status === 400) {
-          toast.error(err.data?.message);
+        if (err.response.status === 400) {
+          toast.error(err.response.data?.message);
         }
         toast.error("Error occurred while creating user");
       })
@@ -127,8 +127,8 @@ const Users = () => {
       })
       .catch((err) => {
         console.log(err);
-        if (err.status === 400) {
-          toast.error(err.data?.message);
+        if (err.response.status === 400) {
+          toast.error(err.response.data?.message);
         }
         toast.error("Error occurred while deleting user");
       })
@@ -155,8 +155,8 @@ const Users = () => {
       })
       .catch((err) => {
         console.log(err);
-        if (err.status === 400) {
-          toast.error(err.data?.message);
+        if (err.response.status === 400) {
+          toast.error(err.response.data?.message);
         }
       })
       .finally(() => setLoading(false));
@@ -183,8 +183,8 @@ const Users = () => {
       })
       .catch((err) => {
         console.log(err);
-        if (err.status === 400) {
-          toast.error(err.data?.message);
+        if (err.response.status === 400) {
+          toast.error(err.response.data?.message);
         }
       })
       .finally(() => {

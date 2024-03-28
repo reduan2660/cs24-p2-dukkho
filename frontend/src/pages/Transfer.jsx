@@ -9,7 +9,7 @@ import api from "../api";
 import { Select } from "antd";
 import { useGlobalState } from "../GlobalStateProvider";
 
-const Vehicles = () => {
+const Transfer = () => {
   const [createReg, setCreateReg] = useState("");
   const [createCapacity, setCreateCapacity] = useState("");
   const [createVtype, setCreateVtype] = useState("");
@@ -84,7 +84,7 @@ const Vehicles = () => {
       });
   };
 
-  const createVehicle = () => {
+  const createTransfer = () => {
     setConfirmLoading(true);
     api
       .post("/vehicle", {
@@ -201,7 +201,6 @@ const Vehicles = () => {
       setUpdateStsId(updateVehicle.sts["name"].toString());
       setUpdateLoadedCost(updateVehicle.loaded_cost.toString());
       setUpdateEmptyCost(updateVehicle.empty_cost.toString());
-      console.log(updateVehicle.sts["name"].toString(),)
     }
   }, [openEdit, updateVehicle]);
 
@@ -234,7 +233,7 @@ const Vehicles = () => {
             <div className="mx-2 mt-4 flex flex-col gap-y-4 lg:mx-16 lg:mt-16 lg:gap-y-12">
               <div className="mx-2 flex items-center justify-between">
                 <div className="text-lg font-light text-xlightgray lg:text-3xl">
-                  All Vehicles
+                  All Transfer Records
                 </div>
                 {globalState.user?.role.permissions.includes(
                   "create_vehicle",
@@ -245,7 +244,7 @@ const Vehicles = () => {
                       onClick={showModal}
                       className="rounded-md bg-xblue px-3 py-1 font-medium text-white transition-all duration-300 hover:bg-blue-600 lg:rounded-lg lg:px-5 lg:py-2"
                     >
-                      Create Vehicle
+                      Create Transfer Record
                     </button>
                   </div>
                 ) : (
@@ -358,9 +357,9 @@ const Vehicles = () => {
                   </div>
                 </Modal>
                 <Modal
-                  title="Create Vehicle"
+                  title="Create New Vehicle Record"
                   open={openCreate}
-                  onOk={createVehicle}
+                  onOk={createTransfer}
                   confirmLoading={confirmLoading}
                   onCancel={() => setOpenCreate(false)}
                   centered
@@ -536,4 +535,4 @@ const Vehicles = () => {
     );
 };
 
-export default Vehicles;
+export default Transfer;

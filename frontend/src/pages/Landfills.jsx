@@ -16,6 +16,7 @@ const Landfills = () => {
   const [createLatitude, setCreateLatitude] = useState("");
   const [updateName, setUpdateName] = useState("");
   const [updateCapacity, setUpdateCapacity] = useState("");
+  const [updateCurrentCapacity, setUpdateCurrentCapacity] = useState("");
   const [updateLongitude, setUpdateLongitude] = useState("");
   const [updateLatitude, setUpdateLatitude] = useState("");
   const [profileLoading, setProfileLoading] = useState(false);
@@ -53,8 +54,8 @@ const Landfills = () => {
       })
       .catch((err) => {
         console.log(err);
-        if (err.status === 400) {
-          toast.error(err.data?.message);
+        if (err.response.status === 400) {
+          toast.error(err.response.data?.message);
         }
         toast.error("Error occurred while assigning manager(s)");
       })
@@ -98,8 +99,8 @@ const Landfills = () => {
       })
       .catch((err) => {
         console.log(err);
-        if (err.status === 400) {
-          toast.error(err.data?.message);
+        if (err.response.status === 400) {
+          toast.error(err.response.data?.message);
         }
       });
   };
@@ -109,6 +110,7 @@ const Landfills = () => {
     api
       .put(`/landfill/${updateLandfill.id}`, {
         name: updateName,
+        current_capacity: parseInt(updateCurrentCapacity),
         capacity: parseInt(updateCapacity),
         latitude: parseFloat(updateLatitude),
         longitude: parseFloat(updateLongitude),
@@ -121,8 +123,8 @@ const Landfills = () => {
       })
       .catch((err) => {
         console.log(err);
-        if (err.status === 400) {
-          toast.error(err.data?.message);
+        if (err.response.status === 400) {
+          toast.error(err.response.data?.message);
         }
         toast.error("Error occurred while updating Landfill");
       })
@@ -149,8 +151,8 @@ const Landfills = () => {
       })
       .catch((err) => {
         console.log(err);
-        if (err.status === 400) {
-          toast.error(err.data?.message);
+        if (err.response.status === 400) {
+          toast.error(err.response.data?.message);
         }
         toast.error("Error occurred while creating Landfill");
       })
@@ -186,8 +188,8 @@ const Landfills = () => {
       })
       .catch((err) => {
         console.log(err);
-        if (err.status === 400) {
-          toast.error(err.data?.message);
+        if (err.response.status === 400) {
+          toast.error(err.response.data?.message);
         }
         toast.error("Error occurred while deleting Landfill");
       })
@@ -207,8 +209,8 @@ const Landfills = () => {
       })
       .catch((err) => {
         console.log(err);
-        if (err.status === 400) {
-          toast.error(err.data?.message);
+        if (err.response.status === 400) {
+          toast.error(err.response.data?.message);
         }
       })
       .finally(() => {
@@ -230,8 +232,8 @@ const Landfills = () => {
       })
       .catch((err) => {
         console.log(err);
-        if (err.status === 400) {
-          toast.error(err.data?.message);
+        if (err.response.status === 400) {
+          toast.error(err.response.data?.message);
         }
       })
       .finally(() => {
@@ -320,6 +322,11 @@ const Landfills = () => {
                     title="Capacity"
                     dataIndex="capacity"
                     sorter={(a, b) => a.capacity - b.capacity}
+                  ></Column>
+                  <Column
+                    title="Current Capacity"
+                    dataIndex="current_capacity"
+                    sorter={(a, b) => a.current_capacity - b.current_capacity}
                   ></Column>
                   <Column
                     title="Latitude"
@@ -541,6 +548,13 @@ const Landfills = () => {
                       value={updateCapacity}
                       className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
                       onChange={(e) => setUpdateCapacity(e.target.value)}
+                    />
+                    <input
+                      type="number"
+                      placeholder="Current Capacity"
+                      value={updateCurrentCapacity}
+                      className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
+                      onChange={(e) => setUpdateCurrentCapacity(e.target.value)}
                     />
                     <input
                       type="number"
