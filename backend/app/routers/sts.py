@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from typing import List
 from app.dependencies import get_user_from_session
-from app.models import User, STS, STSmanager
+from app.models import User, STS, STSmanager, Vehicle
 from app.config import SessionLocal
 
 router = APIRouter(
@@ -34,6 +34,16 @@ async def get_sts(user: User = Depends(get_user_from_session)):
                         "name": m.user.name,
                         "email": m.user.email
                     } for m in db.query(STSmanager).filter(STSmanager.sts_id == st.id).all()
+                ],
+                "vehicles": [
+                    {
+                        "id": v.id,
+                        "reg_no": v.reg_no,
+                        "capacity": v.capacity,
+                        "vtype": v.vtype,
+                        "loaded_cost": v.loaded_cost,
+                        "empty_cost": v.empty_cost
+                    } for v in db.query(Vehicle).filter(Vehicle.sts_id == st.id).all()
                 ]
             })
 
