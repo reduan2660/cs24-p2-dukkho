@@ -96,7 +96,6 @@ async def get_transfers(user: User = Depends(get_user_from_session)):
 
 
 class STSdeparture(BaseModel):
-    sts_id: int
     vehicle_id: int
     landfill_id: int
     weight: float
@@ -107,8 +106,15 @@ async def sts_departure(transfer: STSdeparture, user: User = Depends(get_user_fr
     if "update_transfer_sts" not in user["role"]["permissions"]:
         return JSONResponse(status_code=401, content={"message": "Not enough permissions"})
     
+    if user["role"]["id"] != 2: # STS
+        return JSONResponse(status_code=401, content={"message": "Not enough permissions"})
+    
     with SessionLocal() as db:
-        sts = db.query(STS).filter(STS.id == transfer.sts_id).first()
+        user_sts = db.query(STSmanager).filter(STSmanager.user_id == user["id"]).first()
+        if user_sts is None:
+            return JSONResponse(status_code=404, content={"message": "STS not found"})
+        
+        sts = db.query(STS).filter(STS.id == user_sts.sts_id).first()
         if sts is None:
             return JSONResponse(status_code=404, content={"message": "STS not found"})
         
