@@ -19,6 +19,8 @@ RUN npm run build
 # Use the official Nginx image for serving
 FROM nginx:1.25.4-alpine-slim
 
+# Copy the custom Nginx configuration file to the container
+COPY --from=build /app/nginx/nginx.conf /etc/nginx/conf.d/default.conf
 # Copy the built React app from the previous stage to the nginx public directory
 COPY --from=build /app/dist /usr/share/nginx/html
 
