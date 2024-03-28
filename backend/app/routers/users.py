@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 from typing import List
 from pydantic import BaseModel
 from app.dependencies import get_user_from_session
-from app.models import User, Role, Permission, RolePermission
+from app.models import User, Role, Permission, RolePermission, STSmanager, LandfillManager
 from app.config import SessionLocal
 import os
 
@@ -165,5 +165,10 @@ async def assign_role(user_id: int, assignRoleRequest: AssignRoleRequest, user: 
             return JSONResponse(status_code=404, content={"message": "Role not found"})
         
         user.role_id = role.id
+
+
+        # remove the user from all sts and landfill
+        db.query(STSmanager).filter(STSmanager.user_id == user_id).delete()
+        db.query(LandfillManager).filter(LandfillManager.user_id == user_id).delete()
         db.commit()
         return JSONResponse(status_code=200, content={"message": "Role assigned to user"})
