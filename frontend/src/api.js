@@ -1,7 +1,8 @@
 import axios from "axios";
+import { baseURL } from "./baseURL";
 
 export default axios.create({
-  baseURL: `http://localhost:8000`,
+  baseURL: `${baseURL}`,
   timeout: 30000,
   withCredentials: true,
   headers: {

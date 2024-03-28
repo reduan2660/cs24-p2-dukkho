@@ -37,6 +37,9 @@ const ResetPassword = () => {
       })
       .catch((err) => {
         console.log(err);
+        if (err.status === 400) {
+          toast.error(err.data?.message);
+        }
       });
   };
 
@@ -53,6 +56,9 @@ const ResetPassword = () => {
       })
       .catch((err) => {
         console.log(err);
+        if (err.status === 400) {
+          toast.error(err.data?.message);
+        }
       });
   };
 
@@ -120,6 +126,7 @@ const ResetPassword = () => {
             <input
               type="email"
               placeholder="Email"
+              value={email}
               className="w-full rounded-md border border-[#DED2D9] px-2 py-3 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
               onChange={(e) => setEmail(e.target.value)}
             />

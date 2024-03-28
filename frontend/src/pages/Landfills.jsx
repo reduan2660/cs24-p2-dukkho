@@ -53,6 +53,9 @@ const Landfills = () => {
       })
       .catch((err) => {
         console.log(err);
+        if (err.status === 400) {
+          toast.error(err.data?.message);
+        }
         toast.error("Error occurred while assigning manager(s)");
       })
       .finally(() => {
@@ -95,6 +98,9 @@ const Landfills = () => {
       })
       .catch((err) => {
         console.log(err);
+        if (err.status === 400) {
+          toast.error(err.data?.message);
+        }
       });
   };
 
@@ -115,6 +121,9 @@ const Landfills = () => {
       })
       .catch((err) => {
         console.log(err);
+        if (err.status === 400) {
+          toast.error(err.data?.message);
+        }
         toast.error("Error occurred while updating Landfill");
       })
       .finally(() => {
@@ -140,6 +149,9 @@ const Landfills = () => {
       })
       .catch((err) => {
         console.log(err);
+        if (err.status === 400) {
+          toast.error(err.data?.message);
+        }
         toast.error("Error occurred while creating Landfill");
       })
       .finally(() => {
@@ -174,6 +186,9 @@ const Landfills = () => {
       })
       .catch((err) => {
         console.log(err);
+        if (err.status === 400) {
+          toast.error(err.data?.message);
+        }
         toast.error("Error occurred while deleting Landfill");
       })
       .finally(() => {
@@ -192,6 +207,9 @@ const Landfills = () => {
       })
       .catch((err) => {
         console.log(err);
+        if (err.status === 400) {
+          toast.error(err.data?.message);
+        }
       })
       .finally(() => {
         setLandfillLoading(false);
@@ -212,6 +230,9 @@ const Landfills = () => {
       })
       .catch((err) => {
         console.log(err);
+        if (err.status === 400) {
+          toast.error(err.data?.message);
+        }
       })
       .finally(() => {
         setProfileLoading(false);

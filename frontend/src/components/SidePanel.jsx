@@ -12,11 +12,15 @@ import { MdLogout, MdLogin } from "react-icons/md";
 import { RiShieldKeyholeLine, RiKeyLine } from "react-icons/ri";
 import { LiaDumpsterSolid } from "react-icons/lia";
 import api from "../api";
+import { useGlobalState } from "../GlobalStateProvider";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const SidePanel = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
+  const { globalState, setGlobalState } = useGlobalState();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const logout = () => {
@@ -29,6 +33,9 @@ const SidePanel = () => {
       })
       .catch((err) => {
         console.log(err);
+        if (err.status === 400) {
+          toast.error(err.data?.message);
+        }
       });
   };
 
@@ -42,6 +49,7 @@ const SidePanel = () => {
         setIsLoggedIn(true);
       } else {
         setIsLoggedIn(false);
+        navigate("/login", { state: "session expired" });
       }
     };
 
@@ -51,6 +59,18 @@ const SidePanel = () => {
   return (
     <div className="hidden min-h-screen lg:block">
       <Sidebar collapsed={collapsed} className="h-full">
+      <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable={false}
+          pauseOnHover={false}
+          theme="colored"
+        />
         <Menu>
           <MenuItem
             icon={
@@ -102,80 +122,98 @@ const SidePanel = () => {
               <div className="font-medium text-xgray">Dashboard</div>
             </MenuItem>
           </div>
-          <div
-            className={`w-full ${
-              location.pathname === "/admin/roles" ? "bg-blue-100" : ""
-            }`}
-            onClick={() => {
-              if (location.pathname !== "/admin/roles")
-                navigate("/admin/roles");
-              else setCollapsed(!collapsed);
-            }}
-          >
-            <MenuItem icon={<RiShieldKeyholeLine className="text-xgray" />}>
-              <div className="font-medium text-xgray">Roles & Permissions</div>
-            </MenuItem>
-          </div>
-          {!collapsed && (
-            <div className="text-md ml-6 mt-7 font-medium text-xlightgray">
-              Management
+          {globalState.user?.role.permissions.includes("list_all_roles") && (
+            <div
+              className={`w-full ${
+                location.pathname === "/admin/roles" ? "bg-blue-100" : ""
+              }`}
+              onClick={() => {
+                if (location.pathname !== "/admin/roles")
+                  navigate("/admin/roles");
+                else setCollapsed(!collapsed);
+              }}
+            >
+              <MenuItem icon={<RiShieldKeyholeLine className="text-xgray" />}>
+                <div className="font-medium text-xgray">
+                  Roles & Permissions
+                </div>
+              </MenuItem>
             </div>
           )}
-          <div
-            className={`w-full ${
-              location.pathname === "/admin/users" ? "bg-blue-100" : ""
-            }`}
-            onClick={() => {
-              if (location.pathname !== "/admin/users")
-                navigate("/admin/users");
-              else setCollapsed(!collapsed);
-            }}
-          >
-            <MenuItem icon={<PiUsersThree className="text-lg text-xgray" />}>
-              <div className="font-medium text-xgray">Users</div>
-            </MenuItem>
-          </div>
-          <div
-            className={`w-full ${
-              location.pathname === "/admin/vehicles" ? "bg-blue-100" : ""
-            }`}
-            onClick={() => {
-              if (location.pathname !== "/admin/vehicles")
-                navigate("/admin/vehicles");
-              else setCollapsed(!collapsed);
-            }}
-          >
-            <MenuItem icon={<FaTruck className="text-xgray" />}>
-              <div className="font-medium text-xgray">Vehicles</div>
-            </MenuItem>
-          </div>
-          <div
-            className={`w-full ${
-              location.pathname === "/admin/sts" ? "bg-blue-100" : ""
-            }`}
-            onClick={() => {
-              if (location.pathname !== "/admin/sts") navigate("/admin/sts");
-              else setCollapsed(!collapsed);
-            }}
-          >
-            <MenuItem icon={<PiBuildings className="text-xgray" />}>
-              <div className="font-medium text-xgray">STS</div>
-            </MenuItem>
-          </div>
-          <div
-            className={`w-full ${
-              location.pathname === "/admin/landfills" ? "bg-blue-100" : ""
-            }`}
-            onClick={() => {
-              if (location.pathname !== "/admin/landfills")
-                navigate("/admin/landfills");
-              else setCollapsed(!collapsed);
-            }}
-          >
-            <MenuItem icon={<LiaDumpsterSolid className="text-xgray" />}>
-              <div className="font-medium text-xgray">Landfills</div>
-            </MenuItem>
-          </div>
+          {(globalState.user?.role.permissions.includes("list_all_users") ||
+            globalState.user?.role.permissions.includes("list_vehicle") ||
+            globalState.user?.role.permissions.includes("list_all_sts") ||
+            globalState.user?.role.permissions.includes("list_landfill")) &&
+            !collapsed && (
+              <div className="text-md ml-6 mt-7 font-medium text-xlightgray">
+                Management
+              </div>
+            )}
+
+          {globalState.user?.role.permissions.includes("list_all_users") && (
+            <div
+              className={`w-full ${
+                location.pathname === "/admin/users" ? "bg-blue-100" : ""
+              }`}
+              onClick={() => {
+                if (location.pathname !== "/admin/users")
+                  navigate("/admin/users");
+                else setCollapsed(!collapsed);
+              }}
+            >
+              <MenuItem icon={<PiUsersThree className="text-lg text-xgray" />}>
+                <div className="font-medium text-xgray">Users</div>
+              </MenuItem>
+            </div>
+          )}
+          {globalState.user?.role.permissions.includes("list_vehicle") && (
+            <div
+              className={`w-full ${
+                location.pathname === "/admin/vehicles" ? "bg-blue-100" : ""
+              }`}
+              onClick={() => {
+                if (location.pathname !== "/admin/vehicles")
+                  navigate("/admin/vehicles");
+                else setCollapsed(!collapsed);
+              }}
+            >
+              <MenuItem icon={<FaTruck className="text-xgray" />}>
+                <div className="font-medium text-xgray">Vehicles</div>
+              </MenuItem>
+            </div>
+          )}
+          {globalState.user?.role.permissions.includes("list_all_sts") && (
+            <div
+              className={`w-full ${
+                location.pathname === "/admin/sts" ? "bg-blue-100" : ""
+              }`}
+              onClick={() => {
+                if (location.pathname !== "/admin/sts") navigate("/admin/sts");
+                else setCollapsed(!collapsed);
+              }}
+            >
+              <MenuItem icon={<PiBuildings className="text-xgray" />}>
+                <div className="font-medium text-xgray">STS</div>
+              </MenuItem>
+            </div>
+          )}
+          {globalState.user?.role.permissions.includes("list_landfill") && (
+            <div
+              className={`w-full ${
+                location.pathname === "/admin/landfills" ? "bg-blue-100" : ""
+              }`}
+              onClick={() => {
+                if (location.pathname !== "/admin/landfills")
+                  navigate("/admin/landfills");
+                else setCollapsed(!collapsed);
+              }}
+            >
+              <MenuItem icon={<LiaDumpsterSolid className="text-xgray" />}>
+                <div className="font-medium text-xgray">Landfills</div>
+              </MenuItem>
+            </div>
+          )}
+
           {!collapsed && (
             <div className="text-md ml-6 mt-7 font-medium text-xlightgray">
               Settings
