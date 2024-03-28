@@ -8,6 +8,7 @@ import ResetPassword from "./pages/ResetPassword";
 import ChangePassword from "./pages/ChangePassword";
 import Vehicles from "./pages/Vehicles";
 import STS from "./pages/STS";
+import Landfills from "./pages/Landfills";
 
 const App = () => {
   return (
@@ -22,6 +23,7 @@ const App = () => {
           <Route path="/admin/roles" element={<Roles />} />
           <Route path="/admin/vehicles" element={<Vehicles />} />
           <Route path="/admin/sts" element={<STS />} />
+          <Route path="/admin/landfills" element={<Landfills />} />
         </Routes>
       </BrowserRouter>
     </GlobalStateProvider>
