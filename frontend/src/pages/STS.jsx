@@ -53,8 +53,8 @@ const Sts = () => {
       })
       .catch((err) => {
         console.log(err);
-        if (err.status === 400) {
-          toast.error(err.data?.message);
+        if (err.response.status === 400) {
+          toast.error(err.response.data?.message);
         }
         toast.error("Error occurred while assigning manager(s)");
       })
@@ -98,8 +98,8 @@ const Sts = () => {
       })
       .catch((err) => {
         console.log(err);
-        if (err.status === 400) {
-          toast.error(err.data?.message);
+        if (err.response.status === 400) {
+          toast.error(err.response.data?.message);
         }
       });
   };
@@ -121,8 +121,8 @@ const Sts = () => {
       })
       .catch((err) => {
         console.log(err);
-        if (err.status === 400) {
-          toast.error(err.data?.message);
+        if (err.response.status === 400) {
+          toast.error(err.response.data?.message);
         }
         toast.error("Error occurred while updating STS");
       })
@@ -149,8 +149,8 @@ const Sts = () => {
       })
       .catch((err) => {
         console.log(err);
-        if (err.status === 400) {
-          toast.error(err.data?.message);
+        if (err.response.status === 400) {
+          toast.error(err.response.data?.message);
         }
         toast.error("Error occurred while creating STS");
       })
@@ -186,8 +186,8 @@ const Sts = () => {
       })
       .catch((err) => {
         console.log(err);
-        if (err.status === 400) {
-          toast.error(err.data?.message);
+        if (err.response.status === 400) {
+          toast.error(err.response.data?.message);
         }
         toast.error("Error occurred while deleting STS");
       })
@@ -207,8 +207,8 @@ const Sts = () => {
       })
       .catch((err) => {
         console.log(err);
-        if (err.status === 400) {
-          toast.error(err.data?.message);
+        if (err.response.status === 400) {
+          toast.error(err.response.data?.message);
         }
       })
       .finally(() => {
@@ -230,8 +230,8 @@ const Sts = () => {
       })
       .catch((err) => {
         console.log(err);
-        if (err.status === 400) {
-          toast.error(err.data?.message);
+        if (err.response.status === 400) {
+          toast.error(err.response.data?.message);
         }
       })
       .finally(() => {

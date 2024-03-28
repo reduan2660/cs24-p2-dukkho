@@ -30,8 +30,8 @@ const ChangePassword = () => {
       })
       .catch((err) => {
         console.log(err);
-        if (err.status === 400) {
-          toast.error(err.data?.message);
+        if (err.response.status === 400) {
+          toast.error(err.response.data?.message);
         }
       });
   };

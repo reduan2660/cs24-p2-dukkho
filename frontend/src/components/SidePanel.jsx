@@ -15,6 +15,7 @@ import api from "../api";
 import { useGlobalState } from "../GlobalStateProvider";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { BiTransfer } from "react-icons/bi";
 
 const SidePanel = () => {
   const navigate = useNavigate();
@@ -33,8 +34,10 @@ const SidePanel = () => {
       })
       .catch((err) => {
         console.log(err);
-        if (err.status === 400) {
-          toast.error(err.data?.message);
+        if (err.response.status === 400) {
+          toast.error(err.response.data?.message);
+        } else if (err.response.status === 401) {
+          navigate("/login", { state: "session expired" });
         }
       });
   };
@@ -59,7 +62,7 @@ const SidePanel = () => {
   return (
     <div className="hidden min-h-screen lg:block">
       <Sidebar collapsed={collapsed} className="h-full">
-      <ToastContainer
+        <ToastContainer
           position="top-right"
           autoClose={5000}
           hideProgressBar={false}
@@ -125,11 +128,10 @@ const SidePanel = () => {
           {globalState.user?.role.permissions.includes("list_all_roles") && (
             <div
               className={`w-full ${
-                location.pathname === "/admin/roles" ? "bg-blue-100" : ""
+                location.pathname === "/roles" ? "bg-blue-100" : ""
               }`}
               onClick={() => {
-                if (location.pathname !== "/admin/roles")
-                  navigate("/admin/roles");
+                if (location.pathname !== "/roles") navigate("/roles");
                 else setCollapsed(!collapsed);
               }}
             >
@@ -153,11 +155,10 @@ const SidePanel = () => {
           {globalState.user?.role.permissions.includes("list_all_users") && (
             <div
               className={`w-full ${
-                location.pathname === "/admin/users" ? "bg-blue-100" : ""
+                location.pathname === "/users" ? "bg-blue-100" : ""
               }`}
               onClick={() => {
-                if (location.pathname !== "/admin/users")
-                  navigate("/admin/users");
+                if (location.pathname !== "/users") navigate("/users");
                 else setCollapsed(!collapsed);
               }}
             >
@@ -169,11 +170,10 @@ const SidePanel = () => {
           {globalState.user?.role.permissions.includes("list_vehicle") && (
             <div
               className={`w-full ${
-                location.pathname === "/admin/vehicles" ? "bg-blue-100" : ""
+                location.pathname === "/vehicles" ? "bg-blue-100" : ""
               }`}
               onClick={() => {
-                if (location.pathname !== "/admin/vehicles")
-                  navigate("/admin/vehicles");
+                if (location.pathname !== "/vehicles") navigate("/vehicles");
                 else setCollapsed(!collapsed);
               }}
             >
@@ -185,10 +185,10 @@ const SidePanel = () => {
           {globalState.user?.role.permissions.includes("list_all_sts") && (
             <div
               className={`w-full ${
-                location.pathname === "/admin/sts" ? "bg-blue-100" : ""
+                location.pathname === "/sts" ? "bg-blue-100" : ""
               }`}
               onClick={() => {
-                if (location.pathname !== "/admin/sts") navigate("/admin/sts");
+                if (location.pathname !== "/sts") navigate("/sts");
                 else setCollapsed(!collapsed);
               }}
             >
@@ -200,11 +200,10 @@ const SidePanel = () => {
           {globalState.user?.role.permissions.includes("list_landfill") && (
             <div
               className={`w-full ${
-                location.pathname === "/admin/landfills" ? "bg-blue-100" : ""
+                location.pathname === "/landfills" ? "bg-blue-100" : ""
               }`}
               onClick={() => {
-                if (location.pathname !== "/admin/landfills")
-                  navigate("/admin/landfills");
+                if (location.pathname !== "/landfills") navigate("/landfills");
                 else setCollapsed(!collapsed);
               }}
             >
@@ -213,6 +212,42 @@ const SidePanel = () => {
               </MenuItem>
             </div>
           )}
+          {globalState.user?.role.permissions.includes("view_transfer") &&
+            (globalState.user?.role.name === "STS Manager" ? (
+              <div
+                className={`w-full ${
+                  location.pathname === "/transfer/sts" ? "bg-blue-100" : ""
+                }`}
+                onClick={() => {
+                  if (location.pathname !== "/transfer/sts")
+                    navigate("/transfer/sts");
+                  else setCollapsed(!collapsed);
+                }}
+              >
+                <MenuItem icon={<BiTransfer className="text-xgray" />}>
+                  <div className="font-medium text-xgray">Transfer Records</div>
+                </MenuItem>
+              </div>
+            ) : globalState.user?.role.name === "Landfill Manager" ? (
+              <div
+                className={`w-full ${
+                  location.pathname === "/transfer/landfill"
+                    ? "bg-blue-100"
+                    : ""
+                }`}
+                onClick={() => {
+                  if (location.pathname !== "/transfer/landfill")
+                    navigate("/transfer/landfill");
+                  else setCollapsed(!collapsed);
+                }}
+              >
+                <MenuItem icon={<BiTransfer className="text-xgray" />}>
+                  <div className="font-medium text-xgray">Transfer Records</div>
+                </MenuItem>
+              </div>
+            ) : (
+              <div></div>
+            ))}
 
           {!collapsed && (
             <div className="text-md ml-6 mt-7 font-medium text-xlightgray">

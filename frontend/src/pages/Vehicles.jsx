@@ -48,8 +48,8 @@ const Vehicles = () => {
       })
       .catch((err) => {
         console.log(err);
-        if (err.status === 400) {
-          toast.error(err.data?.message);
+        if (err.response.status === 400) {
+          toast.error(err.response.data?.message);
         }
       });
   };
@@ -73,8 +73,8 @@ const Vehicles = () => {
       })
       .catch((err) => {
         console.log(err);
-        if (err.status === 400) {
-          toast.error(err.data?.message);
+        if (err.response.status === 400) {
+          toast.error(err.response.data?.message);
         }
         toast.error("Error occurred while updating vehicle");
       })
@@ -103,8 +103,8 @@ const Vehicles = () => {
       })
       .catch((err) => {
         console.log(err);
-        if (err.status === 400) {
-          toast.error(err.data?.message);
+        if (err.response.status === 400) {
+          toast.error(err.response.data?.message);
         }
         toast.error("Error occurred while creating vehicle");
       })
@@ -140,8 +140,8 @@ const Vehicles = () => {
       })
       .catch((err) => {
         console.log(err);
-        if (err.status === 400) {
-          toast.error(err.data?.message);
+        if (err.response.status === 400) {
+          toast.error(err.response.data?.message);
         }
         toast.error("Error occurred while deleting vehicle");
       })
@@ -161,8 +161,8 @@ const Vehicles = () => {
       })
       .catch((err) => {
         console.log(err);
-        if (err.status === 400) {
-          toast.error(err.data?.message);
+        if (err.response.status === 400) {
+          toast.error(err.response.data?.message);
         }
       })
       .finally(() => {
@@ -184,8 +184,8 @@ const Vehicles = () => {
       })
       .catch((err) => {
         console.log(err);
-        if (err.status === 400) {
-          toast.error(err.data?.message);
+        if (err.response.status === 400) {
+          toast.error(err.response.data?.message);
         }
       })
       .finally(() => {
@@ -201,6 +201,7 @@ const Vehicles = () => {
       setUpdateStsId(updateVehicle.sts["name"].toString());
       setUpdateLoadedCost(updateVehicle.loaded_cost.toString());
       setUpdateEmptyCost(updateVehicle.empty_cost.toString());
+      console.log(updateVehicle.sts["name"].toString(),)
     }
   }, [openEdit, updateVehicle]);
 
