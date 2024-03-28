@@ -10,6 +10,7 @@ import { FiUser } from "react-icons/fi";
 import { BsTools } from "react-icons/bs";
 import { MdLogout, MdLogin } from "react-icons/md";
 import { RiShieldKeyholeLine, RiKeyLine } from "react-icons/ri";
+import { LiaDumpsterSolid } from "react-icons/lia";
 import api from "../api";
 
 const SidePanel = () => {
@@ -153,13 +154,26 @@ const SidePanel = () => {
               location.pathname === "/admin/sts" ? "bg-blue-100" : ""
             }`}
             onClick={() => {
-              if (location.pathname !== "/admin/sts")
-                navigate("/admin/sts");
+              if (location.pathname !== "/admin/sts") navigate("/admin/sts");
               else setCollapsed(!collapsed);
             }}
           >
             <MenuItem icon={<PiBuildings className="text-xgray" />}>
               <div className="font-medium text-xgray">STS</div>
+            </MenuItem>
+          </div>
+          <div
+            className={`w-full ${
+              location.pathname === "/admin/landfills" ? "bg-blue-100" : ""
+            }`}
+            onClick={() => {
+              if (location.pathname !== "/admin/landfills")
+                navigate("/admin/landfills");
+              else setCollapsed(!collapsed);
+            }}
+          >
+            <MenuItem icon={<LiaDumpsterSolid className="text-xgray" />}>
+              <div className="font-medium text-xgray">Landfills</div>
             </MenuItem>
           </div>
           {!collapsed && (
