@@ -29,6 +29,8 @@ const Vehicles = () => {
   const [openCreate, setOpenCreate] = useState(false);
   const [updateVehicle, setUpdateVehicle] = useState({});
   const [openDelete, setOpenDelete] = useState(false);
+  const [openEdit, setOpenEdit] = useState(false);
+  const [STS, setSTS] = useState([]);
 
   const [vehicles, setVehicles] = useState([]);
 
@@ -36,16 +38,56 @@ const Vehicles = () => {
     setOpenCreate(true);
   };
 
+  const getSTS = () => {
+    api
+      .get("/sts")
+      .then((res) => {
+        if (res.status === 200) {
+          setSTS(res.data);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const updateVehicleInfo = () => {
+    setConfirmLoading(true);
+    api
+      .put(`/vehicle/${updateVehicle.id}`, {
+        reg_no: updateReg,
+        capacity: parseInt(updateCapacity),
+        vtype: updateVtype,
+        sts_id: parseInt(updateStsId),
+        loaded_cost: parseFloat(updateLoadedCost),
+        empty_cost: parseFloat(updateEmptyCost),
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          toast.success("Vehicle updated successfully");
+          getVehicles();
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error("Error occurred while updating vehicle");
+      })
+      .finally(() => {
+        setOpenEdit(false);
+        setConfirmLoading(false);
+      });
+  };
+
   const createVehicle = () => {
     setConfirmLoading(true);
     api
       .post("/vehicle", {
         reg_no: createReg,
-        capacity: createCapacity,
+        capacity: parseInt(createCapacity),
         vtype: createVtype,
-        sts_id: createStsId,
-        loaded_cost: createLoadedCost,
-        empty_cost: createEmptyCost,
+        sts_id: parseInt(createStsId),
+        loaded_cost: parseFloat(createLoadedCost),
+        empty_cost: parseFloat(createEmptyCost),
       })
       .then((res) => {
         if (res.status === 201) {
@@ -73,9 +115,9 @@ const Vehicles = () => {
     },
   };
 
-  const deleteModal = (id, name) => {
+  const deleteModal = (id, reg_no) => {
     setOpenDelete(true);
-    setUpdateVehicle({ id: id, name: name });
+    setUpdateVehicle({ id: id, reg_no: reg_no });
   };
 
   const deleteVehicle = () => {
@@ -102,7 +144,7 @@ const Vehicles = () => {
       .get("/vehicle")
       .then((res) => {
         if (res.status === 200) {
-          console.log(res.data);
+          setVehicles(res.data);
         }
       })
       .catch((err) => {
@@ -134,6 +176,18 @@ const Vehicles = () => {
   };
 
   useEffect(() => {
+    if (openEdit && updateVehicle.id) {
+      setUpdateReg(updateVehicle.reg_no);
+      setUpdateCapacity(updateVehicle.capacity.toString());
+      setUpdateVtype(updateVehicle.vtype);
+      setUpdateStsId(updateVehicle.sts["name"].toString());
+      setUpdateLoadedCost(updateVehicle.loaded_cost.toString());
+      setUpdateEmptyCost(updateVehicle.empty_cost.toString());
+    }
+  }, [openEdit, updateVehicle]);
+
+  useEffect(() => {
+    getSTS();
     getVehicles();
     getProfile();
   }, []);
@@ -194,13 +248,39 @@ const Vehicles = () => {
                     sorter={(a, b) => a.id - b.id}
                   ></Column>
                   <Column
-                    title="Name"
-                    dataIndex="name"
-                    sorter={(a, b) => a.name.localeCompare(b.name)}
+                    title="Reg No."
+                    dataIndex="reg_no"
+                    sorter={(a, b) => a.reg_no.localeCompare(b.reg_no)}
+                  ></Column>
+                  <Column
+                    title="Capacity"
+                    dataIndex="capacity"
+                    sorter={(a, b) => a.capacity.localeCompare(b.capacity)}
+                  ></Column>
+                  <Column
+                    title="Vehicle Type"
+                    dataIndex="vtype"
+                    sorter={(a, b) => a.vtype.localeCompare(b.vtype)}
+                  ></Column>
+                  <Column
+                    title="Assigned STS"
+                    dataIndex="sts"
+                    sorter={(a, b) => a.sts_id.localeCompare(b.sts_id)}
+                    render={(sts, record) => <div>{record.sts.name}</div>}
+                  ></Column>
+                  <Column
+                    title="Loaded Cost"
+                    dataIndex="loaded_cost"
+                    sorter={(a, b) => a.loaded_cost - b.loaded_cost}
+                  ></Column>
+                  <Column
+                    title="Empty Cost"
+                    dataIndex="empty_cost"
+                    sorter={(a, b) => a.empty_cost - b.empty_cost}
                   ></Column>
 
                   {globalState.user?.role.permissions.includes(
-                    "create_role",
+                    "delete_vehicle",
                   ) && (
                     <Column
                       title="Actions"
@@ -208,13 +288,18 @@ const Vehicles = () => {
                       render={(actions, record) => (
                         <div className="flex items-center gap-x-4">
                           <button
-                            onClick={() => setUpdateVehicle(record)}
+                            onClick={() => {
+                              setUpdateVehicle(record);
+                              setOpenEdit(true);
+                            }}
                             className="rounded-md bg-xblue px-4 py-1 text-sm font-medium text-white transition-all duration-300 hover:bg-blue-600"
                           >
                             Edit
                           </button>
                           <button
-                            onClick={() => deleteModal(record.id, record.name)}
+                            onClick={() =>
+                              deleteModal(record.id, record.reg_no)
+                            }
                             className="rounded-md bg-xred px-4 py-1 text-sm font-medium text-white transition-all duration-300 hover:bg-red-600"
                           >
                             Delete
@@ -234,7 +319,9 @@ const Vehicles = () => {
                 >
                   <div className="mx-2 my-4">
                     Are you sure you want to delete{" "}
-                    <p className="inline font-semibold">{updateVehicle.name}</p>
+                    <p className="inline font-semibold">
+                      {updateVehicle.reg_no}
+                    </p>
                     ?
                   </div>
                 </Modal>
@@ -295,11 +382,16 @@ const Vehicles = () => {
                         },
                       ]}
                     />
-                    <input
-                      type="text"
-                      placeholder="STS ID"
-                      className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
-                      onChange={(e) => setCreateStsId(e.target.value)}
+                    <Select
+                      placeholder="Assign STS"
+                      className="w-full rounded-md focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
+                      onChange={setCreateStsId}
+                      options={STS.map((sts) => {
+                        return {
+                          value: sts.id,
+                          label: sts.name,
+                        };
+                      })}
                     />
                     <input
                       type="number"
@@ -312,6 +404,95 @@ const Vehicles = () => {
                       placeholder="Empty Cost"
                       className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
                       onChange={(e) => setCreateEmptyCost(e.target.value)}
+                    />
+                  </div>
+                </Modal>
+                <Modal
+                  title="Edit Vehicle Information"
+                  open={openEdit}
+                  onOk={updateVehicleInfo}
+                  okText="Update"
+                  confirmLoading={confirmLoading}
+                  onCancel={() => setOpenEdit(false)}
+                  centered
+                >
+                  <div className="mx-2 my-4 flex flex-col gap-y-4 lg:mx-4 lg:my-8">
+                    <input
+                      type="text"
+                      placeholder="Reg No."
+                      value={updateReg}
+                      className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
+                      onChange={(e) => setUpdateReg(e.target.value)}
+                    />
+                    <Select
+                      placeholder="Capacity"
+                      value={updateCapacity}
+                      className="w-full rounded-md focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
+                      onChange={setUpdateCapacity}
+                      options={[
+                        {
+                          value: 3,
+                          label: "3 Ton",
+                        },
+                        {
+                          value: 5,
+                          label: "5 Ton",
+                        },
+                        {
+                          value: 7,
+                          label: "7 Ton",
+                        },
+                      ]}
+                    />
+                    <Select
+                      placeholder="Vehicle type"
+                      value={updateVtype}
+                      className="w-full rounded-md focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
+                      onChange={setUpdateVtype}
+                      options={[
+                        {
+                          value: "Open",
+                          label: "Open Truck",
+                        },
+                        {
+                          value: "Dump",
+                          label: "Dump Truck",
+                        },
+                        {
+                          value: "Compactor",
+                          label: "Compactor",
+                        },
+                        {
+                          value: "Container",
+                          label: "Container Carrier",
+                        },
+                      ]}
+                    />
+                    <Select
+                      placeholder="Assign STS"
+                      value={updateStsId}
+                      className="w-full rounded-md focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
+                      onChange={setUpdateStsId}
+                      options={STS.map((sts) => {
+                        return {
+                          value: sts.id,
+                          label: sts.name,
+                        };
+                      })}
+                    />
+                    <input
+                      type="number"
+                      placeholder="Loaded Cost"
+                      value={updateLoadedCost}
+                      className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
+                      onChange={(e) => setUpdateLoadedCost(e.target.value)}
+                    />
+                    <input
+                      type="number"
+                      placeholder="Empty Cost"
+                      value={updateEmptyCost}
+                      className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
+                      onChange={(e) => setUpdateEmptyCost(e.target.value)}
                     />
                   </div>
                 </Modal>
