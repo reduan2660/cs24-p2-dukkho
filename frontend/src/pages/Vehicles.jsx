@@ -217,7 +217,9 @@ const Vehicles = () => {
                 <div className="text-lg font-light text-xlightgray lg:text-3xl">
                   All Vehicles
                 </div>
-                {globalState.user?.role.permissions.includes("create_role") ? (
+                {globalState.user?.role.permissions.includes(
+                  "create_vehicle",
+                ) ? (
                   <div>
                     <button
                       type="button"
@@ -279,31 +281,42 @@ const Vehicles = () => {
                     sorter={(a, b) => a.empty_cost - b.empty_cost}
                   ></Column>
 
-                  {globalState.user?.role.permissions.includes(
-                    "delete_vehicle",
-                  ) && (
+                  {(globalState.user?.role.permissions.includes(
+                    "edit_vehicle",
+                  ) ||
+                    globalState.user?.role.permissions.includes(
+                      "delete_vehicle",
+                    )) && (
                     <Column
                       title="Actions"
                       dataIndex="name"
                       render={(actions, record) => (
                         <div className="flex items-center gap-x-4">
-                          <button
-                            onClick={() => {
-                              setUpdateVehicle(record);
-                              setOpenEdit(true);
-                            }}
-                            className="rounded-md bg-xblue px-4 py-1 text-sm font-medium text-white transition-all duration-300 hover:bg-blue-600"
-                          >
-                            Edit
-                          </button>
-                          <button
-                            onClick={() =>
-                              deleteModal(record.id, record.reg_no)
-                            }
-                            className="rounded-md bg-xred px-4 py-1 text-sm font-medium text-white transition-all duration-300 hover:bg-red-600"
-                          >
-                            Delete
-                          </button>
+                          {globalState.user?.role.permissions.includes(
+                            "edit_sts",
+                          ) && (
+                            <button
+                              onClick={() => {
+                                setUpdateVehicle(record);
+                                setOpenEdit(true);
+                              }}
+                              className="rounded-md bg-xblue px-4 py-1 text-sm font-medium text-white transition-all duration-300 hover:bg-blue-600"
+                            >
+                              Edit
+                            </button>
+                          )}
+                          {globalState.user?.role.permissions.includes(
+                            "delete_sts",
+                          ) && (
+                            <button
+                              onClick={() =>
+                                deleteModal(record.id, record.reg_no)
+                              }
+                              className="rounded-md bg-xred px-4 py-1 text-sm font-medium text-white transition-all duration-300 hover:bg-red-600"
+                            >
+                              Delete
+                            </button>
+                          )}
                         </div>
                       )}
                     ></Column>

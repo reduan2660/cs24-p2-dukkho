@@ -119,13 +119,9 @@ const Roles = () => {
     });
 
     setAssignedPermissions([...newAssignedPermissions]);
+    console.log(newAssignedPermissions)
     setUnassignedPermissions([...newUnassignedPermissions]);
     setOpenPermission(true);
-    console.log(
-      newAssignedPermissions,
-      newUnassignedPermissions,
-      assignedPermissions,
-    );
   };
 
   const updateModal = (id, name) => {
@@ -312,7 +308,6 @@ const Roles = () => {
                     <Column
                       title="Permissions"
                       dataIndex="permissions"
-                      sorter={(a, b) => a.email.localeCompare(b.email)}
                       render={(permission, record) => {
                         return (
                           <button

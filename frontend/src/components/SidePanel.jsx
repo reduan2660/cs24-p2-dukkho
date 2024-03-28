@@ -150,10 +150,12 @@ const SidePanel = () => {
           </div>
           <div
             className={`w-full ${
-              location.pathname === "/" ? "bg-blue-100" : ""
+              location.pathname === "/admin/sts" ? "bg-blue-100" : ""
             }`}
             onClick={() => {
-              if (location.pathname !== "/") navigate("/");
+              if (location.pathname !== "/admin/sts")
+                navigate("/admin/sts");
+              else setCollapsed(!collapsed);
             }}
           >
             <MenuItem icon={<PiBuildings className="text-xgray" />}>

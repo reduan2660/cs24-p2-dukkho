@@ -7,6 +7,7 @@ import Roles from "./pages/Roles";
 import ResetPassword from "./pages/ResetPassword";
 import ChangePassword from "./pages/ChangePassword";
 import Vehicles from "./pages/Vehicles";
+import STS from "./pages/STS";
 
 const App = () => {
   return (
@@ -20,6 +21,7 @@ const App = () => {
           <Route path="/admin/users" element={<Users />} />
           <Route path="/admin/roles" element={<Roles />} />
           <Route path="/admin/vehicles" element={<Vehicles />} />
+          <Route path="/admin/sts" element={<STS />} />
         </Routes>
       </BrowserRouter>
     </GlobalStateProvider>
