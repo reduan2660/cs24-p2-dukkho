@@ -255,7 +255,7 @@ const Vehicles = () => {
                   <Column
                     title="Capacity"
                     dataIndex="capacity"
-                    sorter={(a, b) => a.capacity.localeCompare(b.capacity)}
+                    sorter={(a, b) => a.capacity - b.capacity}
                   ></Column>
                   <Column
                     title="Vehicle Type"
@@ -265,7 +265,7 @@ const Vehicles = () => {
                   <Column
                     title="Assigned STS"
                     dataIndex="sts"
-                    sorter={(a, b) => a.sts_id.localeCompare(b.sts_id)}
+                    sorter={(a, b) => a.sts.name.localeCompare(b.sts.name)}
                     render={(sts, record) => <div>{record.sts.name}</div>}
                   ></Column>
                   <Column
