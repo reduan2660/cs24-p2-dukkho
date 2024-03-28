@@ -8,7 +8,7 @@ import { PiUsersThree, PiBuildings } from "react-icons/pi";
 import { FaTruck } from "react-icons/fa";
 import { FiUser } from "react-icons/fi";
 import { BsTools } from "react-icons/bs";
-import { MdLogout } from "react-icons/md";
+import { MdLogout, MdLogin } from "react-icons/md";
 import { RiShieldKeyholeLine, RiKeyLine } from "react-icons/ri";
 import api from "../api";
 
@@ -16,6 +16,7 @@ const SidePanel = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const logout = () => {
     api
@@ -29,6 +30,22 @@ const SidePanel = () => {
         console.log(err);
       });
   };
+
+  useEffect(() => {
+    const checkCookie = () => {
+      const cookies = document.cookie.split("; ");
+      const sessionCookie = cookies.find((cookie) =>
+        cookie.startsWith("SESSION="),
+      );
+      if (sessionCookie) {
+        setIsLoggedIn(true);
+      } else {
+        setIsLoggedIn(false);
+      }
+    };
+
+    checkCookie();
+  }, []);
 
   return (
     <div className="hidden min-h-screen lg:block">
@@ -184,15 +201,30 @@ const SidePanel = () => {
               <div className="font-medium text-xgray">Change Password</div>
             </MenuItem>
           </div>
-          <div className={`absolute bottom-0 w-full`} onClick={logout}>
-            <hr />
-            <MenuItem
-              icon={<MdLogout className="text-xgray" />}
-              className="py-3"
+          {isLoggedIn ? (
+            <div className={`absolute bottom-0 w-full`} onClick={logout}>
+              <hr />
+              <MenuItem
+                icon={<MdLogout className="text-xgray" />}
+                className="py-3"
+              >
+                <div className="font-medium text-xgray">Logout</div>
+              </MenuItem>
+            </div>
+          ) : (
+            <div
+              className={`absolute bottom-0 w-full`}
+              onClick={() => navigate("/login")}
             >
-              <div className="font-medium text-xgray">Logout</div>
-            </MenuItem>
-          </div>
+              <hr />
+              <MenuItem
+                icon={<MdLogin className="text-xgray" />}
+                className="py-3"
+              >
+                <div className="font-medium text-xgray">Login</div>
+              </MenuItem>
+            </div>
+          )}
         </Menu>
       </Sidebar>
     </div>
