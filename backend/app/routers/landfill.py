@@ -60,7 +60,7 @@ async def create_landfill(landfill: Landfillrequest, user: User = Depends(get_us
             capacity=landfill.capacity
         ))
         db.commit()
-        return JSONResponse(status_code=200, content={"message": "Landfill created successfully"})
+        return JSONResponse(status_code=201, content={"message": "Landfill created successfully"})
     
 
 @router.delete("/{landfill_id}")
