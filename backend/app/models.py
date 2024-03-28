@@ -65,6 +65,7 @@ class STS(Base):
     
     vehicle = relationship("Vehicle", back_populates="sts")
     sts_manager = relationship("STSmanager", back_populates="sts")
+    transfer = relationship("Transfer", back_populates="sts")
 
 class STSmanager(Base):
     __tablename__ = "sts_managers"
@@ -84,8 +85,10 @@ class Landfill(Base):
     latitude = Column(Float, nullable=False)
     longitude = Column(Float, nullable=False)
     capacity = Column(Float, nullable=False)
+    current_capacity = Column(Float, nullable=False)
 
     landfill_manager = relationship("LandfillManager", back_populates="landfill")
+    transfer = relationship("Transfer", back_populates="landfill")
 
 class LandfillManager(Base):
     __tablename__ = "landfill_managers"
@@ -107,6 +110,47 @@ class Vehicle(Base):
     vtype = Column(String, nullable=False)
     loaded_cost = Column(Float, nullable=False)
     empty_cost = Column(Float, nullable=False)
+    available = Column(Integer, nullable=False)
     
     sts_id = Column(Integer, ForeignKey("sts.id"))
     sts = relationship("STS", back_populates="vehicle")
+    transfer = relationship("Transfer", back_populates="vehicle")
+
+
+
+class Transfer(Base):
+    __tablename__ = "transfers"
+
+    id = Column(Integer, primary_key=True, index=True)
+
+    sts_id = Column(Integer, ForeignKey("sts.id"))
+    vehicle_id = Column(Integer, ForeignKey("vehicles.id"))
+    landfill_id = Column(Integer, ForeignKey("landfills.id"))
+
+    sts_departure_time = Column(Integer, nullable=False)  # utc timestamp
+    sts_departure_weight = Column(Float, nullable=False) # in tons
+
+    oil = Column(Float, nullable=False) # in liters
+    
+    
+    landfill_arrival_time = Column(Integer) # utc timestamp
+    landfill_arrival_weight = Column(Float)
+
+    landfill_departure_time = Column(Integer) # utc timestamp
+
+    sts_arrival_time = Column(Integer) # utc timestamp
+
+    # status with options:
+    # 1. Departed from sts
+    # 2. Arrived at landfill
+    # 3. Departed from landfill
+    # 4. Trip completed
+    status = Column(Integer, nullable=False)
+
+    sts = relationship("STS", back_populates="transfer")
+    vehicle = relationship("Vehicle", back_populates="transfer")
+    landfill = relationship("Landfill", back_populates="transfer")
+
+
+# arrival vehicle options = all vehicles of sts - status with 1, 2, 3
+# landfill options = all landfills with current_capacity >= weight of waste

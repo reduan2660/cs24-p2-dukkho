@@ -86,8 +86,6 @@ async def get_profile(user: User = Depends(get_user_from_session)):
 @router.get("/logout")
 async def logout(user: User = Depends(get_user_from_session)):
 
-    print("USER: ", user)
-
     with SessionLocal() as db:
         session = db.query(Session).filter(Session.user_id == user['id']).first()
         db.delete(session)

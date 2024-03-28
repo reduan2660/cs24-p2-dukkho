@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from typing import List
@@ -28,6 +28,7 @@ async def get_landfill(user: User = Depends(get_user_from_session)):
                 "latitude": lf.latitude,
                 "longitude": lf.longitude,
                 "capacity": lf.capacity,
+                "current_capacity": lf.current_capacity,
                 "managers": [
                     {
                         "id": m.user_id,
@@ -57,7 +58,8 @@ async def create_landfill(landfill: Landfillrequest, user: User = Depends(get_us
             name=landfill.name,
             latitude=landfill.latitude,
             longitude=landfill.longitude,
-            capacity=landfill.capacity
+            capacity=landfill.capacity,
+            current_capacity=landfill.capacity
         ))
         db.commit()
         return JSONResponse(status_code=201, content={"message": "Landfill created successfully"})
@@ -78,8 +80,15 @@ async def delete_landfill(landfill_id: int, user: User = Depends(get_user_from_s
         db.commit()
         return JSONResponse(status_code=200, content={"message": "Landfill deleted successfully"})
     
+class LandfillUpdateRequest(BaseModel):
+    name: str
+    latitude: float
+    longitude: float
+    capacity: float
+    current_capacity: float
+
 @router.put("/{landfill_id}")
-async def update_landfill(landfill_id: int, landfillReq: Landfillrequest, user: User = Depends(get_user_from_session)):
+async def update_landfill(landfill_id: int, landfillReq: LandfillUpdateRequest, user: User = Depends(get_user_from_session)):
 
     if "edit_landfill" not in user["role"]["permissions"]:
         return JSONResponse(status_code=401, content={"message": "Not enough permissions"})
@@ -93,7 +102,8 @@ async def update_landfill(landfill_id: int, landfillReq: Landfillrequest, user: 
             "name": landfillReq.name,
             "latitude": landfillReq.latitude,
             "longitude": landfillReq.longitude,
-            "capacity": landfillReq.capacity
+            "capacity": landfillReq.capacity,
+            "current_capacity": landfillReq.current_capacity
         })
         
         db.commit()
@@ -144,3 +154,29 @@ async def assign_manager(lanfillManager: LandfillManagerRequest, user: User = De
             ))
         db.commit()
         return JSONResponse(status_code=201, content={"message": "Landfill manager assigned successfully"})
+
+
+@router.get("/available")
+async def available_landfil(weight: float = Query(None), user: User = Depends(get_user_from_session)):
+    if "list_available_landfill" not in user["role"]["permissions"]:
+        return JSONResponse(status_code=401, content={"message": "Not enough permissions"})
+    
+    if weight is None:
+        return JSONResponse(status_code=400, content={"message": "Must specify weight."})
+    
+    with SessionLocal() as db:
+
+        landfills = db.query(Landfill).filter(Landfill.current_capacity >= weight).all()
+
+        response = []
+        for lf in landfills:
+            response.append({
+                "id": lf.id,
+                "name": lf.name,
+                "latitude": lf.latitude,
+                "longitude": lf.longitude,
+                "capacity": lf.capacity,
+                "current_capacity": lf.current_capacity
+            })
+    
+        return JSONResponse(status_code=200, content=response)
