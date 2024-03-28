@@ -36,6 +36,9 @@ const Login = () => {
       })
       .catch((err) => {
         console.log(err);
+        if (err.status === 400) {
+          toast.error(err.data?.message);
+        }
       });
   };
 
@@ -45,6 +48,8 @@ const Login = () => {
     else if (state === "reset_password")
       toast.success("Password has been reset successfully");
     else if (state === "logout") toast.success("Logged out successfully");
+    else if (state === "session expired")
+      toast.error("Session Expired. Please login again to continue");
   }, []);
 
   return (

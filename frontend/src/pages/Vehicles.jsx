@@ -48,6 +48,9 @@ const Vehicles = () => {
       })
       .catch((err) => {
         console.log(err);
+        if (err.status === 400) {
+          toast.error(err.data?.message);
+        }
       });
   };
 
@@ -70,6 +73,9 @@ const Vehicles = () => {
       })
       .catch((err) => {
         console.log(err);
+        if (err.status === 400) {
+          toast.error(err.data?.message);
+        }
         toast.error("Error occurred while updating vehicle");
       })
       .finally(() => {
@@ -97,6 +103,9 @@ const Vehicles = () => {
       })
       .catch((err) => {
         console.log(err);
+        if (err.status === 400) {
+          toast.error(err.data?.message);
+        }
         toast.error("Error occurred while creating vehicle");
       })
       .finally(() => {
@@ -131,6 +140,9 @@ const Vehicles = () => {
       })
       .catch((err) => {
         console.log(err);
+        if (err.status === 400) {
+          toast.error(err.data?.message);
+        }
         toast.error("Error occurred while deleting vehicle");
       })
       .finally(() => {
@@ -149,6 +161,9 @@ const Vehicles = () => {
       })
       .catch((err) => {
         console.log(err);
+        if (err.status === 400) {
+          toast.error(err.data?.message);
+        }
       })
       .finally(() => {
         setVehiclesLoading(false);
@@ -169,6 +184,9 @@ const Vehicles = () => {
       })
       .catch((err) => {
         console.log(err);
+        if (err.status === 400) {
+          toast.error(err.data?.message);
+        }
       })
       .finally(() => {
         setProfileLoading(false);

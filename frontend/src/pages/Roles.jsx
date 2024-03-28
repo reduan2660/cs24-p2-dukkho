@@ -47,6 +47,9 @@ const Roles = () => {
       })
       .catch((err) => {
         console.log(err);
+        if (err.status === 400) {
+          toast.error(err.data?.message);
+        }
         toast.error("Error occurred while updating permissions");
       })
       .finally(() => {
@@ -69,6 +72,9 @@ const Roles = () => {
       })
       .catch((err) => {
         console.log(err);
+        if (err.status === 400) {
+          toast.error(err.data?.message);
+        }
         toast.error("Error occurred while creating role");
       })
       .finally(() => {
@@ -119,7 +125,7 @@ const Roles = () => {
     });
 
     setAssignedPermissions([...newAssignedPermissions]);
-    console.log(newAssignedPermissions)
+    console.log(newAssignedPermissions);
     setUnassignedPermissions([...newUnassignedPermissions]);
     setOpenPermission(true);
   };
@@ -144,6 +150,9 @@ const Roles = () => {
       })
       .catch((err) => {
         console.log(err);
+        if (err.status === 400) {
+          toast.error(err.data?.message);
+        }
         toast.error("Error occurred while deleting role");
       })
       .finally(() => {
@@ -162,6 +171,9 @@ const Roles = () => {
       })
       .catch((err) => {
         console.log(err);
+        if (err.status === 400) {
+          toast.error(err.data?.message);
+        }
         toast.error("Error occurred while updating name");
       });
     setEditingRoleId(null);
@@ -175,6 +187,9 @@ const Roles = () => {
       })
       .catch((err) => {
         console.log(err);
+        if (err.status === 400) {
+          toast.error(err.data?.message);
+        }
       });
   };
 
@@ -189,6 +204,9 @@ const Roles = () => {
       })
       .catch((err) => {
         console.log(err);
+        if (err.status === 400) {
+          toast.error(err.data?.message);
+        }
       })
       .finally(() => {
         setRolesLoading(false);
@@ -209,6 +227,9 @@ const Roles = () => {
       })
       .catch((err) => {
         console.log(err);
+        if (err.status === 400) {
+          toast.error(err.data?.message);
+        }
       })
       .finally(() => {
         setProfileLoading(false);
