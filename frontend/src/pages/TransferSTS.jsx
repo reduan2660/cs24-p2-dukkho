@@ -9,6 +9,7 @@ import api from "../api";
 import { Select } from "antd";
 import { useGlobalState } from "../GlobalStateProvider";
 import { useNavigate } from "react-router-dom";
+import PdfGenerator from "../components/PDFGenerator";
 
 const TransferSTS = () => {
   const navigate = useNavigate();
@@ -44,6 +45,24 @@ const TransferSTS = () => {
     return new Date(time).toLocaleString();
   };
 
+  const getCalculatedOilReport = (vehicleId, landfillId, weight) => {
+    api
+      .post("/transfer/oil", {
+        vehicle_id: vehicleId,
+        landfill_id: landfillId,
+        weight: weight,
+      })
+      .then((res) => {
+        setOptimalOil(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+        if (err.response.status === 400) {
+          toast.error(err.response.data?.message);
+        }
+      });
+  };
+
   const getCalculatedOil = () => {
     api
       .post("/transfer/oil", {
@@ -52,7 +71,6 @@ const TransferSTS = () => {
         weight: createWeight,
       })
       .then((res) => {
-        setOptimalOil(res.data);
         setCalculatedOil(res.data.round_trip);
       })
       .catch((err) => {
@@ -376,6 +394,18 @@ const TransferSTS = () => {
                             >
                               Set Arrived at STS
                             </button>
+                          </div>
+                        ) : record.status.id === 4 ? (
+                          <div
+                            onClick={() =>
+                              getCalculatedOilReport(
+                                record.vehicle.id,
+                                record.landfill.id,
+                                record.sts_departure_weight,
+                              )
+                            }
+                          >
+                            <PdfGenerator data={record} oil={optimalOil} />
                           </div>
                         ) : (
                           <div></div>

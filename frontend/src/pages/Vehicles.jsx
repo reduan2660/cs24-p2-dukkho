@@ -13,13 +13,11 @@ import { useNavigate } from "react-router-dom";
 const Vehicles = () => {
   const navigate = useNavigate();
   const [createReg, setCreateReg] = useState("");
-  const [createCapacity, setCreateCapacity] = useState("");
   const [createVtype, setCreateVtype] = useState("");
   const [createStsId, setCreateStsId] = useState("");
   const [createLoadedCost, setCreateLoadedCost] = useState("");
   const [createEmptyCost, setCreateEmptyCost] = useState("");
   const [updateReg, setUpdateReg] = useState("");
-  const [updateCapacity, setUpdateCapacity] = useState("");
   const [updateVtype, setUpdateVtype] = useState("");
   const [updateStsId, setUpdateStsId] = useState("");
   const [updateLoadedCost, setUpdateLoadedCost] = useState("");
@@ -35,6 +33,13 @@ const Vehicles = () => {
   const [STS, setSTS] = useState([]);
 
   const [vehicles, setVehicles] = useState([]);
+
+  const vehicleWeight = {
+    "Open Truck": "3",
+    "Dump Truck": "5",
+    Compactor: "7",
+    "Container Carrier": "15",
+  };
 
   const showModal = () => {
     setOpenCreate(true);
@@ -61,7 +66,7 @@ const Vehicles = () => {
     api
       .put(`/vehicle/${updateVehicle.id}`, {
         reg_no: updateReg,
-        capacity: parseInt(updateCapacity),
+        capacity: parseInt(vehicleWeight[updateVtype]),
         vtype: updateVtype,
         sts_id: parseInt(updateStsId),
         loaded_cost: parseFloat(updateLoadedCost),
@@ -91,7 +96,7 @@ const Vehicles = () => {
     api
       .post("/vehicle", {
         reg_no: createReg,
-        capacity: parseInt(createCapacity),
+        capacity: parseInt(vehicleWeight[createVtype]),
         vtype: createVtype,
         sts_id: parseInt(createStsId),
         loaded_cost: parseFloat(createLoadedCost),
@@ -200,7 +205,6 @@ const Vehicles = () => {
   useEffect(() => {
     if (openEdit && updateVehicle.id) {
       setUpdateReg(updateVehicle.reg_no);
-      setUpdateCapacity(updateVehicle.capacity.toString());
       setUpdateVtype(updateVehicle.vtype);
       setUpdateStsId(updateVehicle.sts["name"].toString());
       setUpdateLoadedCost(updateVehicle.loaded_cost.toString());
@@ -378,39 +382,16 @@ const Vehicles = () => {
                       onChange={(e) => setCreateReg(e.target.value)}
                     />
                     <Select
-                      placeholder="Capacity"
-                      className="w-full rounded-md focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
-                      onChange={setCreateCapacity}
-                      options={[
-                        {
-                          value: 3,
-                          label: "3 Ton",
-                        },
-                        {
-                          value: 5,
-                          label: "5 Ton",
-                        },
-                        {
-                          value: 7,
-                          label: "7 Ton",
-                        },
-                        {
-                          value: 15,
-                          label: "15 Ton",
-                        },
-                      ]}
-                    />
-                    <Select
                       placeholder="Vehicle type"
                       className="w-full rounded-md focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
                       onChange={setCreateVtype}
                       options={[
                         {
-                          value: "Open",
+                          value: "Open Truck",
                           label: "Open Truck",
                         },
                         {
-                          value: "Dump",
+                          value: "Dump Truck",
                           label: "Dump Truck",
                         },
                         {
@@ -418,7 +399,7 @@ const Vehicles = () => {
                           label: "Compactor",
                         },
                         {
-                          value: "Container",
+                          value: "Container Carrier",
                           label: "Container Carrier",
                         },
                       ]}
@@ -465,30 +446,6 @@ const Vehicles = () => {
                       value={updateReg}
                       className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
                       onChange={(e) => setUpdateReg(e.target.value)}
-                    />
-                    <Select
-                      placeholder="Capacity"
-                      value={updateCapacity}
-                      className="w-full rounded-md focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
-                      onChange={setUpdateCapacity}
-                      options={[
-                        {
-                          value: 3,
-                          label: "3 Ton",
-                        },
-                        {
-                          value: 5,
-                          label: "5 Ton",
-                        },
-                        {
-                          value: 7,
-                          label: "7 Ton",
-                        },
-                        {
-                          value: 15,
-                          label: "15 Ton",
-                        },
-                      ]}
                     />
                     <Select
                       placeholder="Vehicle type"
