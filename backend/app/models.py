@@ -87,6 +87,8 @@ class Landfill(Base):
     longitude = Column(Float, nullable=False)
     capacity = Column(Float, nullable=False)
     current_capacity = Column(Float, nullable=False)
+    time_start = Column(Integer, nullable=False) # 24 hour format
+    time_end = Column(Integer, nullable=False) # 24 hour format
 
     landfill_manager = relationship("LandfillManager", back_populates="landfill")
     transfer = relationship("Transfer", back_populates="landfill")

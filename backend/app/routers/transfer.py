@@ -346,18 +346,22 @@ async def get_fleet( fleetRequest: FleetRequest, sts_id : int = Query(None), use
                 print("Excessive Transfer Error")
             vehicle_remaining_trips.append(3 - transfer_count)
 
-        all_landfill = db.query(Landfill).all()
+        # all_landfill = db.query(Landfill).all()
+        now = datetime.now()
+        current_hour = now.hour
+    
+        available_landfill = db.query(Landfill).filter(Landfill.time_start <= current_hour).filter(Landfill.time_end >= current_hour).all() # TODO: filter(Landfill.current_capacity >= weight).all() ?
 
         # sort by ascending order of distance from sts
-        all_landfill.sort(key=lambda x: haversine_distance(sts.latitude, sts.longitude, x.latitude, x.longitude))        
-        no_of_landfills = len(all_landfill)
+        available_landfill.sort(key=lambda x: haversine_distance(sts.latitude, sts.longitude, x.latitude, x.longitude))        
+        no_of_landfills = len(available_landfill)
 
         landfill_capacities = []
         landfill_capacitites_csum = []
         landfill_distances = []
         landfill_ids=[]
 
-        for landfill in all_landfill:
+        for landfill in available_landfill:
             landfill_capacities.append(landfill.capacity)
             landfill_distances.append(haversine_distance(sts.latitude, sts.longitude, landfill.latitude, landfill.longitude))
             landfill_ids.append(landfill.id)
