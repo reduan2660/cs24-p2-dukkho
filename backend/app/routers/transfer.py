@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from typing import List
@@ -293,20 +293,30 @@ class FleetRequest(BaseModel):
     weight: float
 
 @router.post("/fleet")
-async def get_fleet(fleetRequest: FleetRequest, user: User = Depends(get_user_from_session)):
-    if "update_transfer_sts" not in user["role"]["permissions"]:
+async def get_fleet( fleetRequest: FleetRequest, sts_id : int = Query(None), user: User = Depends(get_user_from_session)):
+    if "get_fleet_planning" not in user["role"]["permissions"]:
         return JSONResponse(status_code=401, content={"message": "Not enough permissions"})
     
     with SessionLocal() as db:
-        user_sts = db.query(STSmanager).filter(STSmanager.user_id == user["id"]).first()
-        if user_sts is None:
+
+        if user["role"]["id"] == 2: # STS
+
+            user_sts = db.query(STSmanager).filter(STSmanager.user_id == user["id"]).first()
+            if user_sts is None:
+                return JSONResponse(status_code=404, content={"message": "STS not found"})
+            
+            sts = db.query(STS).filter(STS.id == user_sts.sts_id).first()
+            if sts is None:
+                return JSONResponse(status_code=404, content={"message": "STS not found"})
+
+            sts_id = sts.id
+        elif sts_id is not None:
+            sts = db.query(STS).filter(STS.id == sts_id).first()
+            if sts is None:
+                return JSONResponse(status_code=404, content={"message": "STS not found"})
+        else:
             return JSONResponse(status_code=404, content={"message": "STS not found"})
         
-        sts = db.query(STS).filter(STS.id == user_sts.sts_id).first()
-        if sts is None:
-            return JSONResponse(status_code=404, content={"message": "STS not found"})
-        
-        sts_id = sts.id
         weight = fleetRequest.weight
 
         sts_vehicle = db.query(Vehicle).filter(Vehicle.sts_id == sts_id).all()
