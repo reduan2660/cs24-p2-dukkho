@@ -1,8 +1,8 @@
 """Data
 
-Revision ID: fcca2251d62e
-Revises: 39ea86417ab3
-Create Date: 2024-03-28 23:25:46.017688
+Revision ID: 6257bc4cd9ab
+Revises: c6efe9eea2b5
+Create Date: 2024-03-30 03:03:50.971103
 
 """
 from typing import Sequence, Union
@@ -12,10 +12,11 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'fcca2251d62e'
-down_revision: Union[str, None] = '39ea86417ab3'
+revision: str = '6257bc4cd9ab'
+down_revision: Union[str, None] = 'c6efe9eea2b5'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
+
 
 from app.config import HASHED_SUPERADMIN_PASSWORD
 
@@ -200,8 +201,9 @@ def upgrade() -> None:
     # Landfill
     landfill_tbl = sa.Table('landfills', meta, autoload_with=op.get_bind())
     op.bulk_insert(landfill_tbl, [
-        {"id": 0, "name": "Aminbazar", "latitude": 23.7861, "longitude": 90.3299, "capacity": 10, "current_capacity": 1000},
-        {"id": 1, "name": "Matuail", "latitude": 23.7261, "longitude": 90.4309, "capacity": 10, "current_capacity": 1000}
+        {"id": 0, "name": "Aminbazar", "latitude": 23.7861, "longitude": 90.3299, "capacity": 10, "current_capacity": 1000, "time_start": 0, "time_end": 23},
+        {"id": 1, "name": "Matuail", "latitude": 23.7261, "longitude": 90.4309, "capacity": 10, "current_capacity": 1000, "time_start": 0, "time_end": 23},
+        {"id": 2, "name": "Keraniganj", "latitude": 23.7031, "longitude": 90.4079, "capacity": 10, "current_capacity": 1000, "time_start": 8, "time_end": 18},
     ])
 
     # Landfill Manager
@@ -230,4 +232,4 @@ def downgrade() -> None:
     op.execute("DELETE FROM users")
     op.execute("DELETE FROM roles_permissions")
     op.execute("DELETE FROM permissions")
-    op.execute("DELETE FROM roles") 
+    op.execute("DELETE FROM roles")

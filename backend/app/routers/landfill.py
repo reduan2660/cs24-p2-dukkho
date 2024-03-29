@@ -5,6 +5,7 @@ from typing import List
 from app.dependencies import get_user_from_session
 from app.models import User, Landfill, LandfillManager
 from app.config import SessionLocal
+from datetime import datetime
 
 router = APIRouter(
     prefix="/landfill",
@@ -29,6 +30,8 @@ async def get_landfill(user: User = Depends(get_user_from_session)):
                 "longitude": lf.longitude,
                 "capacity": lf.capacity,
                 "current_capacity": lf.current_capacity,
+                "time_start": lf.time_start,
+                "time_end": lf.time_end,
                 "managers": [
                     {
                         "id": m.user_id,
@@ -46,6 +49,8 @@ class Landfillrequest(BaseModel):
     latitude: float
     longitude: float
     capacity: float
+    time_start: int
+    time_end: int
 
 @router.post("/")
 async def create_landfill(landfill: Landfillrequest, user: User = Depends(get_user_from_session)):
@@ -59,7 +64,9 @@ async def create_landfill(landfill: Landfillrequest, user: User = Depends(get_us
             latitude=landfill.latitude,
             longitude=landfill.longitude,
             capacity=landfill.capacity,
-            current_capacity=landfill.capacity
+            current_capacity=landfill.capacity,
+            time_start=landfill.time_start,
+            time_end=landfill.time_end
         ))
         db.commit()
         return JSONResponse(status_code=201, content={"message": "Landfill created successfully"})
@@ -86,6 +93,8 @@ class LandfillUpdateRequest(BaseModel):
     longitude: float
     capacity: float
     current_capacity: float
+    time_start: int
+    time_end: int
 
 @router.put("/{landfill_id}")
 async def update_landfill(landfill_id: int, landfillReq: LandfillUpdateRequest, user: User = Depends(get_user_from_session)):
@@ -103,7 +112,9 @@ async def update_landfill(landfill_id: int, landfillReq: LandfillUpdateRequest, 
             "latitude": landfillReq.latitude,
             "longitude": landfillReq.longitude,
             "capacity": landfillReq.capacity,
-            "current_capacity": landfillReq.current_capacity
+            "current_capacity": landfillReq.current_capacity,
+            "time_start": landfillReq.time_start,
+            "time_end": landfillReq.time_end
         })
         
         db.commit()
@@ -166,8 +177,12 @@ async def available_landfil(weight: float = Query(None), user: User = Depends(ge
     
     with SessionLocal() as db:
 
-        landfills = db.query(Landfill).filter(Landfill.current_capacity >= weight).all()
+        # get now hour in 24 format
+        now = datetime.now()
+        current_hour = now.hour
 
+        landfills = db.query(Landfill).filter(Landfill.current_capacity >= weight).filter(Landfill.time_start <= current_hour).filter(Landfill.time_end >= current_hour).all()
+        
         response = []
         for lf in landfills:
             response.append({
@@ -176,7 +191,9 @@ async def available_landfil(weight: float = Query(None), user: User = Depends(ge
                 "latitude": lf.latitude,
                 "longitude": lf.longitude,
                 "capacity": lf.capacity,
-                "current_capacity": lf.current_capacity
+                "current_capacity": lf.current_capacity,
+                "time_start": lf.time_start,
+                "time_end": lf.time_end
             })
     
         return JSONResponse(status_code=200, content=response)

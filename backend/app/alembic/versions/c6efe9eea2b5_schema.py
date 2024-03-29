@@ -1,8 +1,8 @@
 """Schema
 
-Revision ID: 39ea86417ab3
+Revision ID: c6efe9eea2b5
 Revises: 
-Create Date: 2024-03-28 23:25:44.263115
+Create Date: 2024-03-30 03:03:44.682282
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '39ea86417ab3'
+revision: str = 'c6efe9eea2b5'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -27,6 +27,8 @@ def upgrade() -> None:
     sa.Column('longitude', sa.Float(), nullable=False),
     sa.Column('capacity', sa.Float(), nullable=False),
     sa.Column('current_capacity', sa.Float(), nullable=False),
+    sa.Column('time_start', sa.Integer(), nullable=False),
+    sa.Column('time_end', sa.Integer(), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_landfills_id'), 'landfills', ['id'], unique=False)
@@ -48,10 +50,10 @@ def upgrade() -> None:
     op.create_table('sts',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
-    sa.Column('capacity', sa.Float(), nullable=False),
     sa.Column('ward_no', sa.Integer(), nullable=False),
     sa.Column('latitude', sa.Float(), nullable=False),
     sa.Column('longitude', sa.Float(), nullable=False),
+    sa.Column('capacity', sa.Float(), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_sts_id'), 'sts', ['id'], unique=False)

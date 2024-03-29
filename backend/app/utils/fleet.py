@@ -22,7 +22,7 @@ def optimizeFleet(sts, weight, costs_unloaded, costs_loaded, vehicle_capacities,
                 current_ans=mid
                 r=mid-1
         if current_ans==number_of_landfills:
-            return 0,0
+            return 0,0,0
         return landfill_ids[current_ans],landfill_distances[current_ans],landfill_capacitites_csum[current_ans]
 
 
