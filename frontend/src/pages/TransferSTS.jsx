@@ -372,7 +372,7 @@ const TransferSTS = () => {
                     )}
                   ></Column>
                   <Column
-                    title="Allocated Oil (litres)"
+                    title="Allocated Oil (L)"
                     dataIndex="oil"
                     sorter={(a, b) => a.oil - b.oil}
                   ></Column>

@@ -13,9 +13,8 @@ import { RiShieldKeyholeLine, RiKeyLine } from "react-icons/ri";
 import { LiaDumpsterSolid } from "react-icons/lia";
 import api from "../api";
 import { useGlobalState } from "../GlobalStateProvider";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { BiTransfer } from "react-icons/bi";
+import { MdEmojiTransportation } from "react-icons/md";
 
 const SidePanel = () => {
   const navigate = useNavigate();
@@ -33,10 +32,7 @@ const SidePanel = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
-        if (err.response.status === 400) {
-          toast.error(err.response.data?.message);
-        } else if (err.response.status === 401) {
+        console.log(err);if (err.response.status === 401) {
           navigate("/login", { state: "session expired" });
         }
       });
@@ -62,17 +58,6 @@ const SidePanel = () => {
   return (
     <div className="hidden min-h-screen lg:block">
       <Sidebar collapsed={collapsed} className="h-full">
-        <ToastContainer
-          position="top-right"
-          autoClose={2000}
-          hideProgressBar={false}
-          newestOnTop={true}
-          closeOnClick
-          rtl={false}
-          draggable={true}
-          pauseOnHover={false}
-          theme="colored"
-        />
         <Menu>
           <MenuItem
             icon={
@@ -277,6 +262,20 @@ const SidePanel = () => {
             ) : (
               <div></div>
             ))}
+          <div
+            className={`w-full ${
+              location.pathname === "/transfer/fleet" ? "bg-blue-100" : ""
+            }`}
+            onClick={() => {
+              if (location.pathname !== "/transfer/fleet")
+                navigate("/transfer/fleet");
+              else setCollapsed(!collapsed);
+            }}
+          >
+            <MenuItem icon={<MdEmojiTransportation className="text-xgray" />}>
+              <div className="font-medium text-xgray">Fleet Planning</div>
+            </MenuItem>
+          </div>
           {!collapsed && (
             <div className="text-md ml-6 mt-7 font-medium text-xlightgray">
               Account
@@ -284,10 +283,10 @@ const SidePanel = () => {
           )}
           <div
             className={`w-full ${
-              location.pathname === "/" ? "bg-blue-100" : ""
+              location.pathname === "/profile" ? "bg-blue-100" : ""
             }`}
             onClick={() => {
-              if (location.pathname !== "/") navigate("/");
+              if (location.pathname !== "/profile") navigate("/profile");
             }}
           >
             <MenuItem icon={<FiUser className="text-lg text-xgray" />}>
@@ -296,11 +295,6 @@ const SidePanel = () => {
               </div>
             </MenuItem>
           </div>
-          {!collapsed && (
-            <div className="text-md ml-6 mt-7 font-medium text-xlightgray">
-              Settings
-            </div>
-          )}
           <div
             className={`w-full ${
               location.pathname === "/auth/change-password" ? "bg-blue-100" : ""
@@ -312,18 +306,6 @@ const SidePanel = () => {
           >
             <MenuItem icon={<RiKeyLine className="text-lg text-xgray" />}>
               <div className="font-medium text-xgray">Change Password</div>
-            </MenuItem>
-          </div>
-          <div
-            className={`w-full ${
-              location.pathname === "/" ? "bg-blue-100" : ""
-            }`}
-            onClick={() => {
-              if (location.pathname !== "/") navigate("/");
-            }}
-          >
-            <MenuItem icon={<BsTools className="text-xgray" />}>
-              <div className="font-medium text-xgray">Preferences</div>
             </MenuItem>
           </div>
           {isLoggedIn ? (

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import SidePanel from "../components/SidePanel";
@@ -8,24 +8,30 @@ import Column from "antd/es/table/Column";
 import api from "../api";
 import { useGlobalState } from "../GlobalStateProvider";
 import { useNavigate } from "react-router-dom";
-import PdfGenerator from "../components/PDFGenerator";
 
-const TransferLandfill = () => {
+const Fleet = () => {
   const navigate = useNavigate();
+  const [weight, setWeight] = useState("");
   const [profileLoading, setProfileLoading] = useState(false);
-  const [transferLoading, setTransferLoading] = useState(false);
   const { globalState, setGlobalState } = useGlobalState();
+  const [confirmLoading, setConfirmLoading] = useState(false);
+  const [openCreate, setOpenCreate] = useState(false);
   const [assignedVehicle, setAssignedVehicle] = useState({});
   const [associatedSTS, setAssociatedSTS] = useState({});
   const [associatedLandfill, setAssociatedLandfill] = useState({});
-  const [transferRecords, setTransferRecords] = useState([]);
   const [viewVehicle, setViewVehicle] = useState(false);
   const [viewSTS, setViewSTS] = useState(false);
   const [viewLandfill, setViewLandfill] = useState(false);
-  const [openArrival, setOpenArrival] = useState(false);
-  const [weight, setWeight] = useState("");
   const [transfer, setTransfer] = useState("");
   const [viewInfo, setViewInfo] = useState(false);
+
+  const showModal = () => {
+    setOpenCreate(true);
+  };
+
+  const convertUTC = (time) => {
+    return new Date(time).toLocaleString();
+  };
 
   function getStatusColor(statusId) {
     switch (statusId) {
@@ -42,20 +48,16 @@ const TransferLandfill = () => {
     }
   }
 
-  const convertUTC = (time) => {
-    return new Date(time).toLocaleString();
-  };
-
-  const setArrivedAtLandfill = () => {
+  const generateFleet = () => {
+    setConfirmLoading(true);
     api
-      .patch(`/transfer/landfill/arrival/${transfer.id}`, {
-        weight: parseFloat(weight),
+      .post("/transfer/fleet", {
+        weight: weight,
       })
       .then((res) => {
         if (res.status === 200) {
-          toast.success("Arrived at Landfill successfully");
-          getTransfers();
-          setOpenArrival(false);
+          toast.success("Fleet planning generated successfully");
+          console.log(res.data);
         }
       })
       .catch((err) => {
@@ -63,23 +65,11 @@ const TransferLandfill = () => {
         if (err.response.status === 400) {
           toast.error(err.response.data?.message);
         }
-      });
-  };
-
-  const setDepartedFromLandfill = (id) => {
-    api
-      .patch(`/transfer/landfill/departure/${id}`)
-      .then((res) => {
-        if (res.status === 200) {
-          toast.success("Departed from Landfill successfully");
-          getTransfers();
-        }
+        toast.error("Failed to generate fleet planning");
       })
-      .catch((err) => {
-        console.log(err);
-        if (err.response.status === 400) {
-          toast.error(err.response.data?.message);
-        }
+      .finally(() => {
+        setOpenCreate(false);
+        setConfirmLoading(false);
       });
   };
 
@@ -91,26 +81,6 @@ const TransferLandfill = () => {
       //     selectedRows,
       //   );
     },
-  };
-
-  const getTransfers = () => {
-    setTransferLoading(true);
-    api
-      .get("/transfer")
-      .then((res) => {
-        if (res.status === 200) {
-          setTransferRecords(res.data);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-        if (err.response.status === 400) {
-          toast.error(err.response.data?.message);
-        }
-      })
-      .finally(() => {
-        setTransferLoading(false);
-      });
   };
 
   const getProfile = () => {
@@ -139,7 +109,6 @@ const TransferLandfill = () => {
   };
 
   useEffect(() => {
-    getTransfers();
     getProfile();
   }, []);
 
@@ -165,14 +134,28 @@ const TransferLandfill = () => {
             <div className="mx-2 mt-4 flex flex-col gap-y-4 lg:mx-16 lg:mt-16 lg:gap-y-12">
               <div className="mx-2 flex items-center justify-between">
                 <div className="text-lg font-light text-xlightgray lg:text-3xl">
-                  All Transfer Records
+                  All Fleet Transfers
                 </div>
-                <div></div>
+                {globalState.user?.role.permissions.includes(
+                  "update_transfer_sts",
+                ) ? (
+                  <div>
+                    <button
+                      type="button"
+                      onClick={showModal}
+                      className="rounded-md bg-xblue px-3 py-1 font-medium text-white transition-all duration-300 hover:bg-blue-600 lg:rounded-lg lg:px-5 lg:py-2"
+                    >
+                      Generate Fleet Planning
+                    </button>
+                  </div>
+                ) : (
+                  <div></div>
+                )}
               </div>
               <div className="overflow-x-auto">
-                <Table
-                  loading={transferLoading}
-                  dataSource={transferRecords}
+                {/* <Table
+                  loading={confirmLoading}
+                  dataSource={weight}
                   rowKey="id"
                   style={{ overflowX: "auto" }}
                   rowSelection={{
@@ -271,45 +254,51 @@ const TransferLandfill = () => {
                     sorter={(a, b) => a.oil - b.oil}
                   ></Column>
                   {globalState.user?.role.permissions.includes(
-                    "update_transfer_landfill",
+                    "update_transfer_sts",
                   ) && (
                     <Column
                       title="Actions"
                       dataIndex="name"
                       render={(actions, record) =>
-                        record.status.id === 1 ? (
+                        record.status.id === 3 ? (
                           <div className="flex items-center gap-x-4">
                             <button
                               onClick={() => {
-                                setOpenArrival(true);
                                 setTransfer(record);
                               }}
-                              className="w-fit rounded-md border border-xblue px-2 py-1 text-xblue transition-all duration-300 hover:bg-xblue hover:text-white"
+                              className="w-fit rounded-md border border-green-600 px-2 py-1 text-green-600 transition-all duration-300 hover:bg-green-600 hover:text-white"
                             >
-                              Set Arrived at Landfill
-                            </button>
-                          </div>
-                        ) : record.status.id === 2 ? (
-                          <div className="flex items-center gap-x-4">
-                            <button
-                              onClick={() => {
-                                setDepartedFromLandfill(record.id);
-                                setTransfer(record);
-                              }}
-                              className="w-fit rounded-md border border-orange-500 px-2 py-1 text-orange-500 transition-all duration-300 hover:bg-orange-500 hover:text-white"
-                            >
-                              Set Departed from Landfill
+                              Set Arrived at STS
                             </button>
                           </div>
                         ) : record.status.id === 4 ? (
-                            <PdfGenerator data={record} />
+                          <div></div>
                         ) : (
                           <div></div>
                         )
                       }
                     ></Column>
                   )}
-                </Table>
+                </Table> */}
+                <Modal
+                  title="Generate Fleet Planning"
+                  open={openCreate}
+                  onOk={generateFleet}
+                  confirmLoading={confirmLoading}
+                  onCancel={() => setOpenCreate(false)}
+                  closable={false}
+                  centered
+                >
+                  <div className="mx-2 my-4 flex flex-col gap-y-4 lg:mx-4 lg:my-8">
+                    <input
+                      type="number"
+                      placeholder={`Weight of waste`}
+                      className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
+                      value={weight}
+                      onChange={(e) => setWeight(e.target.value)}
+                    />
+                  </div>
+                </Modal>
                 <Modal
                   title="Assigned Vehicle"
                   open={viewVehicle}
@@ -395,47 +384,13 @@ const TransferLandfill = () => {
                   </div>
                 </Modal>
                 <Modal
-                  title="Enter received weight"
-                  open={openArrival}
-                  onOk={setArrivedAtLandfill}
-                  onCancel={() => setOpenArrival(false)}
-                  closable={false}
-                  centered
-                >
-                  <div className="mx-2 my-4 flex flex-col gap-y-4 lg:mx-4 lg:my-8">
-                    <input
-                      type="number"
-                      min={0}
-                      max={transfer.sts_departure_weight}
-                      placeholder={`Weight (max: ${
-                        transfer.sts_departure_weight
-                          ? transfer.sts_departure_weight
-                          : 0
-                      })`}
-                      className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
-                      value={weight}
-                      onChange={(e) => {
-                        const inputValue = e.target.value;
-                        const maxValue = transfer.sts_departure_weight;
-
-                        if (
-                          inputValue === "" ||
-                          (inputValue >= 0 && inputValue <= maxValue)
-                        ) {
-                          setWeight(inputValue);
-                        }
-                      }}
-                    />
-                  </div>
-                </Modal>
-                <Modal
                   title="Transfer Information"
                   open={viewInfo}
                   onOk={() => setViewInfo(false)}
                   okText="Close"
                   cancelButtonProps={{ style: { display: "none" } }}
-                  closable={false}
                   centered
+                  closable={false}
                 >
                   <div className="mx-2 my-4 grid grid-cols-2 gap-y-4 lg:mx-4 lg:my-8">
                     {Object.entries(transfer)
@@ -482,4 +437,4 @@ const TransferLandfill = () => {
     );
 };
 
-export default TransferLandfill;
+export default Fleet;
