@@ -48,10 +48,7 @@ const Roles = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
-        if (err.response.status === 400) {
-          toast.error(err.response.data?.message);
-        }
+        toast.error(err.response.data?.message);
         toast.error("Error occurred while updating permissions");
       })
       .finally(() => {
@@ -73,10 +70,7 @@ const Roles = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
-        if (err.response.status === 400) {
-          toast.error(err.response.data?.message);
-        }
+        toast.error(err.response.data?.message);
         toast.error("Error occurred while creating role");
       })
       .finally(() => {
@@ -171,10 +165,7 @@ const Roles = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
-        if (err.response.status === 400) {
-          toast.error(err.response.data?.message);
-        }
+        toast.error(err.response.data?.message);
         toast.error("Error occurred while updating name");
       });
     setEditingRoleId(null);
@@ -187,10 +178,7 @@ const Roles = () => {
         setPermissions(res.data);
       })
       .catch((err) => {
-        console.log(err);
-        if (err.response.status === 400) {
-          toast.error(err.response.data?.message);
-        }
+        toast.error(err.response.data?.message);
       });
   };
 
@@ -204,10 +192,7 @@ const Roles = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
-        if (err.response.status === 400) {
-          toast.error(err.response.data?.message);
-        }
+        toast.error(err.response.data?.message);
       })
       .finally(() => {
         setRolesLoading(false);
@@ -229,10 +214,7 @@ const Roles = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
-        if (err.response.status === 400) {
-          toast.error(err.response.data?.message);
-        }
+        toast.error(err.response.data?.message);
       })
       .finally(() => {
         setProfileLoading(false);

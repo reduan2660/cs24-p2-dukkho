@@ -31,8 +31,10 @@ const Sts = () => {
   const [openDelete, setOpenDelete] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [openAssignManager, setOpenAssignManager] = useState(false);
+  const [openVehicle, setOpenVehicle] = useState(false);
   const [openUpdate, setOpenUpdate] = useState(false);
   const [assignedManagers, setAssignedManagers] = useState([]);
+  const [allocatedVehicles, setAllocatedVehicles] = useState([]);
   const [selectedManagers, setSelectedManagers] = useState([]);
   const [usersByRole, setUsersByRole] = useState([]);
   const [unassignedUsers, setUnassignedUsers] = useState([]);
@@ -56,10 +58,7 @@ const Sts = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
-        if (err.response.status === 400) {
-          toast.error(err.response.data?.message);
-        }
+        toast.error(err.response.data?.message);
         toast.error("Error occurred while assigning manager(s)");
       })
       .finally(() => {
@@ -101,10 +100,7 @@ const Sts = () => {
         setUsersByRole(res.data);
       })
       .catch((err) => {
-        console.log(err);
-        if (err.response.status === 400) {
-          toast.error(err.response.data?.message);
-        }
+        toast.error(err.response.data?.message);
       });
   };
 
@@ -125,10 +121,7 @@ const Sts = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
-        if (err.response.status === 400) {
-          toast.error(err.response.data?.message);
-        }
+        toast.error(err.response.data?.message);
         toast.error("Error occurred while updating STS");
       })
       .finally(() => {
@@ -154,10 +147,7 @@ const Sts = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
-        if (err.response.status === 400) {
-          toast.error(err.response.data?.message);
-        }
+        toast.error(err.response.data?.message);
         toast.error("Error occurred while creating STS");
       })
       .finally(() => {
@@ -191,10 +181,7 @@ const Sts = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
-        if (err.response.status === 400) {
-          toast.error(err.response.data?.message);
-        }
+        toast.error(err.response.data?.message);
         toast.error("Error occurred while deleting STS");
       })
       .finally(() => {
@@ -212,10 +199,7 @@ const Sts = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
-        if (err.response.status === 400) {
-          toast.error(err.response.data?.message);
-        }
+        toast.error(err.response.data?.message);
       })
       .finally(() => {
         setSTSLoading(false);
@@ -237,10 +221,7 @@ const Sts = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
-        if (err.response.status === 400) {
-          toast.error(err.response.data?.message);
-        }
+        toast.error(err.response.data?.message);
       })
       .finally(() => {
         setProfileLoading(false);
@@ -347,7 +328,7 @@ const Sts = () => {
                     <Column
                       title="Managers"
                       dataIndex="managers"
-                      render={(permission, record) => {
+                      render={(manager, record) => {
                         return (
                           <button
                             onClick={() => {
@@ -368,6 +349,25 @@ const Sts = () => {
                       }}
                     ></Column>
                   )}
+                  <Column
+                    title="Vehicles"
+                    dataIndex="vehicles"
+                    render={(vehicle, record) => {
+                      return (
+                        <button
+                          onClick={() => {
+                            setAllocatedVehicles(
+                              record.vehicles.map((user) => user.reg_no),
+                            );
+                            setOpenVehicle(true);
+                          }}
+                          className="w-fit rounded-md border border-xblue px-2 py-1 text-xblue transition-all duration-300 hover:bg-xblue hover:text-white"
+                        >
+                          Vehicles
+                        </button>
+                      );
+                    }}
+                  ></Column>
                   {(globalState.user?.role.permissions.includes("edit_sts") ||
                     globalState.user?.role.permissions.includes(
                       "delete_sts",
@@ -407,6 +407,34 @@ const Sts = () => {
                     ></Column>
                   )}
                 </Table>
+                <Modal
+                  title="Allocated Vehicles"
+                  open={openVehicle}
+                  onOk={() => {
+                    setOpenVehicle(false);
+                  }}
+                  okText="Close"
+                  cancelButtonProps={{ style: { display: "none" } }}
+                  closable={false}
+                  centered
+                >
+                  <div className="flex flex-wrap gap-2">
+                    {allocatedVehicles.length > 0 ? (
+                      allocatedVehicles.map((vehicle, i) => {
+                        return (
+                          <div
+                            key={i}
+                            className="inline space-x-1 rounded-md bg-gray-100 px-2 py-1"
+                          >
+                            {vehicle}
+                          </div>
+                        );
+                      })
+                    ) : (
+                      <div>No vehicles allocated</div>
+                    )}
+                  </div>
+                </Modal>
                 <Modal
                   title="Assign Managers"
                   open={openUpdate}

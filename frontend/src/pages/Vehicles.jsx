@@ -54,10 +54,7 @@ const Vehicles = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
-        if (err.response.status === 400) {
-          toast.error(err.response.data?.message);
-        }
+        toast.error(err.response.data?.message);
       });
   };
 
@@ -79,10 +76,7 @@ const Vehicles = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
-        if (err.response.status === 400) {
-          toast.error(err.response.data?.message);
-        }
+        toast.error(err.response.data?.message);
         toast.error("Error occurred while updating vehicle");
       })
       .finally(() => {
@@ -109,10 +103,7 @@ const Vehicles = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
-        if (err.response.status === 400) {
-          toast.error(err.response.data?.message);
-        }
+        toast.error(err.response.data?.message);
         toast.error("Error occurred while creating vehicle");
       })
       .finally(() => {
@@ -146,10 +137,7 @@ const Vehicles = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
-        if (err.response.status === 400) {
-          toast.error(err.response.data?.message);
-        }
+        toast.error(err.response.data?.message);
         toast.error("Error occurred while deleting vehicle");
       })
       .finally(() => {
@@ -167,10 +155,7 @@ const Vehicles = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
-        if (err.response.status === 400) {
-          toast.error(err.response.data?.message);
-        }
+        toast.error(err.response.data?.message);
       })
       .finally(() => {
         setVehiclesLoading(false);
@@ -192,10 +177,7 @@ const Vehicles = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
-        if (err.response.status === 400) {
-          toast.error(err.response.data?.message);
-        }
+        toast.error(err.response.data?.message);
       })
       .finally(() => {
         setProfileLoading(false);
@@ -203,13 +185,12 @@ const Vehicles = () => {
   };
 
   useEffect(() => {
-    if (openEdit && updateVehicle.id) {
+    if (openEdit) {
       setUpdateReg(updateVehicle.reg_no);
       setUpdateVtype(updateVehicle.vtype);
       setUpdateStsId(updateVehicle.sts["name"].toString());
       setUpdateLoadedCost(updateVehicle.loaded_cost.toString());
       setUpdateEmptyCost(updateVehicle.empty_cost.toString());
-      console.log(updateVehicle.sts["name"].toString());
     }
   }, [openEdit, updateVehicle]);
 

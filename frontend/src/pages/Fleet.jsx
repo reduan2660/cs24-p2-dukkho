@@ -8,10 +8,13 @@ import Column from "antd/es/table/Column";
 import api from "../api";
 import { useGlobalState } from "../GlobalStateProvider";
 import { useNavigate } from "react-router-dom";
+import { Select } from "antd";
 
 const Fleet = () => {
   const navigate = useNavigate();
   const [weight, setWeight] = useState("");
+  const [StsId, setStsId] = useState("");
+  const [STS, setSTS] = useState([]);
   const [profileLoading, setProfileLoading] = useState(false);
   const { globalState, setGlobalState } = useGlobalState();
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -22,29 +25,24 @@ const Fleet = () => {
     setOpenCreate(true);
   };
 
-  const convertUTC = (time) => {
-    return new Date(time).toLocaleString();
+  const getSTS = () => {
+    api
+      .get("/sts")
+      .then((res) => {
+        if (res.status === 200) {
+          setSTS(res.data);
+        }
+      })
+      .catch((err) => {
+        toast.error(err.response.data?.message);
+      });
   };
-
-  function getStatusColor(statusId) {
-    switch (statusId) {
-      case 1:
-        return "bg-yellow-500"; // Departed from sts
-      case 2:
-        return "bg-blue-600"; // Arrived at landfill
-      case 3:
-        return "bg-orange-500"; // Departed from landfill
-      case 4:
-        return "bg-green-600"; // Trip completed
-      default:
-        return "bg-gray-600"; // Default color if statusId is unknown
-    }
-  }
 
   const generateFleet = () => {
     setConfirmLoading(true);
     api
       .post("/transfer/fleet", {
+        sts_id: StsId,
         weight: weight,
       })
       .then((res) => {
@@ -54,11 +52,7 @@ const Fleet = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
-        if (err.response.status === 400) {
-          toast.error(err.response.data?.message);
-        }
-        toast.error("Failed to generate fleet planning");
+        toast.error(err.response.data?.message);
       })
       .finally(() => {
         setOpenCreate(false);
@@ -81,11 +75,7 @@ const Fleet = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
-        if (err.response.status === 400) {
-          toast.error(err.response.data?.message);
-        }
-        toast.error("Failed to create transfer");
+        toast.error(err.response.data?.message);
       });
   };
 
@@ -114,10 +104,7 @@ const Fleet = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
-        if (err.response.status === 400) {
-          toast.error(err.response.data?.message);
-        }
+        toast.error(err.response.data?.message);
       })
       .finally(() => {
         setProfileLoading(false);
@@ -125,6 +112,7 @@ const Fleet = () => {
   };
 
   useEffect(() => {
+    getSTS();
     getProfile();
   }, []);
 
@@ -154,7 +142,8 @@ const Fleet = () => {
                 </div>
                 {globalState.user?.role.permissions.includes(
                   "update_transfer_sts",
-                ) ? (
+                ) ||
+                globalState.user?.role.permissions.includes("view_transfer") ? (
                   <div>
                     <button
                       type="button"
@@ -247,6 +236,22 @@ const Fleet = () => {
                   centered
                 >
                   <div className="mx-2 my-4 flex flex-col gap-y-4 lg:mx-4 lg:my-8">
+                    {!globalState.user?.role.permissions.includes(
+                      "update_transfer_sts",
+                    ) &&
+                      globalState.user?.role.permissions.includes(
+                        "view_transfer",
+                      ) && (
+                        <Select
+                          placeholder="Select STS"
+                          className="w-full rounded-md focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
+                          onChange={setStsId}
+                          options={STS.map((sts) => {
+                            return { label: sts.name, value: sts.id };
+                          })}
+                        />
+                      )}
+
                     <input
                       type="number"
                       placeholder={`Weight of waste`}

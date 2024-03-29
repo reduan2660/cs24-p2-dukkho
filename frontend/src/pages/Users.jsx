@@ -46,10 +46,7 @@ const Users = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
-        if (err.response.status === 400) {
-          toast.error(err.response.data?.message);
-        }
+        toast.error(err.response.data?.message);
         toast.error("Error occurred while updating name");
       });
     setEditingUserId(null);
@@ -77,10 +74,7 @@ const Users = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
-        if (err.response.status === 400) {
-          toast.error(err.response.data?.message);
-        }
+        toast.error(err.response.data?.message);
         toast.error("Error occurred while updating role");
       })
       .finally(() => {
@@ -106,10 +100,7 @@ const Users = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
-        if (err.response.status === 400) {
-          toast.error(err.response.data?.message);
-        }
+        toast.error(err.response.data?.message);
         toast.error("Error occurred while creating user");
       })
       .finally(() => {
@@ -128,10 +119,7 @@ const Users = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
-        if (err.response.status === 400) {
-          toast.error(err.response.data?.message);
-        }
+        toast.error(err.response.data?.message);
         toast.error("Error occurred while deleting user");
       })
       .finally(() => {
@@ -156,10 +144,7 @@ const Users = () => {
         setUsers(res.data);
       })
       .catch((err) => {
-        console.log(err);
-        if (err.response.status === 400) {
-          toast.error(err.response.data?.message);
-        }
+        toast.error(err.response.data?.message);
       })
       .finally(() => setLoading(false));
   };
@@ -186,10 +171,7 @@ const Users = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
-        if (err.response.status === 400) {
-          toast.error(err.response.data?.message);
-        }
+        toast.error(err.response.data?.message);
       })
       .finally(() => {
         setProfileLoading(false);

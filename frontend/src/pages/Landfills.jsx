@@ -16,11 +16,15 @@ const Landfills = () => {
   const [createCapacity, setCreateCapacity] = useState("");
   const [createLongitude, setCreateLongitude] = useState("");
   const [createLatitude, setCreateLatitude] = useState("");
+  const [createStartTime, setCreateStartTime] = useState("");
+  const [createEndTime, setCreateEndTime] = useState("");
   const [updateName, setUpdateName] = useState("");
   const [updateCapacity, setUpdateCapacity] = useState("");
   const [updateCurrentCapacity, setUpdateCurrentCapacity] = useState("");
   const [updateLongitude, setUpdateLongitude] = useState("");
   const [updateLatitude, setUpdateLatitude] = useState("");
+  const [updateStartTime, setUpdateStartTime] = useState("");
+  const [updateEndTime, setUpdateEndTime] = useState("");
   const [profileLoading, setProfileLoading] = useState(false);
   const [landfillLoading, setLandfillLoading] = useState(false);
   const { globalState, setGlobalState } = useGlobalState();
@@ -37,10 +41,21 @@ const Landfills = () => {
   const [unassignedUsers, setUnassignedUsers] = useState([]);
   const [managerIds, setManagerIds] = useState([]);
   const [landfill, setLandfill] = useState([]);
+  const [timeArray, setTimeArray] = useState([]);
 
   const showModal = () => {
     setOpenCreate(true);
   };
+
+  function convertTo12HourFormat() {
+    const timeArray = [];
+    for (let i = 0; i < 24; i++) {
+      let label = i >= 12 ? "PM" : "AM";
+      let hour = i % 12 || 12; // Convert 0 to 12
+      timeArray.push({ label: `${hour} ${label}`, value: i });
+    }
+    setTimeArray(timeArray);
+  }
 
   const assignManagers = () => {
     api
@@ -55,10 +70,7 @@ const Landfills = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
-        if (err.response.status === 400) {
-          toast.error(err.response.data?.message);
-        }
+        toast.error(err.response.data?.message);
         toast.error("Error occurred while assigning manager(s)");
       })
       .finally(() => {
@@ -100,10 +112,7 @@ const Landfills = () => {
         setUsersByRole(res.data);
       })
       .catch((err) => {
-        console.log(err);
-        if (err.response.status === 400) {
-          toast.error(err.response.data?.message);
-        }
+        toast.error(err.response.data?.message);
       });
   };
 
@@ -116,6 +125,8 @@ const Landfills = () => {
         capacity: parseInt(updateCapacity),
         latitude: parseFloat(updateLatitude),
         longitude: parseFloat(updateLongitude),
+        start_time: parseInt(updateStartTime),
+        end_time: parseInt(updateEndTime),
       })
       .then((res) => {
         if (res.status === 200) {
@@ -124,10 +135,7 @@ const Landfills = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
-        if (err.response.status === 400) {
-          toast.error(err.response.data?.message);
-        }
+        toast.error(err.response.data?.message);
         toast.error("Error occurred while updating Landfill");
       })
       .finally(() => {
@@ -144,6 +152,8 @@ const Landfills = () => {
         capacity: parseInt(createCapacity),
         longitude: parseFloat(createLongitude),
         latitude: parseFloat(createLatitude),
+        start_time: parseInt(createStartTime),
+        end_time: parseInt(createEndTime),
       })
       .then((res) => {
         if (res.status === 201) {
@@ -152,10 +162,7 @@ const Landfills = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
-        if (err.response.status === 400) {
-          toast.error(err.response.data?.message);
-        }
+        toast.error(err.response.data?.message);
         toast.error("Error occurred while creating Landfill");
       })
       .finally(() => {
@@ -189,10 +196,7 @@ const Landfills = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
-        if (err.response.status === 400) {
-          toast.error(err.response.data?.message);
-        }
+        toast.error(err.response.data?.message);
         toast.error("Error occurred while deleting Landfill");
       })
       .finally(() => {
@@ -210,10 +214,7 @@ const Landfills = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
-        if (err.response.status === 400) {
-          toast.error(err.response.data?.message);
-        }
+        toast.error(err.response.data?.message);
       })
       .finally(() => {
         setLandfillLoading(false);
@@ -235,10 +236,7 @@ const Landfills = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
-        if (err.response.status === 400) {
-          toast.error(err.response.data?.message);
-        }
+        toast.error(err.response.data?.message);
       })
       .finally(() => {
         setProfileLoading(false);
@@ -246,15 +244,18 @@ const Landfills = () => {
   };
 
   useEffect(() => {
-    if (openEdit && updateLandfill.id) {
+    if (openEdit) {
       setUpdateName(updateLandfill.name);
       setUpdateCapacity(updateLandfill.capacity);
       setUpdateLongitude(updateLandfill.longitude);
       setUpdateLatitude(updateLandfill.latitude);
+      setUpdateStartTime(updateLandfill.start_time);
+      setUpdateEndTime(updateLandfill.end_time);
     }
   }, [openEdit, updateLandfill]);
 
   useEffect(() => {
+    convertTo12HourFormat();
     getUsersByRole([0, 3]);
     getLandfill();
     getProfile();
@@ -340,6 +341,16 @@ const Landfills = () => {
                     title="Longitude"
                     dataIndex="longitude"
                     sorter={(a, b) => a.longitude - b.longitude}
+                  ></Column>
+                  <Column
+                    title="Start Time"
+                    dataIndex="start_time"
+                    sorter={(a, b) => a.start_time - b.start_time}
+                  ></Column>
+                  <Column
+                    title="End Time"
+                    dataIndex="end_time"
+                    sorter={(a, b) => a.end_time - b.end_time}
                   ></Column>
                   {globalState.user?.role.permissions.includes(
                     "create_landfill",
@@ -526,6 +537,18 @@ const Landfills = () => {
                       className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
                       onChange={(e) => setCreateLongitude(e.target.value)}
                     />
+                    <Select
+                      placeholder="Select Start Time"
+                      className="w-full rounded-md focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
+                      onChange={(value) => setCreateStartTime(value)}
+                      options={timeArray}
+                    />
+                    <Select
+                      placeholder="Select End Time"
+                      className="w-full rounded-md focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
+                      onChange={(value) => setCreateEndTime(value)}
+                      options={timeArray}
+                    />
                   </div>
                 </Modal>
                 <Modal
@@ -572,6 +595,20 @@ const Landfills = () => {
                       value={updateLongitude}
                       className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
                       onChange={(e) => setUpdateLongitude(e.target.value)}
+                    />
+                    <Select
+                      placeholder="Start Time"
+                      value={updateStartTime}
+                      className="w-full rounded-md focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
+                      onChange={(value) => setUpdateStartTime(value)}
+                      options={timeArray}
+                    />
+                    <Select
+                      placeholder="End Time"
+                      value={updateEndTime}
+                      className="w-full rounded-md focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
+                      onChange={(value) => setUpdateEndTime(value)}
+                      options={timeArray}
                     />
                   </div>
                 </Modal>
