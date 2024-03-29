@@ -310,7 +310,7 @@ async def get_fleet(fleetRequest: FleetRequest, user: User = Depends(get_user_fr
         weight = fleetRequest.weight
 
         sts_vehicle = db.query(Vehicle).filter(Vehicle.sts_id == sts_id).all()
-        no_of_vehicles = len(sts_vehicle)
+        no_of_vehicles = 0
 
         costs_unloaded = []
         costs_loaded = []
@@ -321,6 +321,8 @@ async def get_fleet(fleetRequest: FleetRequest, user: User = Depends(get_user_fr
 
             if v.available==0:
                 continue
+            
+            no_of_vehicles += 1
 
             costs_unloaded.append(v.empty_cost)
             costs_loaded.append(v.loaded_cost)
