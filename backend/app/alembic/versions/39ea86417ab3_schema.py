@@ -48,6 +48,7 @@ def upgrade() -> None:
     op.create_table('sts',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
+    sa.Column('capacity', sa.Float(), nullable=False),
     sa.Column('ward_no', sa.Integer(), nullable=False),
     sa.Column('latitude', sa.Float(), nullable=False),
     sa.Column('longitude', sa.Float(), nullable=False),
