@@ -65,6 +65,9 @@ def upgrade() -> None:
         {"id": 23, "name": "view_transfer", "category": "transfer"},
         {"id": 24, "name": "update_transfer_sts", "category": "transfer"},
         {"id": 25, "name": "update_transfer_landfill", "category": "transfer"},
+
+        {"id": 26, "name": "report_available_vehicles", "category": "report"},
+
     ])
 
     roles_permissions_tbl = sa.Table('roles_permissions', meta, autoload_with=op.get_bind())
@@ -107,6 +110,9 @@ def upgrade() -> None:
         # System Admin - Transfer
         {"role_id": 1, "permission_id": 23},
 
+        # System Admin - Report
+        {"role_id": 1, "permission_id": 26},
+
         # -------------------------------------
 
         # STS Manager
@@ -123,6 +129,9 @@ def upgrade() -> None:
         {"role_id": 2, "permission_id": 23},
         {"role_id": 2, "permission_id": 24},
 
+        # STS Manager - Report
+        {"role_id": 2, "permission_id": 26},
+
         # -------------------------------------
 
         # Landfill Manager 
@@ -135,6 +144,8 @@ def upgrade() -> None:
         # Landfill Manager - Transfer
         {"role_id": 3, "permission_id": 23},
         {"role_id": 3, "permission_id": 25},  
+
+        # Landfill Manager - Report
 
         # -------------------------------------
     ])
