@@ -150,7 +150,7 @@ def upgrade() -> None:
     # STS
     sts_tbl = sa.Table('sts', meta, autoload_with=op.get_bind())
     op.bulk_insert(sts_tbl, [
-        {"id": 0, "name": "STS 1", "ward_no": 1, "latitude": 27.7172, "longitude": 85.3240}
+        {"id": 0, "name": "Farmgate", "ward_no": 1, "latitude": 23.7561, "longitude": 90.3872}
     ])
 
     # STS Manager
@@ -162,7 +162,7 @@ def upgrade() -> None:
     # Landfill
     landfill_tbl = sa.Table('landfills', meta, autoload_with=op.get_bind())
     op.bulk_insert(landfill_tbl, [
-        {"id": 0, "name": "Landfill 1", "latitude": 27.7172, "longitude": 85.3240, "capacity": 1000, "current_capacity": 100}
+        {"id": 0, "name": "Aminbazar", "latitude": 23.7861, "longitude": 90.3299, "capacity": 1000, "current_capacity": 1000}
     ])
 
     # Landfill Manager
@@ -174,7 +174,7 @@ def upgrade() -> None:
     # Vehicle
     vehicle_tbl = sa.Table('vehicles', meta, autoload_with=op.get_bind())
     op.bulk_insert(vehicle_tbl, [
-        {"id": 0, "reg_no": "BA 1 PA 1234", "capacity": 1000, "vtype": "Truck", "loaded_cost": 1000, "empty_cost": 500, "available": 1, "sts_id": 0}
+        {"id": 0, "reg_no": "BA 1 PA 1234", "capacity": 3, "vtype": "Truck", "loaded_cost": 0.3, "empty_cost": 0.1, "available": 1, "sts_id": 0}
     ])
 
 

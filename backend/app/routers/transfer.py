@@ -6,6 +6,8 @@ from app.dependencies import get_user_from_session
 from app.models import Transfer, Vehicle, STS, Landfill, User, STSmanager, LandfillManager
 from app.config import SessionLocal
 from datetime import datetime
+from math import radians, sin, cos, sqrt, atan2
+
 
 router = APIRouter(
     prefix="/transfer",
@@ -150,8 +152,75 @@ async def sts_departure(transfer: STSdeparture, user: User = Depends(get_user_fr
         landfill.current_capacity = landfill.current_capacity - transfer.weight
         
         db.commit()
-        return JSONResponse(status_code=200, content={"message": "Transfer added successfully"})
+        return JSONResponse(status_code=201, content={"message": "Transfer added successfully"})
     
+class OILrequest(BaseModel):
+    vehicle_id: int
+    landfill_id: int
+    weight: float
+
+@router.post("/oil")
+async def sts_oil(transfer: OILrequest, user: User = Depends(get_user_from_session)):
+    if "update_transfer_sts" not in user["role"]["permissions"]:
+        return JSONResponse(status_code=401, content={"message": "Not enough permissions"})
+    
+    if user["role"]["id"] != 2: # STS
+        return JSONResponse(status_code=401, content={"message": "Not enough permissions"})
+    
+    with SessionLocal() as db:
+        user_sts = db.query(STSmanager).filter(STSmanager.user_id == user["id"]).first()
+        if user_sts is None:
+            return JSONResponse(status_code=404, content={"message": "STS not found"})
+        
+        sts = db.query(STS).filter(STS.id == user_sts.sts_id).first()
+        if sts is None:
+            return JSONResponse(status_code=404, content={"message": "STS not found"})
+        
+        vehicle = db.query(Vehicle).filter(Vehicle.id == transfer.vehicle_id).first()
+        if vehicle is None:
+            return JSONResponse(status_code=404, content={"message": "Vehicle not found"})
+        
+        # TODO: check for vehicle availability
+        
+        landfill = db.query(Landfill).filter(Landfill.id == transfer.landfill_id).first()
+        if landfill is None:
+            return JSONResponse(status_code=404, content={"message": "Landfill not found"})
+        
+        lat1 = landfill.latitude
+        lon1 = landfill.longitude
+        lat2 = sts.latitude
+        lon2 = sts.longitude
+
+        # Convert latitude and longitude from degrees to radians
+        lat1, lon1, lat2, lon2 = map(radians, [lat1, lon1, lat2, lon2])
+
+        # Haversine formula
+        dlon = lon2 - lon1
+        dlat = lat2 - lat1
+        a = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
+        c = 2 * atan2(sqrt(a), sqrt(1 - a))
+        # Radius of earth in kilometers. Use 3956 for miles
+        radius = 6371  
+        distance = radius * c
+        
+        print("Distance in km:", distance)
+
+        # cost calculation
+        ratio=transfer.weight/vehicle.capacity
+        cost_journey = vehicle.empty_cost + ratio*(vehicle.loaded_cost-vehicle.empty_cost)
+        
+        to_landfill=distance*cost_journey
+        from_landfill = distance*vehicle.empty_cost
+        total_bill = to_landfill + from_landfill
+
+        return JSONResponse(status_code=200, content={
+            "to_landfill": to_landfill,
+            "from_landfill": from_landfill,
+            "round_trip": total_bill,
+            "distance": distance
+            })
+
+
 
 class LandfillArrival(BaseModel):
     weight: float
