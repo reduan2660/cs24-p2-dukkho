@@ -7,8 +7,10 @@ import { Modal, Table } from "antd";
 import Column from "antd/es/table/Column";
 import api from "../api";
 import { useGlobalState } from "../GlobalStateProvider";
+import { useNavigate } from "react-router-dom";
 
 const TransferLandfill = () => {
+  const navigate = useNavigate();
   const [profileLoading, setProfileLoading] = useState(false);
   const [transferLoading, setTransferLoading] = useState(false);
   const { globalState, setGlobalState } = useGlobalState();
@@ -26,18 +28,22 @@ const TransferLandfill = () => {
 
   function getStatusColor(statusId) {
     switch (statusId) {
-      case 0:
-        return "bg-green-600"; // Trip completed
       case 1:
-        return "bg-yellow-600"; // Departed from sts
+        return "bg-yellow-500"; // Departed from sts
       case 2:
         return "bg-blue-600"; // Arrived at landfill
       case 3:
-        return "bg-red-600"; // Departed from landfill
+        return "bg-orange-500"; // Departed from landfill
+      case 4:
+        return "bg-green-600"; // Trip completed
       default:
         return "bg-gray-600"; // Default color if statusId is unknown
     }
   }
+
+  const convertUTC = (time) => {
+    return new Date(time).toLocaleString();
+  };
 
   const setArrivedAtLandfill = () => {
     api
@@ -59,14 +65,13 @@ const TransferLandfill = () => {
       });
   };
 
-  const setDepartedFromLandfill = () => {
+  const setDepartedFromLandfill = (id) => {
     api
-      .patch(`/transfer/landfill/departure/${transfer.id}`)
+      .patch(`/transfer/landfill/departure/${id}`)
       .then((res) => {
         if (res.status === 200) {
           toast.success("Departed from Landfill successfully");
           getTransfers();
-          setOpenArrival(false);
         }
       })
       .catch((err) => {
@@ -117,6 +122,8 @@ const TransferLandfill = () => {
             ...prevState,
             user: res.data,
           }));
+          if (!res.data.role.permissions.includes("view_transfer"))
+            navigate("/", { state: "access_denied" });
         }
       })
       .catch((err) => {
@@ -141,13 +148,12 @@ const TransferLandfill = () => {
       <div className="min-h-screen">
         <ToastContainer
           position="top-right"
-          autoClose={5000}
+          autoClose={2000}
           hideProgressBar={false}
-          newestOnTop={false}
+          newestOnTop={true}
           closeOnClick
           rtl={false}
-          pauseOnFocusLoss
-          draggable={false}
+          draggable={true}
           pauseOnHover={false}
           theme="colored"
         />
@@ -252,7 +258,7 @@ const TransferLandfill = () => {
                     sorter={(a, b) => a.status.id - b.status.id}
                     render={(sts, record) => (
                       <div
-                        className={`rounded-full px-2 py-1 text-center text-sm text-white ${getStatusColor(sts.id)}`}
+                        className={`rounded-full px-2 py-1 text-center text-sm text-white ${getStatusColor(record.status.id)}`}
                       >
                         {record.status.desc}
                       </div>
@@ -286,7 +292,7 @@ const TransferLandfill = () => {
                           <div className="flex items-center gap-x-4">
                             <button
                               onClick={() => {
-                                setDepartedFromLandfill();
+                                setDepartedFromLandfill(record.id);
                                 setTransfer(record);
                               }}
                               className="rounded-md bg-xblue px-4 py-1 text-sm font-medium text-white transition-all duration-300 hover:bg-blue-600"
@@ -307,6 +313,7 @@ const TransferLandfill = () => {
                   onOk={() => setViewVehicle(false)}
                   okText="Close"
                   cancelButtonProps={{ style: { display: "none" } }}
+                  closable={false}
                   centered
                 >
                   <div className="mx-2 my-4 grid grid-cols-2 gap-y-4 lg:mx-4 lg:my-8">
@@ -334,6 +341,7 @@ const TransferLandfill = () => {
                   onOk={() => setViewSTS(false)}
                   okText="Close"
                   cancelButtonProps={{ style: { display: "none" } }}
+                  closable={false}
                   centered
                 >
                   <div className="mx-2 my-4 grid grid-cols-2 gap-y-4 lg:mx-4 lg:my-8">
@@ -361,6 +369,7 @@ const TransferLandfill = () => {
                   onOk={() => setViewLandfill(false)}
                   okText="Close"
                   cancelButtonProps={{ style: { display: "none" } }}
+                  closable={false}
                   centered
                 >
                   <div className="mx-2 my-4 grid grid-cols-2 gap-y-4 lg:mx-4 lg:my-8">
@@ -383,18 +392,36 @@ const TransferLandfill = () => {
                   </div>
                 </Modal>
                 <Modal
-                  title="Create New Vehicle Record"
+                  title="Enter received weight"
                   open={openArrival}
                   onOk={setArrivedAtLandfill}
                   onCancel={() => setOpenArrival(false)}
+                  closable={false}
                   centered
                 >
                   <div className="mx-2 my-4 flex flex-col gap-y-4 lg:mx-4 lg:my-8">
                     <input
                       type="number"
-                      placeholder="Weight"
+                      min={0}
+                      max={transfer.sts_departure_weight}
+                      placeholder={`Weight (max: ${
+                        transfer.sts_departure_weight
+                          ? transfer.sts_departure_weight
+                          : 0
+                      })`}
                       className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
-                      onChange={(e) => setWeight(e.target.value)}
+                      value={weight}
+                      onChange={(e) => {
+                        const inputValue = e.target.value;
+                        const maxValue = transfer.sts_departure_weight;
+
+                        if (
+                          inputValue === "" ||
+                          (inputValue >= 0 && inputValue <= maxValue)
+                        ) {
+                          setWeight(inputValue);
+                        }
+                      }}
                     />
                   </div>
                 </Modal>
@@ -404,6 +431,7 @@ const TransferLandfill = () => {
                   onOk={() => setViewInfo(false)}
                   okText="Close"
                   cancelButtonProps={{ style: { display: "none" } }}
+                  closable={false}
                   centered
                 >
                   <div className="mx-2 my-4 grid grid-cols-2 gap-y-4 lg:mx-4 lg:my-8">
@@ -431,7 +459,13 @@ const TransferLandfill = () => {
                                 )
                                 .join(" ")}
                             </p>
-                            <p className="text-xdark">{value}</p>
+                            <p className="text-xdark">
+                              {key.includes("time")
+                                ? convertUTC(value)
+                                : value
+                                  ? value
+                                  : "N/A"}
+                            </p>
                           </div>
                         );
                       })}

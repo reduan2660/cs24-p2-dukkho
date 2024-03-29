@@ -8,8 +8,10 @@ import Column from "antd/es/table/Column";
 import api from "../api";
 import { Select } from "antd";
 import { useGlobalState } from "../GlobalStateProvider";
+import { useNavigate } from "react-router-dom";
 
 const Vehicles = () => {
+  const navigate = useNavigate();
   const [createReg, setCreateReg] = useState("");
   const [createCapacity, setCreateCapacity] = useState("");
   const [createVtype, setCreateVtype] = useState("");
@@ -180,6 +182,8 @@ const Vehicles = () => {
             ...prevState,
             user: res.data,
           }));
+          if (!res.data.role.permissions.includes("list_vehicle"))
+            navigate("/", { state: "access_denied" });
         }
       })
       .catch((err) => {
@@ -201,7 +205,7 @@ const Vehicles = () => {
       setUpdateStsId(updateVehicle.sts["name"].toString());
       setUpdateLoadedCost(updateVehicle.loaded_cost.toString());
       setUpdateEmptyCost(updateVehicle.empty_cost.toString());
-      console.log(updateVehicle.sts["name"].toString(),)
+      console.log(updateVehicle.sts["name"].toString());
     }
   }, [openEdit, updateVehicle]);
 
@@ -217,13 +221,12 @@ const Vehicles = () => {
       <div className="min-h-screen">
         <ToastContainer
           position="top-right"
-          autoClose={5000}
+          autoClose={2000}
           hideProgressBar={false}
-          newestOnTop={false}
+          newestOnTop={true}
           closeOnClick
           rtl={false}
-          pauseOnFocusLoss
-          draggable={false}
+          draggable={true}
           pauseOnHover={false}
           theme="colored"
         />
@@ -347,6 +350,7 @@ const Vehicles = () => {
                   onOk={deleteVehicle}
                   okText="Delete"
                   onCancel={() => setOpenDelete(false)}
+                  closable={false}
                   centered
                 >
                   <div className="mx-2 my-4">
@@ -363,6 +367,7 @@ const Vehicles = () => {
                   onOk={createVehicle}
                   confirmLoading={confirmLoading}
                   onCancel={() => setOpenCreate(false)}
+                  closable={false}
                   centered
                 >
                   <div className="mx-2 my-4 flex flex-col gap-y-4 lg:mx-4 lg:my-8">
@@ -388,6 +393,10 @@ const Vehicles = () => {
                         {
                           value: 7,
                           label: "7 Ton",
+                        },
+                        {
+                          value: 15,
+                          label: "15 Ton",
                         },
                       ]}
                     />
@@ -446,6 +455,7 @@ const Vehicles = () => {
                   okText="Update"
                   confirmLoading={confirmLoading}
                   onCancel={() => setOpenEdit(false)}
+                  closable={false}
                   centered
                 >
                   <div className="mx-2 my-4 flex flex-col gap-y-4 lg:mx-4 lg:my-8">
@@ -473,6 +483,10 @@ const Vehicles = () => {
                         {
                           value: 7,
                           label: "7 Ton",
+                        },
+                        {
+                          value: 15,
+                          label: "15 Ton",
                         },
                       ]}
                     />

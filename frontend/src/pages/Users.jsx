@@ -8,8 +8,10 @@ import { Select } from "antd";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useGlobalState } from "../GlobalStateProvider";
+import { useNavigate } from "react-router-dom";
 
 const Users = () => {
+  const navigate = useNavigate();
   const [users, setUsers] = useState([]);
   const [roles, setRoles] = useState([]);
   const [name, setName] = useState("");
@@ -179,6 +181,8 @@ const Users = () => {
             ...prevState,
             user: res.data,
           }));
+          if (!res.data.role.permissions.includes("list_all_users"))
+            navigate("/", { state: "access_denied" });
         }
       })
       .catch((err) => {
@@ -210,13 +214,12 @@ const Users = () => {
       <div className="min-h-screen">
         <ToastContainer
           position="top-right"
-          autoClose={5000}
+          autoClose={2000}
           hideProgressBar={false}
-          newestOnTop={false}
+          newestOnTop={true}
           closeOnClick
           rtl={false}
-          pauseOnFocusLoss
-          draggable={false}
+          draggable={true}
           pauseOnHover={false}
           theme="colored"
         />
@@ -345,6 +348,7 @@ const Users = () => {
                   onOk={ConfirmRole}
                   okText="Confirm"
                   onCancel={() => setOpenConfirm(false)}
+                  closable={false}
                   centered
                 >
                   <div className="mx-2 my-4">
@@ -358,6 +362,7 @@ const Users = () => {
                   onOk={deleteUser}
                   okText="Delete"
                   onCancel={() => setOpenDelete(false)}
+                  closable={false}
                   centered
                 >
                   <div className="mx-2 my-4">
@@ -371,6 +376,7 @@ const Users = () => {
                   onOk={CreateUser}
                   confirmLoading={confirmLoading}
                   onCancel={() => setOpenCreate(false)}
+                  closable={false}
                   centered
                 >
                   <div className="mx-2 my-4 flex flex-col gap-y-4 lg:mx-4 lg:my-8">

@@ -8,8 +8,10 @@ import Column from "antd/es/table/Column";
 import api from "../api";
 import { Select } from "antd";
 import { useGlobalState } from "../GlobalStateProvider";
+import { useNavigate } from "react-router-dom";
 
 const Sts = () => {
+  const navigate = useNavigate();
   const [createName, setCreateName] = useState("");
   const [createWard, setCreateWard] = useState("");
   const [createLongitude, setCreateLongitude] = useState("");
@@ -226,6 +228,8 @@ const Sts = () => {
             ...prevState,
             user: res.data,
           }));
+          if (!res.data.role.permissions.includes("list_all_sts"))
+            navigate("/", { state: "access_denied" });
         }
       })
       .catch((err) => {
@@ -262,11 +266,10 @@ const Sts = () => {
           position="top-right"
           autoClose={5000}
           hideProgressBar={false}
-          newestOnTop={false}
+          newestOnTop={true}
           closeOnClick
           rtl={false}
-          pauseOnFocusLoss
-          draggable={false}
+          draggable={true}
           pauseOnHover={false}
           theme="colored"
         />
@@ -403,6 +406,7 @@ const Sts = () => {
                   onCancel={() => {
                     setOpenUpdate(false);
                   }}
+                  closable={false}
                   centered
                 >
                   <div className="mx-2 my-4">
@@ -419,6 +423,7 @@ const Sts = () => {
                     setOpenAssignManager(false);
                     setSelectedManagers([]);
                   }}
+                  closable={false}
                   centered
                 >
                   <div className="mx-2 my-4">
@@ -466,6 +471,7 @@ const Sts = () => {
                   onOk={deleteSTS}
                   okText="Delete"
                   onCancel={() => setOpenDelete(false)}
+                  closable={false}
                   centered
                 >
                   <div className="mx-2 my-4">
@@ -479,6 +485,7 @@ const Sts = () => {
                   onOk={createSTS}
                   confirmLoading={confirmLoading}
                   onCancel={() => setOpenCreate(false)}
+                  closable={false}
                   centered
                 >
                   <div className="mx-2 my-4 flex flex-col gap-y-4 lg:mx-4 lg:my-8">
@@ -515,6 +522,7 @@ const Sts = () => {
                   okText="Update"
                   confirmLoading={confirmLoading}
                   onCancel={() => setOpenEdit(false)}
+                  closable={false}
                   centered
                 >
                   <div className="mx-2 my-4 flex flex-col gap-y-4 lg:mx-4 lg:my-8">

@@ -64,13 +64,12 @@ const SidePanel = () => {
       <Sidebar collapsed={collapsed} className="h-full">
         <ToastContainer
           position="top-right"
-          autoClose={5000}
+          autoClose={2000}
           hideProgressBar={false}
-          newestOnTop={false}
+          newestOnTop={true}
           closeOnClick
           rtl={false}
-          pauseOnFocusLoss
-          draggable={false}
+          draggable={true}
           pauseOnHover={false}
           theme="colored"
         />
@@ -213,7 +212,9 @@ const SidePanel = () => {
             </div>
           )}
           {globalState.user?.role.permissions.includes("view_transfer") &&
-            (globalState.user?.role.name === "STS Manager" ? (
+            (globalState.user?.role.permissions.includes(
+              "update_transfer_sts",
+            ) ? (
               <div
                 className={`w-full ${
                   location.pathname === "/transfer/sts" ? "bg-blue-100" : ""
@@ -228,7 +229,9 @@ const SidePanel = () => {
                   <div className="font-medium text-xgray">Transfer Records</div>
                 </MenuItem>
               </div>
-            ) : globalState.user?.role.name === "Landfill Manager" ? (
+            ) : globalState.user?.role.permissions.includes(
+                "update_transfer_landfill",
+              ) ? (
               <div
                 className={`w-full ${
                   location.pathname === "/transfer/landfill"
@@ -264,7 +267,9 @@ const SidePanel = () => {
             }}
           >
             <MenuItem icon={<FiUser className="text-lg text-xgray" />}>
-              <div className="font-medium text-xgray">Account</div>
+              <div className="font-medium text-xgray">
+                {globalState.user?.name ? globalState.user?.name : "Account"}
+              </div>
             </MenuItem>
           </div>
           <div

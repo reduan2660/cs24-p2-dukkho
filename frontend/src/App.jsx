@@ -1,6 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
-import Home from "./pages/Home";
 import Users from "./pages/Users";
 import { GlobalStateProvider } from "./GlobalStateProvider";
 import Roles from "./pages/Roles";
@@ -11,13 +10,14 @@ import STS from "./pages/STS";
 import Landfills from "./pages/Landfills";
 import TransferSTS from "./pages/TransferSTS";
 import TransferLandfill from "./pages/TransferLandfill";
+import Dashboard from "./pages/Dashboard";
 
 const App = () => {
   return (
     <GlobalStateProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Dashboard />} />
           <Route path="/login" element={<Login />} />
           <Route path="/auth/reset-password" element={<ResetPassword />} />
           <Route path="/auth/change-password" element={<ChangePassword />} />
