@@ -7,7 +7,7 @@ from app.models import Transfer, Vehicle, STS, Landfill, User, STSmanager, Landf
 from app.config import SessionLocal
 from datetime import datetime
 from math import radians, sin, cos, sqrt, atan2
-
+from app.utils.fleet import optimizeFleet
 
 router = APIRouter(
     prefix="/transfer",
@@ -154,71 +154,6 @@ async def sts_departure(transfer: STSdeparture, user: User = Depends(get_user_fr
         db.commit()
         return JSONResponse(status_code=201, content={"message": "Transfer added successfully"})
     
-class OILrequest(BaseModel):
-    vehicle_id: int
-    landfill_id: int
-    weight: float
-
-@router.post("/oil")
-async def sts_oil(transfer: OILrequest, user: User = Depends(get_user_from_session)):
-    if "update_transfer_sts" not in user["role"]["permissions"]:
-        return JSONResponse(status_code=401, content={"message": "Not enough permissions"})
-    
-    if user["role"]["id"] != 2: # STS
-        return JSONResponse(status_code=401, content={"message": "Not enough permissions"})
-    
-    with SessionLocal() as db:
-        user_sts = db.query(STSmanager).filter(STSmanager.user_id == user["id"]).first()
-        if user_sts is None:
-            return JSONResponse(status_code=404, content={"message": "STS not found"})
-        
-        sts = db.query(STS).filter(STS.id == user_sts.sts_id).first()
-        if sts is None:
-            return JSONResponse(status_code=404, content={"message": "STS not found"})
-        
-        vehicle = db.query(Vehicle).filter(Vehicle.id == transfer.vehicle_id).first()
-        if vehicle is None:
-            return JSONResponse(status_code=404, content={"message": "Vehicle not found"})
-        
-        # TODO: check for vehicle availability
-        
-        landfill = db.query(Landfill).filter(Landfill.id == transfer.landfill_id).first()
-        if landfill is None:
-            return JSONResponse(status_code=404, content={"message": "Landfill not found"})
-        
-        lat1 = landfill.latitude
-        lon1 = landfill.longitude
-        lat2 = sts.latitude
-        lon2 = sts.longitude
-
-        # Convert latitude and longitude from degrees to radians
-        lat1, lon1, lat2, lon2 = map(radians, [lat1, lon1, lat2, lon2])
-
-        # Haversine formula
-        dlon = lon2 - lon1
-        dlat = lat2 - lat1
-        a = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
-        c = 2 * atan2(sqrt(a), sqrt(1 - a))
-        # Radius of earth in kilometers. Use 3956 for miles
-        radius = 6371  
-        distance = radius * c
-        
-        print("Distance in km:", distance)
-
-        # cost calculation
-        ratio=transfer.weight/vehicle.capacity
-        cost_journey = vehicle.empty_cost + ratio*(vehicle.loaded_cost-vehicle.empty_cost)
-        
-        to_landfill=distance*cost_journey
-        from_landfill = distance*vehicle.empty_cost
-        total_bill = to_landfill + from_landfill
-
-        return JSONResponse(status_code=200, content={
-            "to_landfill": to_landfill,
-            "from_landfill": from_landfill,
-            "round_trip": total_bill,
-            "distance": distance
-            })
 
 
 
@@ -283,3 +218,154 @@ async def sts_arrival(transfer_id: int, user: User = Depends(get_user_from_sessi
         db.commit()
 
         return JSONResponse(status_code=200, content={"message": "Transfer updated successfully"})
+
+
+def haversine_distance(lat1, lon1, lat2, lon2):
+    # Convert latitude and longitude from degrees to radians
+    lat1, lon1, lat2, lon2 = map(radians, [lat1, lon1, lat2, lon2])
+
+    # Haversine formula
+    dlon = lon2 - lon1
+    dlat = lat2 - lat1
+    a = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
+    c = 2 * atan2(sqrt(a), sqrt(1 - a))
+    radius = 6371  
+    distance = radius * c
+    return distance
+
+class OILrequest(BaseModel):
+    vehicle_id: int
+    landfill_id: int
+    weight: float
+
+@router.post("/oil")
+async def sts_oil(transfer: OILrequest, user: User = Depends(get_user_from_session)):
+    if "update_transfer_sts" not in user["role"]["permissions"]:
+        return JSONResponse(status_code=401, content={"message": "Not enough permissions"})
+    
+    if user["role"]["id"] != 2: # STS
+        return JSONResponse(status_code=401, content={"message": "Not enough permissions"})
+    
+    with SessionLocal() as db:
+        user_sts = db.query(STSmanager).filter(STSmanager.user_id == user["id"]).first()
+        if user_sts is None:
+            return JSONResponse(status_code=404, content={"message": "STS not found"})
+        
+        sts = db.query(STS).filter(STS.id == user_sts.sts_id).first()
+        if sts is None:
+            return JSONResponse(status_code=404, content={"message": "STS not found"})
+        
+        vehicle = db.query(Vehicle).filter(Vehicle.id == transfer.vehicle_id).first()
+        if vehicle is None:
+            return JSONResponse(status_code=404, content={"message": "Vehicle not found"})
+        
+        # TODO: check for vehicle availability
+        
+        landfill = db.query(Landfill).filter(Landfill.id == transfer.landfill_id).first()
+        if landfill is None:
+            return JSONResponse(status_code=404, content={"message": "Landfill not found"})
+        
+        lat1 = landfill.latitude
+        lon1 = landfill.longitude
+        lat2 = sts.latitude
+        lon2 = sts.longitude
+        distance = haversine_distance(lat1, lon1, lat2, lon2)
+
+        
+        # cost calculation
+        ratio=transfer.weight/vehicle.capacity
+        cost_journey = vehicle.empty_cost + ratio*(vehicle.loaded_cost-vehicle.empty_cost)
+        
+        to_landfill=distance*cost_journey
+        from_landfill = distance*vehicle.empty_cost
+        total_bill = to_landfill + from_landfill
+
+        return JSONResponse(status_code=200, content={
+            "to_landfill": to_landfill,
+            "from_landfill": from_landfill,
+            "round_trip": total_bill,
+            "distance": distance
+            })
+
+
+
+class FleetRequest(BaseModel):
+    weight: float
+
+@router.get("/fleet")
+async def get_fleet(fleetRequest: FleetRequest, user: User = Depends(get_user_from_session)):
+    if "update_transfer_sts" not in user["role"]["permissions"]:
+        return JSONResponse(status_code=401, content={"message": "Not enough permissions"})
+    
+    with SessionLocal() as db:
+        user_sts = db.query(STSmanager).filter(STSmanager.user_id == user["id"]).first()
+        if user_sts is None:
+            return JSONResponse(status_code=404, content={"message": "STS not found"})
+        
+        sts = db.query(STS).filter(STS.id == user_sts.sts_id).first()
+        if sts is None:
+            return JSONResponse(status_code=404, content={"message": "STS not found"})
+        
+        sts_id = sts.id
+        weight = fleetRequest.weight
+
+        sts_vehicle = db.query(Vehicle).filter(Vehicle.sts_id == sts_id).all()
+        no_of_vehicles = len(sts_vehicle)
+
+        costs_unloaded = []
+        costs_loaded = []
+        vehicle_capacities = []
+        vehicle_remaining_trips = []
+        for v in sts_vehicle:
+            costs_unloaded.append(v.empty_cost)
+            costs_loaded.append(v.loaded_cost)
+            vehicle_capacities.append(v.capacity)
+
+            # count the number of transfers of this vehicle today
+            today_starts_timestamp = int(datetime.combine(datetime.today(), datetime.min.time()).timestamp()) # Get today's start timestamp
+            transfer_count = db.query(Transfer).filter(Transfer.vehicle_id == v.id).filter(Transfer.sts_departure_time >= today_starts_timestamp).count()
+            vehicle_remaining_trips.append(3 - transfer_count)
+
+        all_landfill = db.query(Landfill).all()
+
+        # sort by ascending order of distance from sts
+        all_landfill.sort(key=lambda x: haversine_distance(sts.latitude, sts.longitude, x.latitude, x.longitude))        
+        no_of_landfills = len(all_landfill)
+
+        landfill_capacities = []
+        landfill_capacitites_csum = []
+        landfill_distances = []
+        landfill_ids=[]
+
+        for landfill in all_landfill:
+            landfill_capacities.append(landfill.capacity)
+            landfill_distances.append(haversine_distance(sts.latitude, sts.longitude, landfill.latitude, landfill.longitude))
+            landfill_ids.append(landfill.id)
+            landfill_capacitites_csum.append(sum(landfill_capacities))
+
+        max_pos_weight, cost, number_of_transfers, transfers = optimizeFleet(sts, weight, costs_unloaded, costs_loaded, vehicle_capacities, vehicle_remaining_trips, no_of_vehicles, landfill_capacities, landfill_distances, no_of_landfills, landfill_capacitites_csum, landfill_ids)
+
+
+        transfer_response = []
+        for i in range(len(transfers)):
+
+            transfer_response.append({
+                "vehicle": {
+                    "id": transfers[i][0],
+                    "reg_no": db.query(Vehicle).filter(Vehicle.id == transfers[i][0]).first().reg_no
+                },
+                "weight": transfers[i][1],
+                "landfill": {
+                    "id": transfers[i][2],
+                    "name": db.query(Landfill).filter(Landfill.id == transfers[i][2]).first().name
+                },
+                 "cost": transfers[i][3]
+            })
+            
+
+        return JSONResponse(status_code=200, content={
+            "max_possible_weight": max_pos_weight,
+            "cost": cost,
+            "number_of_transfers": number_of_transfers,
+            "transfers": transfer_response
+            })
