@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Sidebar, Menu, MenuItem } from "react-pro-sidebar";
 import { useNavigate, useLocation } from "react-router-dom";
 import { IoChevronForwardOutline } from "react-icons/io5";

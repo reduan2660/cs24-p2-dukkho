@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import SidePanel from "../components/SidePanel";
 import api from "../api";
 import { Modal, Table } from "antd";
@@ -47,7 +47,6 @@ const Users = () => {
       })
       .catch((err) => {
         toast.error(err.response.data?.message);
-        toast.error("Error occurred while updating name");
       });
     setEditingUserId(null);
   };
@@ -75,7 +74,6 @@ const Users = () => {
       })
       .catch((err) => {
         toast.error(err.response.data?.message);
-        toast.error("Error occurred while updating role");
       })
       .finally(() => {
         setOpenConfirm(false);
@@ -101,7 +99,6 @@ const Users = () => {
       })
       .catch((err) => {
         toast.error(err.response.data?.message);
-        toast.error("Error occurred while creating user");
       })
       .finally(() => {
         setOpenCreate(false);
@@ -120,21 +117,10 @@ const Users = () => {
       })
       .catch((err) => {
         toast.error(err.response.data?.message);
-        toast.error("Error occurred while deleting user");
       })
       .finally(() => {
         setOpenDelete(false);
       });
-  };
-
-  const rowSelection = {
-    onChange: (selectedRowKeys, selectedRows) => {
-      // console.log(
-      //   `selectedRowKeys: ${selectedRowKeys}`,
-      //   "selectedRows: ",
-      //   selectedRows,
-      // );
-    },
   };
 
   const getUsers = () => {
@@ -234,10 +220,6 @@ const Users = () => {
                   dataSource={users}
                   rowKey="id"
                   style={{ overflowX: "auto" }}
-                  rowSelection={{
-                    type: "checkbox",
-                    ...rowSelection,
-                  }}
                 >
                   <Column
                     title="User ID"

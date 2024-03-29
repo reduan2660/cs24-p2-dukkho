@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import SidePanel from "../components/SidePanel";
@@ -57,6 +57,12 @@ const Landfills = () => {
     setTimeArray(timeArray);
   }
 
+  function convert24to12HourFormat(hour24) {
+    let label = hour24 >= 12 ? "PM" : "AM";
+    let hour12 = hour24 % 12 || 12; // Convert 0 to 12
+    return `${hour12} ${label}`;
+  }
+
   const assignManagers = () => {
     api
       .post(`/landfill/manager`, {
@@ -71,7 +77,6 @@ const Landfills = () => {
       })
       .catch((err) => {
         toast.error(err.response.data?.message);
-        toast.error("Error occurred while assigning manager(s)");
       })
       .finally(() => {
         setOpenAssignManager(false);
@@ -125,8 +130,8 @@ const Landfills = () => {
         capacity: parseInt(updateCapacity),
         latitude: parseFloat(updateLatitude),
         longitude: parseFloat(updateLongitude),
-        start_time: parseInt(updateStartTime),
-        end_time: parseInt(updateEndTime),
+        time_start: parseInt(updateStartTime),
+        time_end: parseInt(updateEndTime),
       })
       .then((res) => {
         if (res.status === 200) {
@@ -136,7 +141,6 @@ const Landfills = () => {
       })
       .catch((err) => {
         toast.error(err.response.data?.message);
-        toast.error("Error occurred while updating Landfill");
       })
       .finally(() => {
         setOpenEdit(false);
@@ -152,8 +156,8 @@ const Landfills = () => {
         capacity: parseInt(createCapacity),
         longitude: parseFloat(createLongitude),
         latitude: parseFloat(createLatitude),
-        start_time: parseInt(createStartTime),
-        end_time: parseInt(createEndTime),
+        time_start: parseInt(createStartTime),
+        time_end: parseInt(createEndTime),
       })
       .then((res) => {
         if (res.status === 201) {
@@ -163,22 +167,11 @@ const Landfills = () => {
       })
       .catch((err) => {
         toast.error(err.response.data?.message);
-        toast.error("Error occurred while creating Landfill");
       })
       .finally(() => {
         setOpenCreate(false);
         setConfirmLoading(false);
       });
-  };
-
-  const rowSelection = {
-    onChange: (selectedRowKeys, selectedRows) => {
-      //   console.log(
-      //     `selectedRowKeys: ${selectedRowKeys}`,
-      //     "selectedRows: ",
-      //     selectedRows,
-      //   );
-    },
   };
 
   const deleteModal = (id, name) => {
@@ -197,7 +190,6 @@ const Landfills = () => {
       })
       .catch((err) => {
         toast.error(err.response.data?.message);
-        toast.error("Error occurred while deleting Landfill");
       })
       .finally(() => {
         setOpenDelete(false);
@@ -247,10 +239,11 @@ const Landfills = () => {
     if (openEdit) {
       setUpdateName(updateLandfill.name);
       setUpdateCapacity(updateLandfill.capacity);
+      setUpdateCurrentCapacity(updateLandfill.current_capacity);
       setUpdateLongitude(updateLandfill.longitude);
       setUpdateLatitude(updateLandfill.latitude);
-      setUpdateStartTime(updateLandfill.start_time);
-      setUpdateEndTime(updateLandfill.end_time);
+      setUpdateStartTime(updateLandfill.time_start);
+      setUpdateEndTime(updateLandfill.time_end);
     }
   }, [openEdit, updateLandfill]);
 
@@ -307,10 +300,6 @@ const Landfills = () => {
                   dataSource={landfill}
                   rowKey="id"
                   style={{ overflowX: "auto" }}
-                  rowSelection={{
-                    type: "checkbox",
-                    ...rowSelection,
-                  }}
                 >
                   <Column
                     title="Landfill ID"
@@ -344,13 +333,19 @@ const Landfills = () => {
                   ></Column>
                   <Column
                     title="Start Time"
-                    dataIndex="start_time"
-                    sorter={(a, b) => a.start_time - b.start_time}
+                    dataIndex="time_start"
+                    sorter={(a, b) => a.time_start - b.time_start}
+                    render={(time, record) => {
+                      return convert24to12HourFormat(record.time_start);
+                    }}
                   ></Column>
                   <Column
                     title="End Time"
-                    dataIndex="end_time"
-                    sorter={(a, b) => a.end_time - b.end_time}
+                    dataIndex="time_end"
+                    sorter={(a, b) => a.time_end - b.time_end}
+                    render={(time, record) => {
+                      return convert24to12HourFormat(record.time_end);
+                    }}
                   ></Column>
                   {globalState.user?.role.permissions.includes(
                     "create_landfill",

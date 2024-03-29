@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import SidePanel from "../components/SidePanel";
@@ -59,7 +59,6 @@ const Sts = () => {
       })
       .catch((err) => {
         toast.error(err.response.data?.message);
-        toast.error("Error occurred while assigning manager(s)");
       })
       .finally(() => {
         setOpenAssignManager(false);
@@ -122,7 +121,6 @@ const Sts = () => {
       })
       .catch((err) => {
         toast.error(err.response.data?.message);
-        toast.error("Error occurred while updating STS");
       })
       .finally(() => {
         setOpenEdit(false);
@@ -148,22 +146,11 @@ const Sts = () => {
       })
       .catch((err) => {
         toast.error(err.response.data?.message);
-        toast.error("Error occurred while creating STS");
       })
       .finally(() => {
         setOpenCreate(false);
         setConfirmLoading(false);
       });
-  };
-
-  const rowSelection = {
-    onChange: (selectedRowKeys, selectedRows) => {
-      //   console.log(
-      //     `selectedRowKeys: ${selectedRowKeys}`,
-      //     "selectedRows: ",
-      //     selectedRows,
-      //   );
-    },
   };
 
   const deleteModal = (id, name) => {
@@ -182,7 +169,6 @@ const Sts = () => {
       })
       .catch((err) => {
         toast.error(err.response.data?.message);
-        toast.error("Error occurred while deleting STS");
       })
       .finally(() => {
         setOpenDelete(false);
@@ -229,9 +215,10 @@ const Sts = () => {
   };
 
   useEffect(() => {
-    if (openEdit && updateSTS.id) {
+    if (openEdit) {
       setUpdateName(updateSTS.name);
       setUpdateWard(updateSTS.ward_no);
+      setUpdateCapacity(updateSTS.capacity);
       setUpdateLongitude(updateSTS.longitude);
       setUpdateLatitude(updateSTS.latitude);
     }
@@ -287,10 +274,6 @@ const Sts = () => {
                   dataSource={sts}
                   rowKey="id"
                   style={{ overflowX: "auto" }}
-                  rowSelection={{
-                    type: "checkbox",
-                    ...rowSelection,
-                  }}
                 >
                   <Column
                     title="STS ID"

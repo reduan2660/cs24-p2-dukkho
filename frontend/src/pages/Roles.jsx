@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import SidePanel from "../components/SidePanel";
@@ -17,7 +17,6 @@ const Roles = () => {
   const [rolesLoading, setRolesLoading] = useState(false);
   const { globalState, setGlobalState } = useGlobalState();
   const [editingRoleId, setEditingRoleId] = useState(null);
-  const [selectedRole, setSelectedRole] = useState({});
   const [openPermission, setOpenPermission] = useState(false);
   const [permissions, setPermissions] = useState([]);
   const [assignedPermissions, setAssignedPermissions] = useState([]);
@@ -42,14 +41,12 @@ const Roles = () => {
       .put(`/rbac/${updateRole.id}/permissions`, { permissions: permissionIds })
       .then((res) => {
         if (res.status === 200) {
-          console.log(permissionIds);
           toast.success("Permissions updated successfully");
           getRoles();
         }
       })
       .catch((err) => {
         toast.error(err.response.data?.message);
-        toast.error("Error occurred while updating permissions");
       })
       .finally(() => {
         setOpenUpdate(false);
@@ -71,7 +68,6 @@ const Roles = () => {
       })
       .catch((err) => {
         toast.error(err.response.data?.message);
-        toast.error("Error occurred while creating role");
       })
       .finally(() => {
         setOpenCreate(false);
@@ -91,16 +87,6 @@ const Roles = () => {
     });
     console.log(permissionIds);
     setPermissionIds(permissionIds);
-  };
-
-  const rowSelection = {
-    onChange: (selectedRowKeys, selectedRows) => {
-      //   console.log(
-      //     `selectedRowKeys: ${selectedRowKeys}`,
-      //     "selectedRows: ",
-      //     selectedRows,
-      //   );
-    },
   };
 
   const filterPermissions = (assignedPermissions) => {
@@ -145,10 +131,7 @@ const Roles = () => {
         }
       })
       .catch((err) => {
-        console.log(err.response.data.message);
-        if (err.response.status === 400) {
-          toast.error(err.response.data?.message);
-        } else toast.error("Error occurred while deleting role");
+        toast.error(err.response.data?.message);
       })
       .finally(() => {
         setOpenDelete(false);
@@ -166,7 +149,6 @@ const Roles = () => {
       })
       .catch((err) => {
         toast.error(err.response.data?.message);
-        toast.error("Error occurred while updating name");
       });
     setEditingRoleId(null);
   };
@@ -277,10 +259,6 @@ const Roles = () => {
                   dataSource={roles}
                   rowKey="id"
                   style={{ overflowX: "auto" }}
-                  rowSelection={{
-                    type: "checkbox",
-                    ...rowSelection,
-                  }}
                 >
                   <Column
                     title="Role ID"
