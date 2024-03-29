@@ -16,14 +16,7 @@ const Fleet = () => {
   const { globalState, setGlobalState } = useGlobalState();
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [openCreate, setOpenCreate] = useState(false);
-  const [assignedVehicle, setAssignedVehicle] = useState({});
-  const [associatedSTS, setAssociatedSTS] = useState({});
-  const [associatedLandfill, setAssociatedLandfill] = useState({});
-  const [viewVehicle, setViewVehicle] = useState(false);
-  const [viewSTS, setViewSTS] = useState(false);
-  const [viewLandfill, setViewLandfill] = useState(false);
-  const [transfer, setTransfer] = useState("");
-  const [viewInfo, setViewInfo] = useState(false);
+  const [fleet, setFleet] = useState();
 
   const showModal = () => {
     setOpenCreate(true);
@@ -57,7 +50,7 @@ const Fleet = () => {
       .then((res) => {
         if (res.status === 200) {
           toast.success("Fleet planning generated successfully");
-          console.log(res.data);
+          setFleet(res.data);
         }
       })
       .catch((err) => {
@@ -70,6 +63,29 @@ const Fleet = () => {
       .finally(() => {
         setOpenCreate(false);
         setConfirmLoading(false);
+      });
+  };
+
+  const createTransfer = (vehicleId, landfillId, weight, oil) => {
+    api
+      .post("/transfer/sts/departure", {
+        vehicle_id: parseInt(vehicleId),
+        landfill_id: parseInt(landfillId),
+        weight: parseFloat(weight),
+        oil: parseFloat(oil),
+      })
+      .then((res) => {
+        if (res.status === 201) {
+          toast.success("Transfer created successfully");
+          setFleet(res.data);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        if (err.response.status === 400) {
+          toast.error(err.response.data?.message);
+        }
+        toast.error("Failed to create transfer");
       });
   };
 
@@ -153,9 +169,9 @@ const Fleet = () => {
                 )}
               </div>
               <div className="overflow-x-auto">
-                {/* <Table
+                <Table
                   loading={confirmLoading}
-                  dataSource={weight}
+                  dataSource={fleet?.transfers}
                   rowKey="id"
                   style={{ overflowX: "auto" }}
                   rowSelection={{
@@ -164,94 +180,36 @@ const Fleet = () => {
                   }}
                 >
                   <Column
-                    title="Transfer ID"
-                    dataIndex="id"
-                    sorter={(a, b) => a.id - b.id}
-                  ></Column>
-                  <Column
-                    title="Assigned Vehicle"
-                    dataIndex="vehicle"
+                    title="Assignable Vehicle"
+                    dataIndex="reg_no"
+                    sorter={(a, b) => a.reg_no - b.reg_no}
                     render={(vehicle, record) => {
-                      return (
-                        <button
-                          onClick={() => {
-                            setAssignedVehicle(record.vehicle);
-                            setViewVehicle(true);
-                          }}
-                          className="w-fit rounded-md border border-xblue px-2 py-1 text-xblue transition-all duration-300 hover:bg-xblue hover:text-white"
-                        >
-                          {record.vehicle.reg_no}
-                        </button>
-                      );
+                      return <div>{record.vehicle.reg_no}</div>;
                     }}
                   ></Column>
                   <Column
-                    title="Associated STS"
-                    dataIndex="sts"
+                    title="Desination Landfill"
+                    dataIndex="name"
+                    sorter={(a, b) => a.name.localeCompare(b.name)}
                     render={(vehicle, record) => {
-                      return (
-                        <button
-                          onClick={() => {
-                            setAssociatedSTS(record.sts);
-                            setViewSTS(true);
-                          }}
-                          className="w-fit rounded-md border border-xblue px-2 py-1 text-xblue transition-all duration-300 hover:bg-xblue hover:text-white"
-                        >
-                          {record.sts.name}
-                        </button>
-                      );
+                      return <div>{record.landfill.name}</div>;
                     }}
                   ></Column>
                   <Column
-                    title="Associated Landfill"
-                    dataIndex="landfill"
+                    title="Allocated Weight (Tonnes)"
+                    dataIndex="weight"
+                    sorter={(a, b) => a.weight - b.weight}
                     render={(vehicle, record) => {
-                      return (
-                        <button
-                          onClick={() => {
-                            setAssociatedLandfill(record.landfill);
-                            setViewLandfill(true);
-                          }}
-                          className="w-fit rounded-md border border-xblue px-2 py-1 text-xblue transition-all duration-300 hover:bg-xblue hover:text-white"
-                        >
-                          {record.landfill.name}
-                        </button>
-                      );
+                      return <div>{record.weight}</div>;
                     }}
                   ></Column>
                   <Column
-                    title="Transfer Information"
-                    dataIndex="sts"
-                    render={(vehicle, record) => {
-                      return (
-                        <button
-                          onClick={() => {
-                            setTransfer(record);
-                            setViewInfo(true);
-                          }}
-                          className="w-fit rounded-md border border-xblue px-2 py-1 text-xblue transition-all duration-300 hover:bg-xblue hover:text-white"
-                        >
-                          Details
-                        </button>
-                      );
-                    }}
-                  ></Column>
-                  <Column
-                    title="Vehicle Status"
-                    dataIndex="sts"
-                    sorter={(a, b) => a.status.id - b.status.id}
-                    render={(sts, record) => (
-                      <div
-                        className={`rounded-full px-2 py-1 text-center text-sm text-white ${getStatusColor(record.status.id)}`}
-                      >
-                        {record.status.desc}
-                      </div>
-                    )}
-                  ></Column>
-                  <Column
-                    title="Allocated Oil (L)"
+                    title="Required Oil (L)"
                     dataIndex="oil"
                     sorter={(a, b) => a.oil - b.oil}
+                    render={(vehicle, record) => {
+                      return <div>{record.cost}</div>;
+                    }}
                   ></Column>
                   {globalState.user?.role.permissions.includes(
                     "update_transfer_sts",
@@ -259,27 +217,26 @@ const Fleet = () => {
                     <Column
                       title="Actions"
                       dataIndex="name"
-                      render={(actions, record) =>
-                        record.status.id === 3 ? (
-                          <div className="flex items-center gap-x-4">
-                            <button
-                              onClick={() => {
-                                setTransfer(record);
-                              }}
-                              className="w-fit rounded-md border border-green-600 px-2 py-1 text-green-600 transition-all duration-300 hover:bg-green-600 hover:text-white"
-                            >
-                              Set Arrived at STS
-                            </button>
-                          </div>
-                        ) : record.status.id === 4 ? (
-                          <div></div>
-                        ) : (
-                          <div></div>
-                        )
-                      }
+                      render={(actions, record) => (
+                        <div className="flex items-center gap-x-4">
+                          <button
+                            onClick={() => {
+                              createTransfer(
+                                record.vehicle.id,
+                                record.landfill.id,
+                                record.weight,
+                                record.cost,
+                              );
+                            }}
+                            className="w-fit rounded-md border border-xblue px-2 py-1 text-xblue transition-all duration-300 hover:bg-xblue hover:text-white"
+                          >
+                            Create Transfer Record
+                          </button>
+                        </div>
+                      )}
                     ></Column>
                   )}
-                </Table> */}
+                </Table>
                 <Modal
                   title="Generate Fleet Planning"
                   open={openCreate}
@@ -297,136 +254,6 @@ const Fleet = () => {
                       value={weight}
                       onChange={(e) => setWeight(e.target.value)}
                     />
-                  </div>
-                </Modal>
-                <Modal
-                  title="Assigned Vehicle"
-                  open={viewVehicle}
-                  onOk={() => setViewVehicle(false)}
-                  okText="Close"
-                  cancelButtonProps={{ style: { display: "none" } }}
-                  closable={false}
-                  centered
-                >
-                  <div className="mx-2 my-4 grid grid-cols-2 gap-y-4 lg:mx-4 lg:my-8">
-                    {Object.entries(assignedVehicle).map(([key, value]) => {
-                      return (
-                        <div key={key} className="flex flex-col">
-                          <p className="text-sm font-semibold text-xgray">
-                            {key
-                              .split("_")
-                              .map(
-                                (word) =>
-                                  word.charAt(0).toUpperCase() + word.slice(1),
-                              )
-                              .join(" ")}
-                          </p>
-                          <p className="text-xdark">{value}</p>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </Modal>
-                <Modal
-                  title="Associated STS"
-                  open={viewSTS}
-                  onOk={() => setViewSTS(false)}
-                  okText="Close"
-                  cancelButtonProps={{ style: { display: "none" } }}
-                  closable={false}
-                  centered
-                >
-                  <div className="mx-2 my-4 grid grid-cols-2 gap-y-4 lg:mx-4 lg:my-8">
-                    {Object.entries(associatedSTS).map(([key, value]) => {
-                      return (
-                        <div key={key} className="flex flex-col">
-                          <p className="text-sm font-semibold text-xgray">
-                            {key
-                              .split("_")
-                              .map(
-                                (word) =>
-                                  word.charAt(0).toUpperCase() + word.slice(1),
-                              )
-                              .join(" ")}
-                          </p>
-                          <p className="text-xdark">{value}</p>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </Modal>
-                <Modal
-                  title="Associated Landfill"
-                  open={viewLandfill}
-                  onOk={() => setViewLandfill(false)}
-                  okText="Close"
-                  cancelButtonProps={{ style: { display: "none" } }}
-                  closable={false}
-                  centered
-                >
-                  <div className="mx-2 my-4 grid grid-cols-2 gap-y-4 lg:mx-4 lg:my-8">
-                    {Object.entries(associatedLandfill).map(([key, value]) => {
-                      return (
-                        <div key={key} className="flex flex-col">
-                          <p className="text-sm font-semibold text-xgray">
-                            {key
-                              .split("_")
-                              .map(
-                                (word) =>
-                                  word.charAt(0).toUpperCase() + word.slice(1),
-                              )
-                              .join(" ")}
-                          </p>
-                          <p className="text-xdark">{value}</p>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </Modal>
-                <Modal
-                  title="Transfer Information"
-                  open={viewInfo}
-                  onOk={() => setViewInfo(false)}
-                  okText="Close"
-                  cancelButtonProps={{ style: { display: "none" } }}
-                  centered
-                  closable={false}
-                >
-                  <div className="mx-2 my-4 grid grid-cols-2 gap-y-4 lg:mx-4 lg:my-8">
-                    {Object.entries(transfer)
-                      .filter(([key, _]) =>
-                        [
-                          "sts_arrival_time",
-                          "sts_departure_time",
-                          "sts_departure_weight",
-                          "landfill_arrival_time",
-                          "landfill_departure_time",
-                          "landfill_arrival_weight",
-                        ].includes(key),
-                      )
-                      .map(([key, value]) => {
-                        return (
-                          <div key={key} className="flex flex-col">
-                            <p className="text-sm font-semibold text-xgray">
-                              {key
-                                .split("_")
-                                .map(
-                                  (word) =>
-                                    word.charAt(0).toUpperCase() +
-                                    word.slice(1),
-                                )
-                                .join(" ")}
-                            </p>
-                            <p className="text-xdark">
-                              {key.includes("time")
-                                ? convertUTC(value)
-                                : value
-                                  ? value
-                                  : "N/A"}
-                            </p>
-                          </div>
-                        );
-                      })}
                   </div>
                 </Modal>
               </div>
