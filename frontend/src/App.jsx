@@ -12,27 +12,36 @@ import TransferSTS from "./pages/TransferSTS";
 import TransferLandfill from "./pages/TransferLandfill";
 import Dashboard from "./pages/Dashboard";
 import Fleet from "./pages/Fleet";
+import Sidebar from "./components/Sidebar";
 
 const App = () => {
   return (
-    <GlobalStateProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/auth/reset-password" element={<ResetPassword />} />
-          <Route path="/auth/change-password" element={<ChangePassword />} />
-          <Route path="/users" element={<Users />} />
-          <Route path="/roles" element={<Roles />} />
-          <Route path="/vehicles" element={<Vehicles />} />
-          <Route path="/sts" element={<STS />} />
-          <Route path="/landfills" element={<Landfills />} />
-          <Route path="/transfer/sts" element={<TransferSTS />} />
-          <Route path="/transfer/landfill" element={<TransferLandfill />} />
-          <Route path="/transfer/fleet" element={<Fleet />} />
-        </Routes>
-      </BrowserRouter>
-    </GlobalStateProvider>
+    <div className="App font-body" id="outer-container">
+      <div id="page-wrap">
+        <GlobalStateProvider>
+          <BrowserRouter>
+            <Sidebar id="sidebar" />
+            <Routes>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/auth/reset-password" element={<ResetPassword />} />
+              <Route
+                path="/auth/change-password"
+                element={<ChangePassword />}
+              />
+              <Route path="/users" element={<Users />} />
+              <Route path="/roles" element={<Roles />} />
+              <Route path="/vehicles" element={<Vehicles />} />
+              <Route path="/sts" element={<STS />} />
+              <Route path="/landfills" element={<Landfills />} />
+              <Route path="/transfer/sts" element={<TransferSTS />} />
+              <Route path="/transfer/landfill" element={<TransferLandfill />} />
+              <Route path="/transfer/fleet" element={<Fleet />} />
+            </Routes>
+          </BrowserRouter>
+        </GlobalStateProvider>
+      </div>
+    </div>
   );
 };
 

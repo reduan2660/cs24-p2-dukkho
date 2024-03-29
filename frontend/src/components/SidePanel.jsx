@@ -32,7 +32,8 @@ const SidePanel = () => {
         }
       })
       .catch((err) => {
-        console.log(err);if (err.response.status === 401) {
+        console.log(err);
+        if (err.response.status === 401) {
           navigate("/login", { state: "session expired" });
         }
       });
@@ -56,7 +57,7 @@ const SidePanel = () => {
   }, []);
 
   return (
-    <div className="hidden min-h-screen lg:block">
+    <div className="sticky top-0 hidden h-screen lg:block">
       <Sidebar collapsed={collapsed} className="h-full">
         <Menu>
           <MenuItem
