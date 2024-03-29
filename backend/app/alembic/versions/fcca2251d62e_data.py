@@ -65,6 +65,16 @@ def upgrade() -> None:
         {"id": 23, "name": "view_transfer", "category": "transfer"},
         {"id": 24, "name": "update_transfer_sts", "category": "transfer"},
         {"id": 25, "name": "update_transfer_landfill", "category": "transfer"},
+
+        {"id": 26, "name": "report_available_vehicles", "category": "report"},
+        {"id": 27, "name": "report_vehicles_in_transfer", "category": "report"},
+        {"id": 28, "name": "report_total_sts", "category": "report"},
+        {"id": 29, "name": "report_total_landfill", "category": "report"},
+        {"id": 30, "name": "report_total_waste_transfer_by_landfill", "category": "report"},
+        {"id": 31, "name": "report_total_waste_transfer_by_sts", "category": "report"},
+        {"id": 32, "name": "report_total_oil_consumption_by_sts", "category": "report"},
+        {"id": 33, "name": "report_total_transfer", "category": "report"},
+
     ])
 
     roles_permissions_tbl = sa.Table('roles_permissions', meta, autoload_with=op.get_bind())
@@ -107,6 +117,16 @@ def upgrade() -> None:
         # System Admin - Transfer
         {"role_id": 1, "permission_id": 23},
 
+        # System Admin - Report
+        {"role_id": 1, "permission_id": 26},
+        {"role_id": 1, "permission_id": 27},
+        {"role_id": 1, "permission_id": 28},
+        {"role_id": 1, "permission_id": 29},
+        {"role_id": 1, "permission_id": 30},
+        {"role_id": 1, "permission_id": 31},
+        {"role_id": 1, "permission_id": 32},
+        {"role_id": 1, "permission_id": 33},
+
         # -------------------------------------
 
         # STS Manager
@@ -123,6 +143,14 @@ def upgrade() -> None:
         {"role_id": 2, "permission_id": 23},
         {"role_id": 2, "permission_id": 24},
 
+        # STS Manager - Report
+        {"role_id": 2, "permission_id": 26},
+        {"role_id": 2, "permission_id": 27},
+        {"role_id": 2, "permission_id": 29},
+        {"role_id": 2, "permission_id": 31},
+        {"role_id": 2, "permission_id": 32},
+        {"role_id": 2, "permission_id": 33},
+
         # -------------------------------------
 
         # Landfill Manager 
@@ -135,6 +163,12 @@ def upgrade() -> None:
         # Landfill Manager - Transfer
         {"role_id": 3, "permission_id": 23},
         {"role_id": 3, "permission_id": 25},  
+
+        # Landfill Manager - Report
+        {"role_id": 3, "permission_id": 27},
+        {"role_id": 3, "permission_id": 28},
+        {"role_id": 3, "permission_id": 30},
+        {"role_id": 2, "permission_id": 33},
 
         # -------------------------------------
     ])
