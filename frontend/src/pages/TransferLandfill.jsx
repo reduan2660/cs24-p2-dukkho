@@ -8,6 +8,7 @@ import Column from "antd/es/table/Column";
 import api from "../api";
 import { useGlobalState } from "../GlobalStateProvider";
 import { useNavigate } from "react-router-dom";
+import PdfGenerator from "../components/PDFGenerator";
 
 const TransferLandfill = () => {
   const navigate = useNavigate();
@@ -300,6 +301,8 @@ const TransferLandfill = () => {
                               Set Departed from Landfill
                             </button>
                           </div>
+                        ) : record.status.id === 4 ? (
+                          <PdfGenerator data={record} />
                         ) : (
                           <div></div>
                         )
