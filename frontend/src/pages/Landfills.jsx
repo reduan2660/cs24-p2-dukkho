@@ -8,8 +8,10 @@ import Column from "antd/es/table/Column";
 import api from "../api";
 import { Select } from "antd";
 import { useGlobalState } from "../GlobalStateProvider";
+import { useNavigate } from "react-router-dom";
 
 const Landfills = () => {
+  const navigate = useNavigate();
   const [createName, setCreateName] = useState("");
   const [createCapacity, setCreateCapacity] = useState("");
   const [createLongitude, setCreateLongitude] = useState("");
@@ -228,6 +230,8 @@ const Landfills = () => {
             ...prevState,
             user: res.data,
           }));
+          if (!res.data.role.permissions.includes("list_landfill"))
+            navigate("/", { state: "access_denied" });
         }
       })
       .catch((err) => {
@@ -262,13 +266,12 @@ const Landfills = () => {
       <div className="min-h-screen">
         <ToastContainer
           position="top-right"
-          autoClose={5000}
+          autoClose={2000}
           hideProgressBar={false}
-          newestOnTop={false}
+          newestOnTop={true}
           closeOnClick
           rtl={false}
-          pauseOnFocusLoss
-          draggable={false}
+          draggable={true}
           pauseOnHover={false}
           theme="colored"
         />

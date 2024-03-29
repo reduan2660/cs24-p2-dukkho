@@ -8,8 +8,10 @@ import Column from "antd/es/table/Column";
 import api from "../api";
 import { Select } from "antd";
 import { useGlobalState } from "../GlobalStateProvider";
+import { useNavigate } from "react-router-dom";
 
 const TransferSTS = () => {
+  const navigate = useNavigate();
   const [createReg, setCreateReg] = useState("");
   const [createWeight, setCreateWeight] = useState("");
   const [createLandfill, setCreateLandfill] = useState("");
@@ -36,24 +38,28 @@ const TransferSTS = () => {
     setOpenCreate(true);
   };
 
+  const convertUTC = (time) => {
+    return new Date(time).toLocaleString();
+  };
+
   function getStatusColor(statusId) {
     switch (statusId) {
-      case 0:
-        return "bg-green-600"; // Trip completed
       case 1:
-        return "bg-yellow-600"; // Departed from sts
+        return "bg-yellow-500"; // Departed from sts
       case 2:
         return "bg-blue-600"; // Arrived at landfill
       case 3:
-        return "bg-red-600"; // Departed from landfill
+        return "bg-orange-500"; // Departed from landfill
+      case 4:
+        return "bg-green-600"; // Trip completed
       default:
         return "bg-gray-600"; // Default color if statusId is unknown
     }
   }
 
-  const setArrivedAtSTS = () => {
+  const setArrivedAtSTS = (id) => {
     api
-      .patch(`/transfer/sts/arrival/${transfer.id}`)
+      .patch(`/transfer/sts/arrival/${id}`)
       .then((res) => {
         if (res.status === 200) {
           toast.success("Arrived at STS successfully");
@@ -168,6 +174,8 @@ const TransferSTS = () => {
             ...prevState,
             user: res.data,
           }));
+          if (!res.data.role.permissions.includes("view_transfer"))
+            navigate("/", { state: "access_denied" });
         }
       })
       .catch((err) => {
@@ -192,13 +200,12 @@ const TransferSTS = () => {
       <div className="min-h-screen">
         <ToastContainer
           position="top-right"
-          autoClose={5000}
+          autoClose={2000}
           hideProgressBar={false}
-          newestOnTop={false}
+          newestOnTop={true}
           closeOnClick
           rtl={false}
-          pauseOnFocusLoss
-          draggable={false}
+          draggable={true}
           pauseOnHover={false}
           theme="colored"
         />
@@ -316,7 +323,9 @@ const TransferSTS = () => {
                     dataIndex="sts"
                     sorter={(a, b) => a.status.id - b.status.id}
                     render={(sts, record) => (
-                      <div className={`rounded-full px-2 py-1 text-center text-sm text-white ${getStatusColor(sts.id)}`}>
+                      <div
+                        className={`rounded-full px-2 py-1 text-center text-sm text-white ${getStatusColor(record.status.id)}`}
+                      >
                         {record.status.desc}
                       </div>
                     )}
@@ -337,7 +346,7 @@ const TransferSTS = () => {
                           <div className="flex items-center gap-x-4">
                             <button
                               onClick={() => {
-                                setArrivedAtSTS();
+                                setArrivedAtSTS(record.id);
                                 setTransfer(record);
                               }}
                               className="rounded-md bg-xblue px-4 py-1 text-sm font-medium text-white transition-all duration-300 hover:bg-blue-600"
@@ -353,11 +362,12 @@ const TransferSTS = () => {
                   )}
                 </Table>
                 <Modal
-                  title="Create New Vehicle Record"
+                  title="Create New Transfer Record"
                   open={openCreate}
                   onOk={createTransfer}
                   confirmLoading={confirmLoading}
                   onCancel={() => setOpenCreate(false)}
+                  closable={false}
                   centered
                 >
                   <div className="mx-2 my-4 flex flex-col gap-y-4 lg:mx-4 lg:my-8">
@@ -365,6 +375,7 @@ const TransferSTS = () => {
                       placeholder="Assign Vehicle"
                       className="w-full rounded-md focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
                       onChange={setCreateReg}
+                      onClick={() => getAvailableVehicle()}
                       options={availableVehicles.map((vehicle) => {
                         return {
                           value: vehicle.id,
@@ -374,9 +385,36 @@ const TransferSTS = () => {
                     />
                     <input
                       type="number"
-                      placeholder="Weight"
+                      min={0}
+                      max={
+                        availableVehicles.find(
+                          (vehicle) => vehicle.id === parseInt(createReg),
+                        )?.capacity
+                      }
+                      placeholder={`Weight (max: ${
+                        availableVehicles.find(
+                          (vehicle) => vehicle.id === parseInt(createReg),
+                        )?.capacity
+                          ? availableVehicles.find(
+                              (vehicle) => vehicle.id === parseInt(createReg),
+                            )?.capacity
+                          : 0
+                      })`}
                       className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
-                      onChange={(e) => setCreateWeight(e.target.value)}
+                      value={createWeight}
+                      onChange={(e) => {
+                        const inputValue = e.target.value;
+                        const maxValue = availableVehicles.find(
+                          (vehicle) => vehicle.id === parseInt(createReg),
+                        )?.capacity;
+
+                        if (
+                          inputValue === "" ||
+                          (inputValue >= 0 && inputValue <= maxValue)
+                        ) {
+                          setCreateWeight(inputValue);
+                        }
+                      }}
                     />
                     <Select
                       placeholder="Assign Landfill"
@@ -404,6 +442,7 @@ const TransferSTS = () => {
                   onOk={() => setViewVehicle(false)}
                   okText="Close"
                   cancelButtonProps={{ style: { display: "none" } }}
+                  closable={false}
                   centered
                 >
                   <div className="mx-2 my-4 grid grid-cols-2 gap-y-4 lg:mx-4 lg:my-8">
@@ -431,6 +470,7 @@ const TransferSTS = () => {
                   onOk={() => setViewSTS(false)}
                   okText="Close"
                   cancelButtonProps={{ style: { display: "none" } }}
+                  closable={false}
                   centered
                 >
                   <div className="mx-2 my-4 grid grid-cols-2 gap-y-4 lg:mx-4 lg:my-8">
@@ -458,6 +498,7 @@ const TransferSTS = () => {
                   onOk={() => setViewLandfill(false)}
                   okText="Close"
                   cancelButtonProps={{ style: { display: "none" } }}
+                  closable={false}
                   centered
                 >
                   <div className="mx-2 my-4 grid grid-cols-2 gap-y-4 lg:mx-4 lg:my-8">
@@ -486,6 +527,7 @@ const TransferSTS = () => {
                   okText="Close"
                   cancelButtonProps={{ style: { display: "none" } }}
                   centered
+                  closable={false}
                 >
                   <div className="mx-2 my-4 grid grid-cols-2 gap-y-4 lg:mx-4 lg:my-8">
                     {Object.entries(transfer)
@@ -512,7 +554,13 @@ const TransferSTS = () => {
                                 )
                                 .join(" ")}
                             </p>
-                            <p className="text-xdark">{value}</p>
+                            <p className="text-xdark">
+                              {key.includes("time")
+                                ? convertUTC(value)
+                                : value
+                                  ? value
+                                  : "N/A"}
+                            </p>
                           </div>
                         );
                       })}
