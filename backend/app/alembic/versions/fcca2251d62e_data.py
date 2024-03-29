@@ -150,7 +150,7 @@ def upgrade() -> None:
     # STS
     sts_tbl = sa.Table('sts', meta, autoload_with=op.get_bind())
     op.bulk_insert(sts_tbl, [
-        {"id": 0, "name": "Farmgate", "ward_no": 1, "latitude": 23.7561, "longitude": 90.3872}
+        {"id": 0, "name": "Farmgate", "ward_no": 1, "latitude": 23.7561, "longitude": 90.3872, "capacity": 100}
     ])
 
     # STS Manager

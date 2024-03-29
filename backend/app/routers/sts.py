@@ -28,6 +28,7 @@ async def get_sts(user: User = Depends(get_user_from_session)):
                 "ward_no": st.ward_no,
                 "latitude": st.latitude,
                 "longitude": st.longitude,
+                "capacity": st.capacity,
                 "managers": [
                     {
                         "id": m.user_id,
@@ -55,6 +56,7 @@ class STSrequest(BaseModel):
     ward_no: int
     latitude: float
     longitude: float
+    capacity: float
 
 @router.post("/")
 async def create_sts(sts: STSrequest, user: User = Depends(get_user_from_session)):
@@ -67,7 +69,8 @@ async def create_sts(sts: STSrequest, user: User = Depends(get_user_from_session
             name=sts.name,
             ward_no=sts.ward_no,
             latitude=sts.latitude,
-            longitude=sts.longitude
+            longitude=sts.longitude,
+            capacity=sts.capacity
         ))
         db.commit()
         return JSONResponse(status_code=201, content={"message": "STS created successfully"})
@@ -90,6 +93,7 @@ class STSUpdateRequest(BaseModel):
     ward_no: int
     latitude: float
     longitude: float
+    capacity: float
 
 @router.put("/{sts_id}")
 async def update_sts(sts_id: int, sts: STSUpdateRequest, user: User = Depends(get_user_from_session)):
@@ -102,7 +106,8 @@ async def update_sts(sts_id: int, sts: STSUpdateRequest, user: User = Depends(ge
                 "name": sts.name,
                 "ward_no": sts.ward_no,
                 "latitude": sts.latitude,
-                "longitude": sts.longitude
+                "longitude": sts.longitude,
+                "capacity": sts.capacity
             })
             db.commit()
             return JSONResponse(status_code=200, content={"message": "STS updated successfully"})
