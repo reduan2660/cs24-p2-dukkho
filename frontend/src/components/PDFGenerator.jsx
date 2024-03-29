@@ -3,7 +3,7 @@ import { PDFDownloadLink } from "@react-pdf/renderer";
 import PdfDocument from "./PDFDocument";
 import { ImSpinner5 } from "react-icons/im";
 
-const PdfGenerator = ({ data }) => {
+const PdfGenerator = ({ data, oil }) => {
   const [isClient, setIsClient] = useState(false);
   
   useEffect(() => {
@@ -14,7 +14,7 @@ const PdfGenerator = ({ data }) => {
     <div>
       {isClient && (
         <PDFDownloadLink
-          document={<PdfDocument data={data} />}
+          document={<PdfDocument data={data} oil={oil}/>}
           fileName={`trip_report_${data.vehicle?.reg_no}_${data.sts.name}_${data.landfill.name}`}
         >
           {({ loading }) =>

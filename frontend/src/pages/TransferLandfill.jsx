@@ -302,7 +302,7 @@ const TransferLandfill = () => {
                             </button>
                           </div>
                         ) : record.status.id === 4 ? (
-                          <PdfGenerator data={record} />
+                            <PdfGenerator data={record} />
                         ) : (
                           <div></div>
                         )
