@@ -74,6 +74,8 @@ def upgrade() -> None:
         {"id": 31, "name": "report_total_waste_transfer_by_sts", "category": "report"},
         {"id": 32, "name": "report_total_oil_consumption_by_sts", "category": "report"},
         {"id": 33, "name": "report_total_transfer", "category": "report"},
+        
+        {"id": 34, "name": "get_fleet_planning", "category": "transfer"},
 
     ])
 
@@ -116,6 +118,7 @@ def upgrade() -> None:
 
         # System Admin - Transfer
         {"role_id": 1, "permission_id": 23},
+        {"role_id": 1, "permission_id": 34},
 
         # System Admin - Report
         {"role_id": 1, "permission_id": 26},
@@ -142,6 +145,7 @@ def upgrade() -> None:
         # STS Manager - Transfer
         {"role_id": 2, "permission_id": 23},
         {"role_id": 2, "permission_id": 24},
+        {"role_id": 2, "permission_id": 34},
 
         # STS Manager - Report
         {"role_id": 2, "permission_id": 26},
