@@ -1,4 +1,4 @@
-def optimizeFleet(sts, weight, costs_unloaded, costs_loaded, vehicle_capacities, vehicle_remaining_trips, number_of_vehicles, landfill_capacities, landfill_distances, number_of_landfills, landfill_capacitites_csum, landfill_ids):
+def optimizeFleet(sts, weight, costs_unloaded, costs_loaded, vehicle_capacities, vehicle_remaining_trips, number_of_vehicles, landfill_capacities, landfill_distances, number_of_landfills, landfill_capacitites_csum, landfill_ids,vehicle_id):
     
     global current_capacity
     current_capacity=0
@@ -100,7 +100,7 @@ def optimizeFleet(sts, weight, costs_unloaded, costs_loaded, vehicle_capacities,
                 nval+=truck_cost
                 # print(nval,minimum_cost,nsz,number_of_transfers,sent)
                 if abs(nval-minimum_cost)<=eps and nsz==number_of_transfers:
-                    optimal_fleet.append([truck_no,sent,destination,truck_cost])
+                    optimal_fleet.append([vehicle_id[truck_no],sent,destination,truck_cost])
                     give_optimal_trucks(truck_no+1,3-vehicle_remaining_trips[truck_no+1],weight+sent,minimum_cost-truck_cost,number_of_transfers-1)
                     return
                 
@@ -110,7 +110,7 @@ def optimizeFleet(sts, weight, costs_unloaded, costs_loaded, vehicle_capacities,
                     nsz+=1
                     nval+=truck_cost
                     if abs(nval-minimum_cost)<=eps and nsz==number_of_transfers:
-                        optimal_fleet.append([truck_no,sent,destination,truck_cost])
+                        optimal_fleet.append([vehicle_id[truck_no],sent,destination,truck_cost])
                         give_optimal_trucks(truck_no,trips_done+1,weight+sent,minimum_cost-truck_cost,number_of_transfers-1)
                         return
         return
