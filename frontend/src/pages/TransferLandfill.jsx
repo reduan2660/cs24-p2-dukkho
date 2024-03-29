@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import SidePanel from "../components/SidePanel";
@@ -77,16 +77,6 @@ const TransferLandfill = () => {
       });
   };
 
-  const rowSelection = {
-    onChange: (selectedRowKeys, selectedRows) => {
-      //   console.log(
-      //     `selectedRowKeys: ${selectedRowKeys}`,
-      //     "selectedRows: ",
-      //     selectedRows,
-      //   );
-    },
-  };
-
   const getTransfers = () => {
     setTransferLoading(true);
     api
@@ -163,10 +153,6 @@ const TransferLandfill = () => {
                   dataSource={transferRecords}
                   rowKey="id"
                   style={{ overflowX: "auto" }}
-                  rowSelection={{
-                    type: "checkbox",
-                    ...rowSelection,
-                  }}
                 >
                   <Column
                     title="Transfer ID"
@@ -427,7 +413,7 @@ const TransferLandfill = () => {
                 >
                   <div className="mx-2 my-4 grid grid-cols-2 gap-y-4 lg:mx-4 lg:my-8">
                     {Object.entries(transfer)
-                      .filter(([key, _]) =>
+                      .filter(([key]) =>
                         [
                           "sts_arrival_time",
                           "sts_departure_time",

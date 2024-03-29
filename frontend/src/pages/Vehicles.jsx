@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import SidePanel from "../components/SidePanel";
@@ -77,7 +77,6 @@ const Vehicles = () => {
       })
       .catch((err) => {
         toast.error(err.response.data?.message);
-        toast.error("Error occurred while updating vehicle");
       })
       .finally(() => {
         setOpenEdit(false);
@@ -104,22 +103,11 @@ const Vehicles = () => {
       })
       .catch((err) => {
         toast.error(err.response.data?.message);
-        toast.error("Error occurred while creating vehicle");
       })
       .finally(() => {
         setOpenCreate(false);
         setConfirmLoading(false);
       });
-  };
-
-  const rowSelection = {
-    onChange: (selectedRowKeys, selectedRows) => {
-      //   console.log(
-      //     `selectedRowKeys: ${selectedRowKeys}`,
-      //     "selectedRows: ",
-      //     selectedRows,
-      //   );
-    },
   };
 
   const deleteModal = (id, reg_no) => {
@@ -138,7 +126,6 @@ const Vehicles = () => {
       })
       .catch((err) => {
         toast.error(err.response.data?.message);
-        toast.error("Error occurred while deleting vehicle");
       })
       .finally(() => {
         setOpenDelete(false);
@@ -246,10 +233,6 @@ const Vehicles = () => {
                   dataSource={vehicles}
                   rowKey="id"
                   style={{ overflowX: "auto" }}
-                  rowSelection={{
-                    type: "checkbox",
-                    ...rowSelection,
-                  }}
                 >
                   <Column
                     title="Vehicle ID"

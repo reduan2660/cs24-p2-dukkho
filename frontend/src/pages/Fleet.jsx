@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import SidePanel from "../components/SidePanel";
@@ -41,8 +41,7 @@ const Fleet = () => {
   const generateFleet = () => {
     setConfirmLoading(true);
     api
-      .post("/transfer/fleet", {
-        sts_id: StsId,
+      .post(`/transfer/fleet${StsId || StsId == 0 ? `?sts_id=${StsId}` : ""}`, {
         weight: weight,
       })
       .then((res) => {
@@ -77,16 +76,6 @@ const Fleet = () => {
       .catch((err) => {
         toast.error(err.response.data?.message);
       });
-  };
-
-  const rowSelection = {
-    onChange: (selectedRowKeys, selectedRows) => {
-      //   console.log(
-      //     `selectedRowKeys: ${selectedRowKeys}`,
-      //     "selectedRows: ",
-      //     selectedRows,
-      //   );
-    },
   };
 
   const getProfile = () => {
@@ -143,7 +132,9 @@ const Fleet = () => {
                 {globalState.user?.role.permissions.includes(
                   "update_transfer_sts",
                 ) ||
-                globalState.user?.role.permissions.includes("view_transfer") ? (
+                globalState.user?.role.permissions.includes(
+                  "get_fleet_planning",
+                ) ? (
                   <div>
                     <button
                       type="button"
@@ -163,10 +154,6 @@ const Fleet = () => {
                   dataSource={fleet?.transfers}
                   rowKey="id"
                   style={{ overflowX: "auto" }}
-                  rowSelection={{
-                    type: "checkbox",
-                    ...rowSelection,
-                  }}
                 >
                   <Column
                     title="Assignable Vehicle"
@@ -236,21 +223,18 @@ const Fleet = () => {
                   centered
                 >
                   <div className="mx-2 my-4 flex flex-col gap-y-4 lg:mx-4 lg:my-8">
-                    {!globalState.user?.role.permissions.includes(
-                      "update_transfer_sts",
-                    ) &&
-                      globalState.user?.role.permissions.includes(
-                        "view_transfer",
-                      ) && (
-                        <Select
-                          placeholder="Select STS"
-                          className="w-full rounded-md focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
-                          onChange={setStsId}
-                          options={STS.map((sts) => {
-                            return { label: sts.name, value: sts.id };
-                          })}
-                        />
-                      )}
+                    {globalState.user?.role.permissions.includes(
+                      "get_fleet_planning",
+                    ) && (
+                      <Select
+                        placeholder="Select STS"
+                        className="w-full rounded-md focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
+                        onChange={setStsId}
+                        options={STS.map((sts) => {
+                          return { label: sts.name, value: sts.id };
+                        })}
+                      />
+                    )}
 
                     <input
                       type="number"

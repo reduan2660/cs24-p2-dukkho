@@ -1,22 +1,16 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import SidePanel from "../components/SidePanel";
 import Navbar from "../components/Navbar";
-import { Modal, Table } from "antd";
-import Column from "antd/es/table/Column";
 import api from "../api";
-import { Select } from "antd";
 import { useGlobalState } from "../GlobalStateProvider";
 import { useLocation } from "react-router-dom";
-import CountUp from "react-countup";
-import { PiTruckLight } from "react-icons/pi";
 import { GiMineTruck } from "react-icons/gi";
 import { FaTruckArrowRight, FaDumpster } from "react-icons/fa6";
 import { BsBuildingsFill } from "react-icons/bs";
 import CountItem from "../components/CountItem";
 import { TitledBarChart } from "../graphs/BarChart";
-import CustomLineChart from "../graphs/LineChart";
 
 const Dashboard = () => {
   const { state } = useLocation();
@@ -31,7 +25,7 @@ const Dashboard = () => {
   const [oilConsumption, setOilConsumption] = useState([]);
   const [totalTransfer, setTotalTransfer] = useState([]);
 
-  //api for above data one by one
+  //TODO: check roles and permissions
 
   const getAvailableVehicle = () => {
     api
@@ -42,7 +36,7 @@ const Dashboard = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
+        console.log(err.response.data?.message);
       });
   };
 
@@ -55,7 +49,7 @@ const Dashboard = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
+        console.log(err.response.data?.message);
       });
   };
 
@@ -68,7 +62,7 @@ const Dashboard = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
+        console.log(err.response.data?.message);
       });
   };
 
@@ -81,7 +75,7 @@ const Dashboard = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
+        console.log(err.response.data?.message);
       });
   };
 
@@ -94,7 +88,7 @@ const Dashboard = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
+        console.log(err.response.data?.message);
       });
   };
 
@@ -107,7 +101,7 @@ const Dashboard = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
+        console.log(err.response.data?.message);
       });
   };
 
@@ -120,7 +114,7 @@ const Dashboard = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
+        console.log(err.response.data?.message);
       });
   };
 
@@ -133,7 +127,7 @@ const Dashboard = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
+        console.log(err.response.data?.message);
       });
   };
 
