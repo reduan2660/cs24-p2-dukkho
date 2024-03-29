@@ -59,10 +59,7 @@ const TransferLandfill = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
-        if (err.response.status === 400) {
-          toast.error(err.response.data?.message);
-        }
+        toast.error(err.response.data?.message);
       });
   };
 
@@ -76,10 +73,7 @@ const TransferLandfill = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
-        if (err.response.status === 400) {
-          toast.error(err.response.data?.message);
-        }
+        toast.error(err.response.data?.message);
       });
   };
 
@@ -103,10 +97,7 @@ const TransferLandfill = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
-        if (err.response.status === 400) {
-          toast.error(err.response.data?.message);
-        }
+        toast.error(err.response.data?.message);
       })
       .finally(() => {
         setTransferLoading(false);
@@ -128,10 +119,7 @@ const TransferLandfill = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
-        if (err.response.status === 400) {
-          toast.error(err.response.data?.message);
-        }
+        toast.error(err.response.data?.message);
       })
       .finally(() => {
         setProfileLoading(false);
@@ -302,7 +290,7 @@ const TransferLandfill = () => {
                             </button>
                           </div>
                         ) : record.status.id === 4 ? (
-                            <PdfGenerator data={record} />
+                          <PdfGenerator data={record} />
                         ) : (
                           <div></div>
                         )
