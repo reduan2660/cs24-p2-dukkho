@@ -11,6 +11,7 @@ import Landfills from "./pages/Landfills";
 import TransferSTS from "./pages/TransferSTS";
 import TransferLandfill from "./pages/TransferLandfill";
 import Dashboard from "./pages/Dashboard";
+import Fleet from "./pages/Fleet";
 
 const App = () => {
   return (
@@ -28,6 +29,7 @@ const App = () => {
           <Route path="/landfills" element={<Landfills />} />
           <Route path="/transfer/sts" element={<TransferSTS />} />
           <Route path="/transfer/landfill" element={<TransferLandfill />} />
+          <Route path="/transfer/fleet" element={<Fleet />} />
         </Routes>
       </BrowserRouter>
     </GlobalStateProvider>

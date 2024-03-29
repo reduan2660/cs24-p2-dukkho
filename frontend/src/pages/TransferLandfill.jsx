@@ -266,7 +266,7 @@ const TransferLandfill = () => {
                     )}
                   ></Column>
                   <Column
-                    title="Allocated Oil"
+                    title="Allocated Oil (L)"
                     dataIndex="oil"
                     sorter={(a, b) => a.oil - b.oil}
                   ></Column>
