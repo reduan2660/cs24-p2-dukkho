@@ -124,6 +124,28 @@ const SidePanel = () => {
               <div className="font-medium text-xgray">Dashboard</div>
             </MenuItem>
           </div>
+          {(globalState.user?.role.permissions.includes("list_all_users") ||
+            globalState.user?.role.permissions.includes("list_all_roles")) &&
+            !collapsed && (
+              <div className="text-md ml-6 mt-7 font-medium text-xlightgray">
+                User Management
+              </div>
+            )}
+          {globalState.user?.role.permissions.includes("list_all_users") && (
+            <div
+              className={`w-full ${
+                location.pathname === "/users" ? "bg-blue-100" : ""
+              }`}
+              onClick={() => {
+                if (location.pathname !== "/users") navigate("/users");
+                else setCollapsed(!collapsed);
+              }}
+            >
+              <MenuItem icon={<PiUsersThree className="text-lg text-xgray" />}>
+                <div className="font-medium text-xgray">Users</div>
+              </MenuItem>
+            </div>
+          )}
           {globalState.user?.role.permissions.includes("list_all_roles") && (
             <div
               className={`w-full ${
@@ -141,46 +163,14 @@ const SidePanel = () => {
               </MenuItem>
             </div>
           )}
-          {(globalState.user?.role.permissions.includes("list_all_users") ||
-            globalState.user?.role.permissions.includes("list_vehicle") ||
+          {(globalState.user?.role.permissions.includes("list_vehicle") ||
             globalState.user?.role.permissions.includes("list_all_sts") ||
             globalState.user?.role.permissions.includes("list_landfill")) &&
             !collapsed && (
               <div className="text-md ml-6 mt-7 font-medium text-xlightgray">
-                Management
+                Waste Management
               </div>
             )}
-
-          {globalState.user?.role.permissions.includes("list_all_users") && (
-            <div
-              className={`w-full ${
-                location.pathname === "/users" ? "bg-blue-100" : ""
-              }`}
-              onClick={() => {
-                if (location.pathname !== "/users") navigate("/users");
-                else setCollapsed(!collapsed);
-              }}
-            >
-              <MenuItem icon={<PiUsersThree className="text-lg text-xgray" />}>
-                <div className="font-medium text-xgray">Users</div>
-              </MenuItem>
-            </div>
-          )}
-          {globalState.user?.role.permissions.includes("list_vehicle") && (
-            <div
-              className={`w-full ${
-                location.pathname === "/vehicles" ? "bg-blue-100" : ""
-              }`}
-              onClick={() => {
-                if (location.pathname !== "/vehicles") navigate("/vehicles");
-                else setCollapsed(!collapsed);
-              }}
-            >
-              <MenuItem icon={<FaTruck className="text-xgray" />}>
-                <div className="font-medium text-xgray">Vehicles</div>
-              </MenuItem>
-            </div>
-          )}
           {globalState.user?.role.permissions.includes("list_all_sts") && (
             <div
               className={`w-full ${
@@ -211,6 +201,27 @@ const SidePanel = () => {
               </MenuItem>
             </div>
           )}
+          {globalState.user?.role.permissions.includes("list_vehicle") && (
+            <div
+              className={`w-full ${
+                location.pathname === "/vehicles" ? "bg-blue-100" : ""
+              }`}
+              onClick={() => {
+                if (location.pathname !== "/vehicles") navigate("/vehicles");
+                else setCollapsed(!collapsed);
+              }}
+            >
+              <MenuItem icon={<FaTruck className="text-xgray" />}>
+                <div className="font-medium text-xgray">Vehicles</div>
+              </MenuItem>
+            </div>
+          )}
+          {globalState.user?.role.permissions.includes("view_transfer") &&
+            !collapsed && (
+              <div className="text-md ml-6 mt-7 font-medium text-xlightgray">
+                Waste Record
+              </div>
+            )}
           {globalState.user?.role.permissions.includes("view_transfer") &&
             (globalState.user?.role.permissions.includes(
               "update_transfer_sts",
@@ -248,16 +259,29 @@ const SidePanel = () => {
                   <div className="font-medium text-xgray">Transfer Records</div>
                 </MenuItem>
               </div>
+            ) : globalState.user?.role.permissions.includes("view_transfer") ? (
+              <div
+                className={`w-full ${
+                  location.pathname === "/transfer/sts" ? "bg-blue-100" : ""
+                }`}
+                onClick={() => {
+                  if (location.pathname !== "/transfer/sts")
+                    navigate("/transfer/sts");
+                  else setCollapsed(!collapsed);
+                }}
+              >
+                <MenuItem icon={<BiTransfer className="text-xgray" />}>
+                  <div className="font-medium text-xgray">Transfer Records</div>
+                </MenuItem>
+              </div>
             ) : (
               <div></div>
             ))}
-
           {!collapsed && (
             <div className="text-md ml-6 mt-7 font-medium text-xlightgray">
-              Settings
+              Account
             </div>
           )}
-
           <div
             className={`w-full ${
               location.pathname === "/" ? "bg-blue-100" : ""
@@ -272,18 +296,11 @@ const SidePanel = () => {
               </div>
             </MenuItem>
           </div>
-          <div
-            className={`w-full ${
-              location.pathname === "/" ? "bg-blue-100" : ""
-            }`}
-            onClick={() => {
-              if (location.pathname !== "/") navigate("/");
-            }}
-          >
-            <MenuItem icon={<BsTools className="text-xgray" />}>
-              <div className="font-medium text-xgray">Preferences</div>
-            </MenuItem>
-          </div>
+          {!collapsed && (
+            <div className="text-md ml-6 mt-7 font-medium text-xlightgray">
+              Settings
+            </div>
+          )}
           <div
             className={`w-full ${
               location.pathname === "/auth/change-password" ? "bg-blue-100" : ""
@@ -295,6 +312,18 @@ const SidePanel = () => {
           >
             <MenuItem icon={<RiKeyLine className="text-lg text-xgray" />}>
               <div className="font-medium text-xgray">Change Password</div>
+            </MenuItem>
+          </div>
+          <div
+            className={`w-full ${
+              location.pathname === "/" ? "bg-blue-100" : ""
+            }`}
+            onClick={() => {
+              if (location.pathname !== "/") navigate("/");
+            }}
+          >
+            <MenuItem icon={<BsTools className="text-xgray" />}>
+              <div className="font-medium text-xgray">Preferences</div>
             </MenuItem>
           </div>
           {isLoggedIn ? (

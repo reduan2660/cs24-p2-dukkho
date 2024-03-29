@@ -14,9 +14,11 @@ const Sts = () => {
   const navigate = useNavigate();
   const [createName, setCreateName] = useState("");
   const [createWard, setCreateWard] = useState("");
+  const [createCapacity, setCreateCapacity] = useState("");
   const [createLongitude, setCreateLongitude] = useState("");
   const [createLatitude, setCreateLatitude] = useState("");
   const [updateName, setUpdateName] = useState("");
+  const [updateCapacity, setUpdateCapacity] = useState("");
   const [updateWard, setUpdateWard] = useState("");
   const [updateLongitude, setUpdateLongitude] = useState("");
   const [updateLatitude, setUpdateLatitude] = useState("");
@@ -112,6 +114,7 @@ const Sts = () => {
       .put(`/sts/${updateSTS.id}`, {
         name: updateName,
         ward_no: parseInt(updateWard),
+        capacity: parseFloat(updateCapacity),
         latitude: parseFloat(updateLatitude),
         longitude: parseFloat(updateLongitude),
       })
@@ -140,6 +143,7 @@ const Sts = () => {
       .post("/sts", {
         name: createName,
         ward_no: parseInt(createWard),
+        capacity: parseFloat(createCapacity),
         longitude: parseFloat(createLongitude),
         latitude: parseFloat(createLatitude),
       })
@@ -323,6 +327,11 @@ const Sts = () => {
                     sorter={(a, b) => a.ward_no - b.ward_no}
                   ></Column>
                   <Column
+                    title="Capacity"
+                    dataIndex="capacity"
+                    sorter={(a, b) => a.capacity - b.capacity}
+                  ></Column>
+                  <Column
                     title="Latitude"
                     dataIndex="latitude"
                     sorter={(a, b) => a.latitude - b.latitude}
@@ -503,6 +512,12 @@ const Sts = () => {
                     />
                     <input
                       type="number"
+                      placeholder="Capacity"
+                      className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
+                      onChange={(e) => setCreateCapacity(e.target.value)}
+                    />
+                    <input
+                      type="number"
                       placeholder="Latitude"
                       className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
                       onChange={(e) => setCreateLatitude(e.target.value)}
@@ -539,6 +554,13 @@ const Sts = () => {
                       value={updateWard}
                       className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
                       onChange={(e) => setUpdateWard(e.target.value)}
+                    />
+                    <input
+                      type="number"
+                      placeholder="Capacity"
+                      value={updateCapacity}
+                      className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
+                      onChange={(e) => setUpdateCapacity(e.target.value)}
                     />
                     <input
                       type="number"
