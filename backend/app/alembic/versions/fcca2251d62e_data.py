@@ -67,6 +67,13 @@ def upgrade() -> None:
         {"id": 25, "name": "update_transfer_landfill", "category": "transfer"},
 
         {"id": 26, "name": "report_available_vehicles", "category": "report"},
+        {"id": 27, "name": "report_vehicles_in_transfer", "category": "report"},
+        {"id": 28, "name": "report_total_sts", "category": "report"},
+        {"id": 29, "name": "report_total_landfill", "category": "report"},
+        {"id": 30, "name": "report_total_waste_transfer_by_landfill", "category": "report"},
+        {"id": 31, "name": "report_total_waste_transfer_by_sts", "category": "report"},
+        {"id": 32, "name": "report_total_oil_consumption_by_sts", "category": "report"},
+        {"id": 33, "name": "report_total_transfer", "category": "report"},
 
     ])
 
@@ -112,6 +119,13 @@ def upgrade() -> None:
 
         # System Admin - Report
         {"role_id": 1, "permission_id": 26},
+        {"role_id": 1, "permission_id": 27},
+        {"role_id": 1, "permission_id": 28},
+        {"role_id": 1, "permission_id": 29},
+        {"role_id": 1, "permission_id": 30},
+        {"role_id": 1, "permission_id": 31},
+        {"role_id": 1, "permission_id": 32},
+        {"role_id": 1, "permission_id": 33},
 
         # -------------------------------------
 
@@ -131,6 +145,11 @@ def upgrade() -> None:
 
         # STS Manager - Report
         {"role_id": 2, "permission_id": 26},
+        {"role_id": 2, "permission_id": 27},
+        {"role_id": 2, "permission_id": 29},
+        {"role_id": 2, "permission_id": 31},
+        {"role_id": 2, "permission_id": 32},
+        {"role_id": 2, "permission_id": 33},
 
         # -------------------------------------
 
@@ -146,6 +165,10 @@ def upgrade() -> None:
         {"role_id": 3, "permission_id": 25},  
 
         # Landfill Manager - Report
+        {"role_id": 3, "permission_id": 27},
+        {"role_id": 3, "permission_id": 28},
+        {"role_id": 3, "permission_id": 30},
+        {"role_id": 2, "permission_id": 33},
 
         # -------------------------------------
     ])
