@@ -162,7 +162,8 @@ def upgrade() -> None:
     # Landfill
     landfill_tbl = sa.Table('landfills', meta, autoload_with=op.get_bind())
     op.bulk_insert(landfill_tbl, [
-        {"id": 0, "name": "Aminbazar", "latitude": 23.7861, "longitude": 90.3299, "capacity": 1000, "current_capacity": 1000}
+        {"id": 0, "name": "Aminbazar", "latitude": 23.7861, "longitude": 90.3299, "capacity": 10, "current_capacity": 1000},
+        {"id": 1, "name": "Matuail", "latitude": 23.7261, "longitude": 90.4309, "capacity": 10, "current_capacity": 1000}
     ])
 
     # Landfill Manager
@@ -174,7 +175,8 @@ def upgrade() -> None:
     # Vehicle
     vehicle_tbl = sa.Table('vehicles', meta, autoload_with=op.get_bind())
     op.bulk_insert(vehicle_tbl, [
-        {"id": 0, "reg_no": "BA 1 PA 1234", "capacity": 3, "vtype": "Truck", "loaded_cost": 0.3, "empty_cost": 0.1, "available": 1, "sts_id": 0}
+        {"id": 0, "reg_no": "BA 1 PA 1234", "capacity": 3, "vtype": "Truck", "loaded_cost": 0.3, "empty_cost": 0.1, "available": 1, "sts_id": 0},
+        {"id": 1, "reg_no": "BA 2 PA 1234", "capacity": 5, "vtype": "Truck", "loaded_cost": 0.2, "empty_cost": 0.1, "available": 1, "sts_id": 0},
     ])
 
 
