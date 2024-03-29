@@ -319,7 +319,8 @@ async def get_fleet(fleetRequest: FleetRequest, user: User = Depends(get_user_fr
         Vehicle_id=[]
         for v in sts_vehicle:
 
-
+            if v.available==0:
+                continue
 
             costs_unloaded.append(v.empty_cost)
             costs_loaded.append(v.loaded_cost)
@@ -329,6 +330,8 @@ async def get_fleet(fleetRequest: FleetRequest, user: User = Depends(get_user_fr
             # count the number of transfers of this vehicle today
             today_starts_timestamp = int(datetime.combine(datetime.today(), datetime.min.time()).timestamp()) # Get today's start timestamp
             transfer_count = db.query(Transfer).filter(Transfer.vehicle_id == v.id).filter(Transfer.sts_departure_time >= today_starts_timestamp).count()
+            if transfer_count>3:
+                print("Excessive Transfer Error")
             vehicle_remaining_trips.append(3 - transfer_count)
 
         all_landfill = db.query(Landfill).all()
