@@ -316,10 +316,15 @@ async def get_fleet(fleetRequest: FleetRequest, user: User = Depends(get_user_fr
         costs_loaded = []
         vehicle_capacities = []
         vehicle_remaining_trips = []
+        Vehicle_id=[]
         for v in sts_vehicle:
+
+
+
             costs_unloaded.append(v.empty_cost)
             costs_loaded.append(v.loaded_cost)
             vehicle_capacities.append(v.capacity)
+            Vehicle_id.append(v.id)
 
             # count the number of transfers of this vehicle today
             today_starts_timestamp = int(datetime.combine(datetime.today(), datetime.min.time()).timestamp()) # Get today's start timestamp
@@ -343,7 +348,7 @@ async def get_fleet(fleetRequest: FleetRequest, user: User = Depends(get_user_fr
             landfill_ids.append(landfill.id)
             landfill_capacitites_csum.append(sum(landfill_capacities))
 
-        max_pos_weight, cost, number_of_transfers, transfers = optimizeFleet(sts, weight, costs_unloaded, costs_loaded, vehicle_capacities, vehicle_remaining_trips, no_of_vehicles, landfill_capacities, landfill_distances, no_of_landfills, landfill_capacitites_csum, landfill_ids)
+        max_pos_weight, cost, number_of_transfers, transfers = optimizeFleet(sts, weight, costs_unloaded, costs_loaded, vehicle_capacities, vehicle_remaining_trips, no_of_vehicles, landfill_capacities, landfill_distances, no_of_landfills, landfill_capacitites_csum, landfill_ids,Vehicle_id)
 
 
         transfer_response = []
