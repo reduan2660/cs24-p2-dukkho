@@ -12,10 +12,12 @@ import { useNavigate } from "react-router-dom";
 
 const TransferSTS = () => {
   const navigate = useNavigate();
-  const [createReg, setCreateReg] = useState("");
+  const [createVehicle, setCreateVehicle] = useState("");
   const [createWeight, setCreateWeight] = useState("");
   const [createLandfill, setCreateLandfill] = useState("");
+  const [optimalOil, setOptimalOil] = useState({});
   const [createOil, setCreateOil] = useState("");
+  const [calculatedOil, setCalculatedOil] = useState("");
   const [profileLoading, setProfileLoading] = useState(false);
   const [transferLoading, setTransferLoading] = useState(false);
   const { globalState, setGlobalState } = useGlobalState();
@@ -40,6 +42,25 @@ const TransferSTS = () => {
 
   const convertUTC = (time) => {
     return new Date(time).toLocaleString();
+  };
+
+  const getCalculatedOil = () => {
+    api
+      .post("/transfer/oil", {
+        vehicle_id: createVehicle,
+        landfill_id: createLandfill,
+        weight: createWeight,
+      })
+      .then((res) => {
+        setOptimalOil(res.data);
+        setCalculatedOil(res.data.round_trip);
+      })
+      .catch((err) => {
+        console.log(err);
+        if (err.response.status === 400) {
+          toast.error(err.response.data?.message);
+        }
+      });
   };
 
   function getStatusColor(statusId) {
@@ -110,10 +131,12 @@ const TransferSTS = () => {
     setConfirmLoading(true);
     api
       .post("/transfer/sts/departure", {
-        vehicle_id: parseInt(createReg),
+        vehicle_id: parseInt(createVehicle),
         landfill_id: parseInt(createLandfill),
         weight: parseFloat(createWeight),
-        oil: parseFloat(createOil),
+        oil: calculatedOil
+          ? parseFloat(calculatedOil).toFixed(2)
+          : parseFloat(createOil),
       })
       .then((res) => {
         if (res.status === 201) {
@@ -262,7 +285,7 @@ const TransferSTS = () => {
                           }}
                           className="w-fit rounded-md border border-xblue px-2 py-1 text-xblue transition-all duration-300 hover:bg-xblue hover:text-white"
                         >
-                          View Vehicle
+                          {record.vehicle.reg_no}
                         </button>
                       );
                     }}
@@ -279,7 +302,7 @@ const TransferSTS = () => {
                           }}
                           className="w-fit rounded-md border border-xblue px-2 py-1 text-xblue transition-all duration-300 hover:bg-xblue hover:text-white"
                         >
-                          View STS
+                          {record.sts.name}
                         </button>
                       );
                     }}
@@ -296,7 +319,7 @@ const TransferSTS = () => {
                           }}
                           className="w-fit rounded-md border border-xblue px-2 py-1 text-xblue transition-all duration-300 hover:bg-xblue hover:text-white"
                         >
-                          View Landfill
+                          {record.landfill.name}
                         </button>
                       );
                     }}
@@ -313,7 +336,7 @@ const TransferSTS = () => {
                           }}
                           className="w-fit rounded-md border border-xblue px-2 py-1 text-xblue transition-all duration-300 hover:bg-xblue hover:text-white"
                         >
-                          View
+                          Details
                         </button>
                       );
                     }}
@@ -349,9 +372,9 @@ const TransferSTS = () => {
                                 setArrivedAtSTS(record.id);
                                 setTransfer(record);
                               }}
-                              className="rounded-md bg-xblue px-4 py-1 text-sm font-medium text-white transition-all duration-300 hover:bg-blue-600"
+                              className="w-fit rounded-md border border-green-600 px-2 py-1 text-green-600 transition-all duration-300 hover:bg-green-600 hover:text-white"
                             >
-                              Arrived at STS
+                              Set Arrived at STS
                             </button>
                           </div>
                         ) : (
@@ -374,7 +397,7 @@ const TransferSTS = () => {
                     <Select
                       placeholder="Assign Vehicle"
                       className="w-full rounded-md focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
-                      onChange={setCreateReg}
+                      onChange={setCreateVehicle}
                       onClick={() => getAvailableVehicle()}
                       options={availableVehicles.map((vehicle) => {
                         return {
@@ -388,15 +411,16 @@ const TransferSTS = () => {
                       min={0}
                       max={
                         availableVehicles.find(
-                          (vehicle) => vehicle.id === parseInt(createReg),
+                          (vehicle) => vehicle.id === parseInt(createVehicle),
                         )?.capacity
                       }
                       placeholder={`Weight (max: ${
                         availableVehicles.find(
-                          (vehicle) => vehicle.id === parseInt(createReg),
+                          (vehicle) => vehicle.id === parseInt(createVehicle),
                         )?.capacity
                           ? availableVehicles.find(
-                              (vehicle) => vehicle.id === parseInt(createReg),
+                              (vehicle) =>
+                                vehicle.id === parseInt(createVehicle),
                             )?.capacity
                           : 0
                       })`}
@@ -405,7 +429,7 @@ const TransferSTS = () => {
                       onChange={(e) => {
                         const inputValue = e.target.value;
                         const maxValue = availableVehicles.find(
-                          (vehicle) => vehicle.id === parseInt(createReg),
+                          (vehicle) => vehicle.id === parseInt(createVehicle),
                         )?.capacity;
 
                         if (
@@ -428,12 +452,32 @@ const TransferSTS = () => {
                         };
                       })}
                     />
-                    <input
-                      type="number"
-                      placeholder="Allocate Oil"
-                      className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
-                      onChange={(e) => setCreateOil(e.target.value)}
-                    />
+                    <div className="flex items-center gap-x-2">
+                      <input
+                        type="number"
+                        placeholder="Allocate Oil"
+                        value={
+                          calculatedOil ? calculatedOil.toFixed(2) : createOil
+                        }
+                        onClick={() => getCalculatedOil()}
+                        className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
+                        onChange={(e) => {
+                          setCreateOil(e.target.value);
+                          setCalculatedOil("");
+                        }}
+                      />
+                      <button
+                        disabled={
+                          createWeight === "" ||
+                          createLandfill === "" ||
+                          createVehicle === ""
+                        }
+                        onClick={() => getCalculatedOil()}
+                        className="min-w-fit rounded-md bg-xblue px-2 py-1 text-white transition-all duration-300 hover:bg-blue-600 disabled:bg-gray-200"
+                      >
+                        Use optimal oil
+                      </button>
+                    </div>
                   </div>
                 </Modal>
                 <Modal

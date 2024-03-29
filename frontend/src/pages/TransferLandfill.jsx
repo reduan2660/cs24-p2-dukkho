@@ -196,7 +196,7 @@ const TransferLandfill = () => {
                           }}
                           className="w-fit rounded-md border border-xblue px-2 py-1 text-xblue transition-all duration-300 hover:bg-xblue hover:text-white"
                         >
-                          View Vehicle
+                          {record.vehicle.reg_no}
                         </button>
                       );
                     }}
@@ -213,7 +213,7 @@ const TransferLandfill = () => {
                           }}
                           className="w-fit rounded-md border border-xblue px-2 py-1 text-xblue transition-all duration-300 hover:bg-xblue hover:text-white"
                         >
-                          View STS
+                          {record.sts.name}
                         </button>
                       );
                     }}
@@ -230,7 +230,7 @@ const TransferLandfill = () => {
                           }}
                           className="w-fit rounded-md border border-xblue px-2 py-1 text-xblue transition-all duration-300 hover:bg-xblue hover:text-white"
                         >
-                          View Landfill
+                          {record.landfill.name}
                         </button>
                       );
                     }}
@@ -247,7 +247,7 @@ const TransferLandfill = () => {
                           }}
                           className="w-fit rounded-md border border-xblue px-2 py-1 text-xblue transition-all duration-300 hover:bg-xblue hover:text-white"
                         >
-                          View
+                          Details
                         </button>
                       );
                     }}
@@ -283,9 +283,9 @@ const TransferLandfill = () => {
                                 setOpenArrival(true);
                                 setTransfer(record);
                               }}
-                              className="rounded-md bg-xblue px-4 py-1 text-sm font-medium text-white transition-all duration-300 hover:bg-blue-600"
+                              className="w-fit rounded-md border border-xblue px-2 py-1 text-xblue transition-all duration-300 hover:bg-xblue hover:text-white"
                             >
-                              Arrived at Landfill
+                              Set Arrived at Landfill
                             </button>
                           </div>
                         ) : record.status.id === 2 ? (
@@ -295,9 +295,9 @@ const TransferLandfill = () => {
                                 setDepartedFromLandfill(record.id);
                                 setTransfer(record);
                               }}
-                              className="rounded-md bg-xblue px-4 py-1 text-sm font-medium text-white transition-all duration-300 hover:bg-blue-600"
+                              className="w-fit rounded-md border border-orange-500 px-2 py-1 text-orange-500 transition-all duration-300 hover:bg-orange-500 hover:text-white"
                             >
-                              Departed from Landfill
+                              Set Departed from Landfill
                             </button>
                           </div>
                         ) : (
