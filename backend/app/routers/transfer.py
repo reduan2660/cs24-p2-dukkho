@@ -292,7 +292,7 @@ async def sts_oil(transfer: OILrequest, user: User = Depends(get_user_from_sessi
 class FleetRequest(BaseModel):
     weight: float
 
-@router.get("/fleet")
+@router.post("/fleet")
 async def get_fleet(fleetRequest: FleetRequest, user: User = Depends(get_user_from_session)):
     if "update_transfer_sts" not in user["role"]["permissions"]:
         return JSONResponse(status_code=401, content={"message": "Not enough permissions"})
