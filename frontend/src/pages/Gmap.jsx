@@ -19,46 +19,26 @@ export default function Gmap({
   zoom,
 }) {
   const position = {
-    lat: (start.lat + end.lat) / 2,
-    lng: (start.lng + end.lng) / 2,
+    lat: (origin.lat + destination.lat) / 2,
+    lng: (origin.lng + destination.lng) / 2,
   };
-  const address = "Tejgaon College";
-  const apiKey = "AIzaSyDzhASJpRuFs0t_G-lq2f7r9fTCjcpueJ8";
-
-  const apiUrl = `https://maps.googleapis.com/maps/api/geocode/json`;
-  const getGeoCode = () => {
-    axios
-      .get(apiUrl, {
-        params: {
-          address: address,
-          key: apiKey,
-        },
-      })
-      .then((response) => {
-        // Handle successful response
-        console.log(response.data);
-      })
-      .catch((error) => {
-        // Handle error
-        console.error("Error:", error);
-      });
-  };
-
-  useEffect(() => {
-    getGeoCode();
-  }, []);
 
   return (
-    <div style={{ height: "800px", width: "800px" }}>
+    <div style={{ height: height, width: width }}>
       <APIProvider apiKey="AIzaSyDzhASJpRuFs0t_G-lq2f7r9fTCjcpueJ8">
         <Map
           center={position}
-          zoom={14}
+          zoom={zoom}
           fullscreenControl={false}
-          gestureHandling="cooperative"
+          gestureHandling="none"
+          zoomControl={false}
           mapId="c722c584ec5ffba3"
         >
-          <Directions />
+          <Directions
+            origin={origin}
+            destination={destination}
+            travelMode={travelMode}
+          />
         </Map>
       </APIProvider>
     </div>

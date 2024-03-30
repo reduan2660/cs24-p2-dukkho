@@ -9,17 +9,20 @@ import api from "../api";
 import { Select } from "antd";
 import { useGlobalState } from "../GlobalStateProvider";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Sts = () => {
   const navigate = useNavigate();
   const [createName, setCreateName] = useState("");
   const [createWard, setCreateWard] = useState("");
   const [createCapacity, setCreateCapacity] = useState("");
+  const [createLocation, setCreateLocation] = useState("");
   const [createLongitude, setCreateLongitude] = useState("");
   const [createLatitude, setCreateLatitude] = useState("");
   const [updateName, setUpdateName] = useState("");
   const [updateCapacity, setUpdateCapacity] = useState("");
   const [updateWard, setUpdateWard] = useState("");
+  const [updateLocation, setUpdateLocation] = useState("");
   const [updateLongitude, setUpdateLongitude] = useState("");
   const [updateLatitude, setUpdateLatitude] = useState("");
   const [profileLoading, setProfileLoading] = useState(false);
@@ -232,17 +235,57 @@ const Sts = () => {
       setCreateLongitude("");
       setCreateLatitude("");
     }
-  }, [openEdit, updateSTS]);
+  }, [openEdit, openCreate, updateSTS]);
 
   useEffect(() => {
-    if (openCreate) {
-      setCreateName("");
-      setCreateWard("");
-      setCreateCapacity("");
-      setCreateLongitude("");
-      setCreateLatitude("");
+    const getGeoCodeCreate = () => {
+      axios
+        .get("https://maps.googleapis.com/maps/api/geocode/json", {
+          params: {
+            address: createLocation,
+            key: "AIzaSyDzhASJpRuFs0t_G-lq2f7r9fTCjcpueJ8",
+          },
+        })
+        .then((response) => {
+          if (response.data.status === "OK") {
+            setCreateLatitude(response.data.results[0].geometry.location.lat);
+            setCreateLongitude(response.data.results[0].geometry.location.lng);
+          }
+        })
+        .catch((error) => {
+          // Handle error
+          console.log("Error:", error);
+        });
+    };
+
+    const getGeoCodeUpdate = () => {
+      axios
+        .get("https://maps.googleapis.com/maps/api/geocode/json", {
+          params: {
+            address: updateLocation,
+            key: "AIzaSyDzhASJpRuFs0t_G-lq2f7r9fTCjcpueJ8",
+          },
+        })
+        .then((response) => {
+          if (response.data.status === "OK") {
+            setUpdateLatitude(response.data.results[0].geometry.location.lat);
+            setUpdateLongitude(response.data.results[0].geometry.location.lng);
+          }
+        })
+        .catch((error) => {
+          // Handle error
+          console.log("Error:", error);
+        });
+    };
+
+    if (createLocation.length > 0) {
+      getGeoCodeCreate();
     }
-  },[createName])
+
+    if (updateLocation.length > 0) {
+      getGeoCodeUpdate();
+    }
+  }, [createLocation, updateLocation]);
 
   useEffect(() => {
     getProfile();
@@ -540,23 +583,33 @@ const Sts = () => {
                       onChange={(e) => setCreateWard(e.target.value)}
                     />
                     <input
+                      type="text"
+                      placeholder="Location"
+                      className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
+                      onChange={(e) => setCreateLocation(e.target.value)}
+                    />
+                    <input
                       type="number"
                       placeholder="Capacity"
                       className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
                       onChange={(e) => setCreateCapacity(e.target.value)}
                     />
-                    <input
+                    {/* <input
                       type="number"
+                      value={createLatitude}
                       placeholder="Latitude"
+                      disabled
                       className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
                       onChange={(e) => setCreateLatitude(e.target.value)}
                     />
                     <input
                       type="number"
+                      value={createLongitude}
                       placeholder="Longitude"
+                      disabled
                       className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
                       onChange={(e) => setCreateLongitude(e.target.value)}
-                    />
+                    /> */}
                   </div>
                 </Modal>
                 <Modal
@@ -585,13 +638,20 @@ const Sts = () => {
                       onChange={(e) => setUpdateWard(e.target.value)}
                     />
                     <input
+                      type="text"
+                      placeholder="Location"
+                      value={updateLocation}
+                      className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
+                      onChange={(e) => setUpdateLocation(e.target.value)}
+                    />
+                    <input
                       type="number"
                       placeholder="Capacity"
                       value={updateCapacity}
                       className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
                       onChange={(e) => setUpdateCapacity(e.target.value)}
                     />
-                    <input
+                    {/* <input
                       type="number"
                       placeholder="Latitude"
                       value={updateLatitude}
@@ -604,7 +664,7 @@ const Sts = () => {
                       value={updateLongitude}
                       className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
                       onChange={(e) => setUpdateLongitude(e.target.value)}
-                    />
+                    /> */}
                   </div>
                 </Modal>
               </div>

@@ -10,6 +10,7 @@ import { Select } from "antd";
 import { useGlobalState } from "../GlobalStateProvider";
 import { useNavigate } from "react-router-dom";
 import PdfGenerator from "../components/PDFGenerator";
+import Gmap from "./Gmap";
 
 const TransferSTS = () => {
   const navigate = useNavigate();
@@ -35,6 +36,7 @@ const TransferSTS = () => {
   const [transfer, setTransfer] = useState("");
   const [viewInfo, setViewInfo] = useState(false);
   const [requestPDF, setRequestPDF] = useState(false);
+  const [openMap, setOpenMap] = useState(false);
 
   const showModal = () => {
     getAvailableVehicle();
@@ -435,18 +437,28 @@ const TransferSTS = () => {
                         }
                       }}
                     />
-                    <Select
-                      placeholder="Assign Landfill"
-                      onClick={() => getAvailableLandfills(createWeight)}
-                      className="w-full rounded-md focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
-                      onChange={setCreateLandfill}
-                      options={availableLandfills.map((landfill) => {
-                        return {
-                          value: landfill.id,
-                          label: landfill.name,
-                        };
-                      })}
-                    />
+                    <div className="flex items-center gap-x-2">
+                      <Select
+                        placeholder="Assign Landfill"
+                        onClick={() => getAvailableLandfills(createWeight)}
+                        className="w-full rounded-md focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
+                        onChange={setCreateLandfill}
+                        options={availableLandfills.map((landfill) => {
+                          return {
+                            value: landfill.id,
+                            label: landfill.name,
+                          };
+                        })}
+                      />
+                      <button
+                        disabled={createLandfill === ""}
+                        onClick={() => setOpenMap(true)}
+                        className="min-w-fit rounded-md bg-xblue px-2 py-1 text-white transition-all duration-300 hover:bg-blue-600 disabled:bg-gray-200"
+                      >
+                        Get Routes
+                      </button>
+                    </div>
+
                     <div className="flex items-center gap-x-2">
                       <input
                         type="number"
@@ -529,6 +541,34 @@ const TransferSTS = () => {
                         </div>
                       );
                     })}
+                  </div>
+                </Modal>
+                <Modal
+                  title="Route Information"
+                  open={openMap}
+                  onOk={() => setOpenMap(false)}
+                  width={1400}
+                  height={900}
+                  okText="Close"
+                  cancelButtonProps={{ style: { display: "none" } }}
+                  closable={false}
+                  centered
+                >
+                  <div className="items-cenetr flex justify-center">
+                    <Gmap
+                      height={800}
+                      width={1300}
+                      origin={{
+                        lat: 23.757985271113462,
+                        lng: 90.38987643530105,
+                      }}
+                      destination={{
+                        lat: 23.72274789134823,
+                        lng: 90.39988172573108,
+                      }}
+                      zoom={14}
+                      travelMode="Driving"
+                    />
                   </div>
                 </Modal>
                 <Modal

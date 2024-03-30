@@ -181,7 +181,14 @@ const Vehicles = () => {
       setUpdateLoadedCost(updateVehicle.loaded_cost.toString());
       setUpdateEmptyCost(updateVehicle.empty_cost.toString());
     }
-  }, [openEdit, updateVehicle]);
+    if (openCreate) {
+      setCreateReg("");
+      setCreateVtype("");
+      setCreateStsId("");
+      setCreateLoadedCost("");
+      setCreateEmptyCost("");
+    }
+  }, [openEdit, updateVehicle, openCreate]);
 
   useEffect(() => {
     getProfile();
