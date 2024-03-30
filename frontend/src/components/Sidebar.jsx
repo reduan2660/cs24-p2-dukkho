@@ -1,4 +1,3 @@
-import React from "react";
 import { slide as Menu } from "react-burger-menu";
 import "../index.css";
 import { useNavigate, useLocation } from "react-router-dom";

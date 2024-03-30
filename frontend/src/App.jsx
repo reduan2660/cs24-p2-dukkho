@@ -13,6 +13,8 @@ import TransferLandfill from "./pages/TransferLandfill";
 import Dashboard from "./pages/Dashboard";
 import Fleet from "./pages/Fleet";
 import Sidebar from "./components/Sidebar";
+import GMap from "./pages/Gmap";
+import { useEffect, useState } from "react";
 
 const App = () => {
   return (
@@ -37,6 +39,7 @@ const App = () => {
               <Route path="/transfer/sts" element={<TransferSTS />} />
               <Route path="/transfer/landfill" element={<TransferLandfill />} />
               <Route path="/transfer/fleet" element={<Fleet />} />
+              <Route path="/map" element={<GMap />} />
             </Routes>
           </BrowserRouter>
         </GlobalStateProvider>

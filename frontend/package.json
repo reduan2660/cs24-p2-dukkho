@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@react-pdf/renderer": "^3.4.2",
+    "@vis.gl/react-google-maps": "^0.8.2",
     "@visx/gradient": "^3.3.0",
     "@visx/group": "^3.3.0",
     "@visx/mock-data": "^3.3.0",

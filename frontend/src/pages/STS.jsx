@@ -225,7 +225,24 @@ const Sts = () => {
       setUpdateLongitude(updateSTS.longitude);
       setUpdateLatitude(updateSTS.latitude);
     }
+    if (openCreate) {
+      setCreateName("");
+      setCreateWard("");
+      setCreateCapacity("");
+      setCreateLongitude("");
+      setCreateLatitude("");
+    }
   }, [openEdit, updateSTS]);
+
+  useEffect(() => {
+    if (openCreate) {
+      setCreateName("");
+      setCreateWard("");
+      setCreateCapacity("");
+      setCreateLongitude("");
+      setCreateLatitude("");
+    }
+  },[createName])
 
   useEffect(() => {
     getProfile();
