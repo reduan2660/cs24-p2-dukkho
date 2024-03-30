@@ -157,3 +157,28 @@ async def assign_manager(stsManager: STSManagerRequest, user: User = Depends(get
             ))
         db.commit()
         return JSONResponse(status_code=201, content={"message": "STS manager assigned successfully"})
+    
+
+@router.get("/my")
+async def get_my_sts(user: User = Depends(get_user_from_session)):
+    """
+    Get the STS assigned to the user
+    """
+    if user["role"]["id"] != 2:
+        return JSONResponse(status_code=401, content={"message": "Not enough permissions"})
+
+    with SessionLocal() as db:
+        sts = db.query(STSmanager).filter(STSmanager.user_id == user["id"]).all()
+        response = []
+        for st in sts:
+            st = db.query(STS).filter(STS.id == st.sts_id).first()
+            response.append({
+                "id": st.id,
+                "name": st.name,
+                "ward_no": st.ward_no,
+                "latitude": st.latitude,
+                "longitude": st.longitude,
+                "capacity": st.capacity
+            })
+
+        return JSONResponse(status_code=200, content=response)
