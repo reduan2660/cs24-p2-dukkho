@@ -6,6 +6,13 @@ import { useState, useEffect } from "react";
 import { Modal } from "antd";
 import api from "../api";
 import { useGlobalState } from "../GlobalStateProvider";
+import { GoGraph } from "react-icons/go";
+import { PiBuildings, PiUsersThree } from "react-icons/pi";
+import { RiKeyLine, RiShieldKeyholeLine } from "react-icons/ri";
+import { FaTruck } from "react-icons/fa";
+import { LiaDumpsterSolid } from "react-icons/lia";
+import { BiTransfer } from "react-icons/bi";
+import { MdEmojiTransportation, MdLogin, MdLogout } from "react-icons/md";
 
 const Sidebar = () => {
   const navigate = useNavigate();
@@ -43,6 +50,7 @@ const Sidebar = () => {
       .then((res) => {
         if (res.status === 200) {
           navigate("/login", { state: "logout" });
+          setLogoutModal(false);
         }
       })
       .catch((err) => {
@@ -50,6 +58,7 @@ const Sidebar = () => {
         if (err.response.status === 401) {
           navigate("/login", { state: "session expired" });
         }
+        setLogoutModal(false);
       });
   };
 
@@ -71,39 +80,59 @@ const Sidebar = () => {
         onClose={() => setOpen(!isOpen)}
       >
         <div className="-mb-8 text-sm">Main</div>
-        <div onClick={() => to("")} className="menu-item -mt-8">
-          Dashboard
+        <div className="menu-item -mt-8">
+          <GoGraph className="text-xgray" />
+          <div onClick={() => to("")} className="ml-2">
+            Dashboard
+          </div>
         </div>
+
         <div className="-mb-8 text-sm">User Management</div>
         {globalState.user?.role.permissions.includes("list_all_users") && (
-          <div onClick={() => to("users")} className="menu-item -mt-8">
-            Users
+          <div className="menu-item -mt-8">
+            <PiUsersThree className="text-xgray" />
+            <div onClick={() => to("users")} className="ml-2">
+              Users
+            </div>
           </div>
         )}
         {globalState.user?.role.permissions.includes("list_all_roles") && (
-          <div onClick={() => to("roles")} className="menu-item -mt-8">
-            Roles & Permissions
+          <div className="menu-item -mt-8">
+            <RiShieldKeyholeLine className="text-xgray" />
+            <div onClick={() => to("roles")} className="ml-2">
+              Roles & Permissions
+            </div>
           </div>
         )}
         <div className="-mb-8 text-sm">Waste Management</div>
         {globalState.user?.role.permissions.includes("list_all_sts") && (
-          <div onClick={() => to("sts")} className="menu-item -mt-8">
-            STS
+          <div className="menu-item -mt-8">
+            <PiBuildings className="text-xgray" />
+            <div onClick={() => to("sts")} className="ml-2">
+              STS
+            </div>
           </div>
         )}
         {globalState.user?.role.permissions.includes("list_landfill") && (
-          <div onClick={() => to("landfills")} className="menu-item -mt-8">
-            Landfills
+          <div className="menu-item -mt-8">
+            <LiaDumpsterSolid className="text-xgray" />
+            <div onClick={() => to("landfills")} className="ml-2">
+              Landfills
+            </div>
           </div>
         )}
         {globalState.user?.role.permissions.includes("list_vehicle") && (
-          <div onClick={() => to("vehicles")} className="menu-item -mt-8">
-            Vehicles
+          <div className="menu-item -mt-8">
+            <FaTruck className="text-xgray" />
+            <div onClick={() => to("vehicles")} className="ml-2">
+              Vehicles
+            </div>
           </div>
         )}
         <div className="-mb-8 text-sm">Waste Management</div>
         {globalState.user?.role.permissions.includes("view_transfer") && (
           <div
+            className="menu-item -mt-8"
             onClick={() =>
               globalState.user?.role.permissions.includes(
                 "update_transfer_sts",
@@ -115,39 +144,44 @@ const Sidebar = () => {
                   ? to("transfer/landfills")
                   : null
             }
-            className="menu-item -mt-8"
           >
-            Transfer Records
+            <BiTransfer className="text-xgray" />
+            <div className="ml-2">Transfer Records</div>
           </div>
         )}
-        <div onClick={() => to("transfer/fleet")} className="menu-item -mt-8">
-          Fleet Planning
+        <div className="menu-item -mt-8">
+          <MdEmojiTransportation className="text-xgray" />
+          <div onClick={() => to("transfer/fleet")} className="ml-2">
+            Fleet Planning
+          </div>
         </div>
         <div className="-mb-8 text-sm">Account</div>
-        <div
-          onClick={() => to("auth/change-password")}
-          className="menu-item -mt-8"
-        >
-          Change Password
+        <div className="menu-item -mt-8">
+          <RiKeyLine className="text-xgray" />
+          <div onClick={() => to("auth/change-password")} className="ml-2">
+            Change Password
+          </div>
         </div>
         {isLoggedIn ? (
-          <li>
-            <div
-              onClick={() => {
-                setLogoutModal(true);
-                setOpen(false);
-              }}
-              className="menu-item"
-            >
+          <div
+            className="menu-item -mt-8"
+            onClick={() => {
+              setLogoutModal(true);
+              setOpen(false);
+            }}
+          >
+            <MdLogout className="text-xgray" />
+            <div onClick={() => to("")} className="ml-2">
               Logout
             </div>
-          </li>
+          </div>
         ) : (
-          <li>
-            <div onClick={() => to("login")} className="menu-item">
+          <div className="menu-item -mt-8">
+            <MdLogin className="text-xgray" />
+            <div onClick={() => to("login")} className="ml-2">
               Login
             </div>
-          </li>
+          </div>
         )}
         <Modal
           title="Confirmation"

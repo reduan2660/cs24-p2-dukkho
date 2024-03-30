@@ -41,12 +41,22 @@ const Fleet = () => {
   const generateFleet = () => {
     setConfirmLoading(true);
     api
-      .post(`/transfer/fleet${StsId || StsId == 0 ? `?sts_id=${StsId}` : ""}`, {
-        weight: weight,
-      })
+      .post(
+        `/transfer/fleet${
+          globalState.user?.role.permissions.includes("get_fleet_planning") &&
+          globalState.user?.role.permissions.includes("list_all_sts")
+            ? `?sts_id=${StsId}`
+            : ""
+        }`,
+        {
+          weight: weight,
+        },
+      )
       .then((res) => {
         if (res.status === 200) {
-          toast.success("Fleet planning generated successfully");
+          res.data.transfers.length === 0
+            ? toast.error("All vehicles are unavailable at the moment")
+            : toast.success("Fleet planning generated successfully");
           setFleet(res.data);
         }
       })
@@ -70,6 +80,7 @@ const Fleet = () => {
       .then((res) => {
         if (res.status === 201) {
           toast.success("Transfer created successfully");
+          navigate("/transfers/sts");
           setFleet(res.data);
         }
       })
@@ -91,6 +102,7 @@ const Fleet = () => {
           if (!res.data.role.permissions.includes("view_transfer"))
             navigate("/", { state: "access_denied" });
         }
+        res.data?.role?.permissions.includes("list_all_sts") && getSTS();
       })
       .catch((err) => {
         toast.error(err.response.data?.message);
@@ -101,7 +113,6 @@ const Fleet = () => {
   };
 
   useEffect(() => {
-    getSTS();
     getProfile();
   }, []);
 
@@ -225,16 +236,19 @@ const Fleet = () => {
                   <div className="mx-2 my-4 flex flex-col gap-y-4 lg:mx-4 lg:my-8">
                     {globalState.user?.role.permissions.includes(
                       "get_fleet_planning",
-                    ) && (
-                      <Select
-                        placeholder="Select STS"
-                        className="w-full rounded-md focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
-                        onChange={setStsId}
-                        options={STS.map((sts) => {
-                          return { label: sts.name, value: sts.id };
-                        })}
-                      />
-                    )}
+                    ) &&
+                      globalState.user?.role.permissions.includes(
+                        "list_all_sts",
+                      ) && (
+                        <Select
+                          placeholder="Select STS"
+                          className="w-full rounded-md focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
+                          onChange={setStsId}
+                          options={STS.map((sts) => {
+                            return { label: sts.name, value: sts.id };
+                          })}
+                        />
+                      )}
 
                     <input
                       type="number"

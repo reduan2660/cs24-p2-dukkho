@@ -16,7 +16,6 @@ const TransferSTS = () => {
   const [createVehicle, setCreateVehicle] = useState("");
   const [createWeight, setCreateWeight] = useState("");
   const [createLandfill, setCreateLandfill] = useState("");
-  const [optimalOil, setOptimalOil] = useState({});
   const [createOil, setCreateOil] = useState("");
   const [calculatedOil, setCalculatedOil] = useState("");
   const [profileLoading, setProfileLoading] = useState(false);
@@ -35,6 +34,7 @@ const TransferSTS = () => {
   const [viewLandfill, setViewLandfill] = useState(false);
   const [transfer, setTransfer] = useState("");
   const [viewInfo, setViewInfo] = useState(false);
+  const [requestPDF, setRequestPDF] = useState(false);
 
   const showModal = () => {
     getAvailableVehicle();
@@ -43,21 +43,6 @@ const TransferSTS = () => {
 
   const convertUTC = (time) => {
     return new Date(time).toLocaleString();
-  };
-
-  const getCalculatedOilReport = (vehicleId, landfillId, weight) => {
-    api
-      .post("/transfer/oil", {
-        vehicle_id: vehicleId,
-        landfill_id: landfillId,
-        weight: weight,
-      })
-      .then((res) => {
-        setOptimalOil(res.data);
-      })
-      .catch((err) => {
-        toast.error(err.response.data?.message);
-      });
   };
 
   const getCalculatedOil = () => {
@@ -130,6 +115,21 @@ const TransferSTS = () => {
       });
   };
 
+  const getCalculatedOilReport = async (vehicleId, landfillId, weight) => {
+    try {
+      const response = await api.post("/transfer/oil", {
+        vehicle_id: vehicleId,
+        landfill_id: landfillId,
+        weight: weight,
+      });
+      console.log(response.data);
+      return response.data;
+    } catch (err) {
+      console.error(err.response.data?.message);
+      return null;
+    }
+  };
+
   const createTransfer = () => {
     setConfirmLoading(true);
     api
@@ -186,6 +186,7 @@ const TransferSTS = () => {
           if (!res.data.role.permissions.includes("view_transfer"))
             navigate("/", { state: "access_denied" });
         }
+        res.data?.role?.permissions.includes("view_transfer") && getTransfers();
       })
       .catch((err) => {
         toast.error(err.response.data?.message);
@@ -196,7 +197,6 @@ const TransferSTS = () => {
   };
 
   useEffect(() => {
-    getTransfers();
     getProfile();
   }, []);
 
@@ -336,6 +336,9 @@ const TransferSTS = () => {
                     title="Allocated Oil (L)"
                     dataIndex="oil"
                     sorter={(a, b) => a.oil - b.oil}
+                    render={(oil, record) => {
+                      return <div>{parseFloat(record.oil).toFixed(2)}</div>;
+                    }}
                   ></Column>
                   {globalState.user?.role.permissions.includes(
                     "update_transfer_sts",
@@ -357,16 +360,17 @@ const TransferSTS = () => {
                             </button>
                           </div>
                         ) : record.status.id === 4 ? (
-                          <div
-                            onClick={() =>
-                              getCalculatedOilReport(
-                                record.vehicle.id,
-                                record.landfill.id,
-                                record.sts_departure_weight,
-                              )
-                            }
-                          >
-                            <PdfGenerator data={record} oil={optimalOil} />
+                          <div onClick={() => setRequestPDF(true)}>
+                            <PdfGenerator
+                              data={record}
+                              oil={() =>
+                                getCalculatedOilReport(0, 0, 20).then(
+                                  (data) => {
+                                    return data;
+                                  },
+                                )
+                              }
+                            />
                           </div>
                         ) : (
                           <div></div>

@@ -162,6 +162,8 @@ const Vehicles = () => {
           if (!res.data.role.permissions.includes("list_vehicle"))
             navigate("/", { state: "access_denied" });
         }
+        res.data?.role?.permissions.includes("list_all_sts") && getSTS();
+        res.data?.role?.permissions.includes("list_vehicle") && getVehicles();
       })
       .catch((err) => {
         toast.error(err.response.data?.message);
@@ -182,8 +184,6 @@ const Vehicles = () => {
   }, [openEdit, updateVehicle]);
 
   useEffect(() => {
-    getSTS();
-    getVehicles();
     getProfile();
   }, []);
 
@@ -259,6 +259,22 @@ const Vehicles = () => {
                     dataIndex="sts"
                     sorter={(a, b) => a.sts.name.localeCompare(b.sts.name)}
                     render={(sts, record) => <div>{record.sts.name}</div>}
+                  ></Column>
+                  <Column
+                    title="Status"
+                    dataIndex="available"
+                    sorter={(a, b) => a.available.localeCompare(b.available)}
+                    render={(sts, record) =>
+                      record.available === 0 ? (
+                        <div className="text-dark rounded-full bg-xyellow px-2 py-1 text-center text-sm">
+                          In Transit
+                        </div>
+                      ) : (
+                        <div className="rounded-full bg-green-600 px-2 py-1 text-center text-sm text-white">
+                          Available
+                        </div>
+                      )
+                    }
                   ></Column>
                   <Column
                     title="Loaded Cost"

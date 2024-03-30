@@ -194,6 +194,9 @@ const Roles = () => {
           if (!res.data.role.permissions.includes("list_all_roles"))
             navigate("/", { state: "access_denied" });
         }
+        res.data?.role?.permissions.includes("list_all_permissions") &&
+          getPermissions();
+        res.data?.role?.permissions.includes("list_all_roles") && getRoles();
       })
       .catch((err) => {
         toast.error(err.response.data?.message);
@@ -210,8 +213,6 @@ const Roles = () => {
   }, [editingRoleId]);
 
   useEffect(() => {
-    getPermissions();
-    getRoles();
     getProfile();
   }, []);
 

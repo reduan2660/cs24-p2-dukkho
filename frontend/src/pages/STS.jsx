@@ -205,6 +205,9 @@ const Sts = () => {
           if (!res.data.role.permissions.includes("list_all_sts"))
             navigate("/", { state: "access_denied" });
         }
+        res.data?.role?.permissions.includes("list_all_sts") && getSTS();
+        res.data?.role?.permissions.includes("list_all_users") &&
+          getUsersByRole([0, 2]);
       })
       .catch((err) => {
         toast.error(err.response.data?.message);
@@ -225,8 +228,6 @@ const Sts = () => {
   }, [openEdit, updateSTS]);
 
   useEffect(() => {
-    getUsersByRole([0, 2]);
-    getSTS();
     getProfile();
   }, []);
 

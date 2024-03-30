@@ -155,6 +155,8 @@ const Users = () => {
           if (!res.data.role.permissions.includes("list_all_users"))
             navigate("/", { state: "access_denied" });
         }
+        res.data?.role?.permissions.includes("list_all_users") && getUsers();
+        res.data?.role?.permissions.includes("list_all_roles") && getRoles();
       })
       .catch((err) => {
         toast.error(err.response.data?.message);
@@ -171,8 +173,6 @@ const Users = () => {
   }, [editingUserId]);
 
   useEffect(() => {
-    getRoles();
-    getUsers();
     getProfile();
   }, []);
 

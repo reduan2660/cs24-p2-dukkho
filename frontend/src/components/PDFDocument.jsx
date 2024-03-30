@@ -1,5 +1,14 @@
-import React from "react";
-import { Page, Text, View, Document, StyleSheet } from "@react-pdf/renderer";
+import React, { useEffect, useState } from "react";
+import {
+  Page,
+  Text,
+  View,
+  Document,
+  StyleSheet,
+  Image,
+} from "@react-pdf/renderer";
+import api from "../api";
+import { BiSolidLeaf } from "react-icons/bi";
 
 const styles = StyleSheet.create({
   page: {
@@ -101,6 +110,16 @@ function PdfDocument({ data, oil }) {
   return (
     <Document>
       <Page size="A4" style={styles.page}>
+        <Text
+          style={{
+            position: "absolute",
+            top: 20,
+            left: 40,
+            fontSize: 15,
+          }}
+        >
+          EcoSync
+        </Text>
         <Text style={styles.date}>Date of Report: {reportDate}</Text>
         <View style={styles.section}>
           <Text style={styles.title}>Trip Report</Text>
@@ -207,18 +226,16 @@ function PdfDocument({ data, oil }) {
         </View>
 
         {/* Oil Consumption Details */}
-        {oil && (
+        {/* {oil && (
           <View style={styles.section}>
             <Text style={styles.label}>Oil Consumption Details</Text>
             <View style={styles.gridContainer}>
-              {/* First column */}
               <View style={styles.gridCell}>
                 <Text style={styles.gridTitle}>STS to Landfill</Text>
                 <Text style={styles.gridText}>{oil.to_landfill} Liters</Text>
                 <Text style={styles.gridTitle}>Total Consumption</Text>
                 <Text style={styles.gridText}>{oil.round_trip} Liters</Text>
               </View>
-              {/* Second column */}
               <View style={styles.gridCell}>
                 <Text style={styles.gridTitle}>Landfill to STS</Text>
                 <Text style={styles.gridText}>{oil.from_landfill} Liters</Text>
@@ -227,14 +244,14 @@ function PdfDocument({ data, oil }) {
               </View>
             </View>
           </View>
-        )}
+        )} */}
 
         {/* Transfer Summary */}
-        <View style={styles.section}>
+        <View>
           <Text style={styles.label}>Transfer Summary</Text>
           <View style={styles.gridContainer}>
             {/* First column */}
-            <View style={styles.gridCell}>
+            <View style={{ width: "48%" }}>
               <Text style={styles.gridTitle}>STS</Text>
               <Text style={styles.gridText}>{sts.name}</Text>
               <Text style={styles.gridTitle}>Vehicle Number</Text>
@@ -245,7 +262,7 @@ function PdfDocument({ data, oil }) {
               </Text>
             </View>
             {/* Second column */}
-            <View style={styles.gridCell}>
+            <View style={{ width: "48%" }}>
               <Text style={styles.gridTitle}>Landfill</Text>
               <Text style={styles.gridText}>{landfill.name}</Text>
               <Text style={styles.gridTitle}>Oil Consumption</Text>
