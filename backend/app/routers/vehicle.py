@@ -65,7 +65,11 @@ async def create_vehicle(vehicle: VehicleRequest, user: User = Depends(get_user_
         return JSONResponse(status_code=401, content={"message": "Not enough permissions"})
 
     with SessionLocal() as db:
+        latest_vehicle_id = db.query(Vehicle).order_by(Vehicle.id.desc()).first()
+        if latest_vehicle_id is None:
+            latest_vehicle_id = 0
         db.add(Vehicle(
+            id=latest_vehicle_id.id + 1,
             reg_no=vehicle.reg_no,
             capacity=vehicle.capacity,
             vtype=vehicle.vtype,
