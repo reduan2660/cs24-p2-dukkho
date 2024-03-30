@@ -9,6 +9,7 @@ import api from "../api";
 import { Select } from "antd";
 import { useGlobalState } from "../GlobalStateProvider";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Landfills = () => {
   const navigate = useNavigate();
@@ -18,6 +19,7 @@ const Landfills = () => {
   const [createLatitude, setCreateLatitude] = useState("");
   const [createStartTime, setCreateStartTime] = useState("");
   const [createEndTime, setCreateEndTime] = useState("");
+  const [createLocation, setCreateLocation] = useState("");
   const [updateName, setUpdateName] = useState("");
   const [updateCapacity, setUpdateCapacity] = useState("");
   const [updateCurrentCapacity, setUpdateCurrentCapacity] = useState("");
@@ -25,6 +27,7 @@ const Landfills = () => {
   const [updateLatitude, setUpdateLatitude] = useState("");
   const [updateStartTime, setUpdateStartTime] = useState("");
   const [updateEndTime, setUpdateEndTime] = useState("");
+  const [updateLocation, setUpdateLocation] = useState("");
   const [profileLoading, setProfileLoading] = useState(false);
   const [landfillLoading, setLandfillLoading] = useState(false);
   const { globalState, setGlobalState } = useGlobalState();
@@ -42,6 +45,8 @@ const Landfills = () => {
   const [managerIds, setManagerIds] = useState([]);
   const [landfill, setLandfill] = useState([]);
   const [timeArray, setTimeArray] = useState([]);
+  const [searchValue, setSearchValue] = useState("");
+  const [searchOption, setSearchOption] = useState("name");
 
   const showModal = () => {
     setOpenCreate(true);
@@ -248,7 +253,71 @@ const Landfills = () => {
       setUpdateStartTime(updateLandfill.time_start);
       setUpdateEndTime(updateLandfill.time_end);
     }
-  }, [openEdit, updateLandfill]);
+    if (openCreate) {
+      setCreateName("");
+      setCreateCapacity("");
+      setCreateLongitude("");
+      setCreateLatitude("");
+      setCreateStartTime("");
+      setCreateEndTime("");
+    }
+  }, [openEdit, updateLandfill, openCreate]);
+
+  useEffect(() => {
+    const getGeoCodeCreate = () => {
+      axios
+        .get("https://maps.googleapis.com/maps/api/geocode/json", {
+          params: {
+            address: createLocation,
+            key: "AIzaSyDzhASJpRuFs0t_G-lq2f7r9fTCjcpueJ8",
+          },
+        })
+        .then((response) => {
+          if (response.data.status === "OK") {
+            setCreateLatitude(response.data.results[0].geometry.location.lat);
+            setCreateLongitude(response.data.results[0].geometry.location.lng);
+          }
+        })
+        .catch((error) => {
+          // Handle error
+          console.log("Error:", error);
+        });
+    };
+
+    const getGeoCodeUpdate = () => {
+      axios
+        .get("https://maps.googleapis.com/maps/api/geocode/json", {
+          params: {
+            address: updateLocation,
+            key: "AIzaSyDzhASJpRuFs0t_G-lq2f7r9fTCjcpueJ8",
+          },
+        })
+        .then((response) => {
+          if (response.data.status === "OK") {
+            setUpdateLatitude(response.data.results[0].geometry.location.lat);
+            setUpdateLongitude(response.data.results[0].geometry.location.lng);
+          }
+        })
+        .catch((error) => {
+          // Handle error
+          console.log("Error:", error);
+        });
+    };
+
+    if (createLocation.length > 0) {
+      getGeoCodeCreate();
+    }
+
+    if (updateLocation.length > 0) {
+      getGeoCodeUpdate();
+    }
+  }, [createLocation, updateLocation]);
+
+  useEffect(() => {
+    if (searchValue === "") {
+      getLandfill();
+    }
+  }, [searchValue]);
 
   useEffect(() => {
     convertTo12HourFormat();
@@ -295,12 +364,80 @@ const Landfills = () => {
                   <div></div>
                 )}
               </div>
+              <div className="flex items-center justify-end gap-x-2">
+                <input
+                  type="text"
+                  placeholder="Search Landfill"
+                  className="w-[300px] rounded-md border border-[#DED2D9] px-2 py-1.5 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
+                  onChange={(e) => setSearchValue(e.target.value)}
+                  onBlur={() => {
+                    const filteredLandfills = landfill.filter((landfill) =>
+                      landfill[searchOption]
+                        .toString()
+                        .toLowerCase()
+                        .includes(searchValue.toLowerCase()),
+                    );
+                    setLandfill(filteredLandfills);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      const filteredLandfills = landfill.filter((landfill) =>
+                        landfill[searchOption]
+                          .toString()
+                          .toLowerCase()
+                          .includes(searchValue.toLowerCase()),
+                      );
+                      setLandfill(filteredLandfills);
+                    }
+                  }}
+                />
+                <Select
+                  value={searchOption}
+                  className="h-12 w-[200px] py-1"
+                  options={[
+                    {
+                      value: "name",
+                      label: "By Name",
+                    },
+                    {
+                      value: "capacity",
+                      label: "By Capacity",
+                    },
+                    {
+                      value: "current_capacity",
+                      label: "By Current Capacity",
+                    },
+                    {
+                      value: "latitude",
+                      label: "By Latitude",
+                    },
+                    {
+                      value: "longitude",
+                      label: "By Longitude",
+                    },
+                    {
+                      value: "time_start",
+                      label: "By Start Time",
+                    },
+                    {
+                      value: "time_end",
+                      label: "By End Time",
+                    },
+                  ]}
+                  onChange={setSearchOption}
+                />
+              </div>
               <div className="overflow-x-auto">
                 <Table
                   loading={landfillLoading}
                   dataSource={landfill}
                   rowKey="id"
                   style={{ overflowX: "auto" }}
+                  pagination={{
+                    defaultPageSize: 10,
+                    showSizeChanger: true,
+                    pageSizeOptions: ["10", "20", "30"],
+                  }}
                 >
                   <Column
                     title="Landfill ID"
@@ -522,6 +659,12 @@ const Landfills = () => {
                       onChange={(e) => setCreateCapacity(e.target.value)}
                     />
                     <input
+                      type="text"
+                      placeholder="Location"
+                      className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
+                      onChange={(e) => setCreateLocation(e.target.value)}
+                    />
+                    {/* <input
                       type="number"
                       placeholder="Latitude"
                       className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
@@ -532,7 +675,7 @@ const Landfills = () => {
                       placeholder="Longitude"
                       className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
                       onChange={(e) => setCreateLongitude(e.target.value)}
-                    />
+                    /> */}
                     <Select
                       placeholder="Select Start Time"
                       className="w-full rounded-md focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
@@ -579,6 +722,13 @@ const Landfills = () => {
                       onChange={(e) => setUpdateCurrentCapacity(e.target.value)}
                     />
                     <input
+                      type="text"
+                      placeholder="Location"
+                      value={updateLocation}
+                      className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
+                      onChange={(e) => setUpdateLocation(e.target.value)}
+                    />
+                    {/* <input
                       type="number"
                       placeholder="Latitude"
                       value={updateLatitude}
@@ -591,7 +741,7 @@ const Landfills = () => {
                       value={updateLongitude}
                       className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
                       onChange={(e) => setUpdateLongitude(e.target.value)}
-                    />
+                    /> */}
                     <Select
                       placeholder="Start Time"
                       value={updateStartTime}

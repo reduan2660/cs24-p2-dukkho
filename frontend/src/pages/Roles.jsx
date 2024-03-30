@@ -27,9 +27,10 @@ const Roles = () => {
   const [openDelete, setOpenDelete] = useState(false);
   const [permissionIds, setPermissionIds] = useState([]);
   const [openUpdate, setOpenUpdate] = useState(false);
-
   const [roles, setRoles] = useState([]);
   const nameInputRef = useRef(null);
+  const [searchValue, setSearchValue] = useState("");
+  const [searchOption, setSearchOption] = useState("name");
 
   const showModal = () => {
     setName("");
@@ -207,6 +208,16 @@ const Roles = () => {
   };
 
   useEffect(() => {
+    if (
+      searchValue === "" ||
+      searchValue === null ||
+      searchValue === undefined
+    ) {
+      getRoles();
+    }
+  }, [searchValue]);
+
+  useEffect(() => {
     if (editingRoleId !== null) {
       nameInputRef.current.focus();
     }
@@ -254,12 +265,82 @@ const Roles = () => {
                   <div></div>
                 )}
               </div>
+              <div className="flex items-center justify-end gap-x-2">
+                {searchOption === "name" ? (
+                  <input
+                    type="text"
+                    placeholder="Search Roles"
+                    className="w-[300px] rounded-md border border-[#DED2D9] px-2 py-1.5 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
+                    onChange={(e) => setSearchValue(e.target.value)}
+                    onBlur={() => {
+                      const filteredRoles = roles.filter((role) =>
+                        role.name
+                          .toString()
+                          .toLowerCase()
+                          .includes(searchValue.toLowerCase()),
+                      );
+                      setRoles(filteredRoles);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        const filteredRoles = roles.filter((role) =>
+                          role.name
+                            .toString()
+                            .toLowerCase()
+                            .includes(searchValue.toLowerCase()),
+                        );
+                        setRoles(filteredRoles);
+                      }
+                    }}
+                  />
+                ) : (
+                  <Select
+                    value={searchValue}
+                    className="h-12 w-[300px] py-1"
+                    allowClear
+                    options={permissions.map((permission) => {
+                      return {
+                        label: permission.category,
+                        title: permission.category,
+                        options: permission.permissions.map((permission) => {
+                          return {
+                            label: permission.name,
+                            value: permission.name,
+                          };
+                        }),
+                      };
+                    })}
+                    onChange={(e) => {
+                      const filteredRoles = roles.filter((role) =>
+                        role.permissions.includes(e),
+                      );
+                      setSearchValue(e);
+                      setRoles(filteredRoles);
+                    }}
+                  />
+                )}
+
+                <Select
+                  value={searchOption}
+                  className="h-12 w-[200px] py-1"
+                  options={[
+                    { value: "name", label: "By Name" },
+                    { value: "permission", label: "By Permission" },
+                  ]}
+                  onChange={setSearchOption}
+                />
+              </div>
               <div className="overflow-x-auto">
                 <Table
                   loading={rolesLoading}
                   dataSource={roles}
                   rowKey="id"
                   style={{ overflowX: "auto" }}
+                  pagination={{
+                    defaultPageSize: 10,
+                    showSizeChanger: true,
+                    pageSizeOptions: ["10", "20", "30"],
+                  }}
                 >
                   <Column
                     title="Role ID"

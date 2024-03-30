@@ -9,17 +9,20 @@ import api from "../api";
 import { Select } from "antd";
 import { useGlobalState } from "../GlobalStateProvider";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Sts = () => {
   const navigate = useNavigate();
   const [createName, setCreateName] = useState("");
   const [createWard, setCreateWard] = useState("");
   const [createCapacity, setCreateCapacity] = useState("");
+  const [createLocation, setCreateLocation] = useState("");
   const [createLongitude, setCreateLongitude] = useState("");
   const [createLatitude, setCreateLatitude] = useState("");
   const [updateName, setUpdateName] = useState("");
   const [updateCapacity, setUpdateCapacity] = useState("");
   const [updateWard, setUpdateWard] = useState("");
+  const [updateLocation, setUpdateLocation] = useState("");
   const [updateLongitude, setUpdateLongitude] = useState("");
   const [updateLatitude, setUpdateLatitude] = useState("");
   const [profileLoading, setProfileLoading] = useState(false);
@@ -40,6 +43,8 @@ const Sts = () => {
   const [unassignedUsers, setUnassignedUsers] = useState([]);
   const [managerIds, setManagerIds] = useState([]);
   const [sts, setSTS] = useState([]);
+  const [searchValue, setSearchValue] = useState("");
+  const [searchOption, setSearchOption] = useState("name");
 
   const showModal = () => {
     setOpenCreate(true);
@@ -218,6 +223,12 @@ const Sts = () => {
   };
 
   useEffect(() => {
+    if (searchValue === "") {
+      getSTS();
+    }
+  }, [searchValue]);
+
+  useEffect(() => {
     if (openEdit) {
       setUpdateName(updateSTS.name);
       setUpdateWard(updateSTS.ward_no);
@@ -225,7 +236,64 @@ const Sts = () => {
       setUpdateLongitude(updateSTS.longitude);
       setUpdateLatitude(updateSTS.latitude);
     }
-  }, [openEdit, updateSTS]);
+    if (openCreate) {
+      setCreateName("");
+      setCreateWard("");
+      setCreateCapacity("");
+      setCreateLongitude("");
+      setCreateLatitude("");
+    }
+  }, [openEdit, openCreate, updateSTS]);
+
+  useEffect(() => {
+    const getGeoCodeCreate = () => {
+      axios
+        .get("https://maps.googleapis.com/maps/api/geocode/json", {
+          params: {
+            address: createLocation,
+            key: "AIzaSyDzhASJpRuFs0t_G-lq2f7r9fTCjcpueJ8",
+          },
+        })
+        .then((response) => {
+          if (response.data.status === "OK") {
+            setCreateLatitude(response.data.results[0].geometry.location.lat);
+            setCreateLongitude(response.data.results[0].geometry.location.lng);
+          }
+        })
+        .catch((error) => {
+          // Handle error
+          console.log("Error:", error);
+        });
+    };
+
+    const getGeoCodeUpdate = () => {
+      axios
+        .get("https://maps.googleapis.com/maps/api/geocode/json", {
+          params: {
+            address: updateLocation,
+            key: "AIzaSyDzhASJpRuFs0t_G-lq2f7r9fTCjcpueJ8",
+          },
+        })
+        .then((response) => {
+          if (response.data.status === "OK") {
+            setUpdateLatitude(response.data.results[0].geometry.location.lat);
+            setUpdateLongitude(response.data.results[0].geometry.location.lng);
+          }
+        })
+        .catch((error) => {
+          // Handle error
+          console.log("Error:", error);
+        });
+    };
+
+    if (createLocation.length > 0) {
+      getGeoCodeCreate();
+    }
+
+    if (updateLocation.length > 0) {
+      getGeoCodeUpdate();
+    }
+  }, [createLocation, updateLocation]);
 
   useEffect(() => {
     getProfile();
@@ -269,12 +337,72 @@ const Sts = () => {
                   <div></div>
                 )}
               </div>
+              <div className="flex items-center justify-end gap-x-2">
+                <input
+                  type="text"
+                  placeholder="Search STS"
+                  className="w-[300px] rounded-md border border-[#DED2D9] px-2 py-1.5 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
+                  onChange={(e) => setSearchValue(e.target.value)}
+                  onBlur={() => {
+                    const filteredSTS = sts.filter((sts) =>
+                      sts[searchOption]
+                        .toString()
+                        .toLowerCase()
+                        .includes(searchValue.toLowerCase()),
+                    );
+                    setSTS(filteredSTS);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      const filteredSTS = sts.filter((sts) =>
+                        sts[searchOption]
+                          .toString()
+                          .toLowerCase()
+                          .includes(searchValue.toLowerCase()),
+                      );
+                      setSTS(filteredSTS);
+                    }
+                  }}
+                />
+                <Select
+                  value={searchOption}
+                  className="h-12 w-[200px] py-1"
+                  options={[
+                    {
+                      value: "name",
+                      label: "By Name",
+                    },
+                    {
+                      value: "ward_no",
+                      label: "By Ward No.",
+                    },
+                    {
+                      value: "capacity",
+                      label: "By Capacity",
+                    },
+                    {
+                      value: "latitude",
+                      label: "By Latitude",
+                    },
+                    {
+                      value: "longitude",
+                      label: "By Longitude",
+                    },
+                  ]}
+                  onChange={setSearchOption}
+                />
+              </div>
               <div className="overflow-x-auto">
                 <Table
                   loading={stsLoading}
                   dataSource={sts}
                   rowKey="id"
                   style={{ overflowX: "auto" }}
+                  pagination={{
+                    defaultPageSize: 10,
+                    showSizeChanger: true,
+                    pageSizeOptions: ["10", "20", "30"],
+                  }}
                 >
                   <Column
                     title="STS ID"
@@ -523,23 +651,33 @@ const Sts = () => {
                       onChange={(e) => setCreateWard(e.target.value)}
                     />
                     <input
+                      type="text"
+                      placeholder="Location"
+                      className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
+                      onChange={(e) => setCreateLocation(e.target.value)}
+                    />
+                    <input
                       type="number"
                       placeholder="Capacity"
                       className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
                       onChange={(e) => setCreateCapacity(e.target.value)}
                     />
-                    <input
+                    {/* <input
                       type="number"
+                      value={createLatitude}
                       placeholder="Latitude"
+                      disabled
                       className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
                       onChange={(e) => setCreateLatitude(e.target.value)}
                     />
                     <input
                       type="number"
+                      value={createLongitude}
                       placeholder="Longitude"
+                      disabled
                       className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
                       onChange={(e) => setCreateLongitude(e.target.value)}
-                    />
+                    /> */}
                   </div>
                 </Modal>
                 <Modal
@@ -568,13 +706,20 @@ const Sts = () => {
                       onChange={(e) => setUpdateWard(e.target.value)}
                     />
                     <input
+                      type="text"
+                      placeholder="Location"
+                      value={updateLocation}
+                      className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
+                      onChange={(e) => setUpdateLocation(e.target.value)}
+                    />
+                    <input
                       type="number"
                       placeholder="Capacity"
                       value={updateCapacity}
                       className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
                       onChange={(e) => setUpdateCapacity(e.target.value)}
                     />
-                    <input
+                    {/* <input
                       type="number"
                       placeholder="Latitude"
                       value={updateLatitude}
@@ -587,7 +732,7 @@ const Sts = () => {
                       value={updateLongitude}
                       className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
                       onChange={(e) => setUpdateLongitude(e.target.value)}
-                    />
+                    /> */}
                   </div>
                 </Modal>
               </div>

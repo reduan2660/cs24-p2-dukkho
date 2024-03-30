@@ -1,4 +1,3 @@
-import React from "react";
 import { BiSolidLeaf } from "react-icons/bi";
 
 const Navbar = () => {

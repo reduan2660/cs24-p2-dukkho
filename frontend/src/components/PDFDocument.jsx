@@ -1,14 +1,10 @@
-import React, { useEffect, useState } from "react";
 import {
   Page,
   Text,
   View,
   Document,
   StyleSheet,
-  Image,
 } from "@react-pdf/renderer";
-import api from "../api";
-import { BiSolidLeaf } from "react-icons/bi";
 
 const styles = StyleSheet.create({
   page: {
