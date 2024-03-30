@@ -28,6 +28,8 @@ const Users = () => {
   const [profileLoading, setProfileLoading] = useState(false);
   const { globalState, setGlobalState } = useGlobalState();
   const nameInputRef = useRef(null);
+  const [searchValue, setSearchValue] = useState("");
+  const [searchOption, setSearchOption] = useState("name");
 
   const showModal = () => {
     setEmail("");
@@ -167,6 +169,12 @@ const Users = () => {
   };
 
   useEffect(() => {
+    if (searchValue === "") {
+      getUsers();
+    }
+  }, [searchValue]);
+
+  useEffect(() => {
     if (editingUserId !== null) {
       nameInputRef.current.focus();
     }
@@ -213,6 +221,54 @@ const Users = () => {
                 ) : (
                   <div></div>
                 )}
+              </div>
+              <div className="flex items-center justify-end gap-x-2">
+                <input
+                  type="text"
+                  placeholder="Search User"
+                  className="w-[300px] rounded-md border border-[#DED2D9] px-2 py-1.5 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
+                  onChange={(e) => setSearchValue(e.target.value)}
+                  onBlur={() => {
+                    const filteredUsers = users.filter((user) =>
+                      searchOption === "role"
+                        ? user[searchOption].name
+                            .toString()
+                            .toLowerCase()
+                            .includes(searchValue.toLowerCase())
+                        : user[searchOption]
+                            .toString()
+                            .toLowerCase()
+                            .includes(searchValue.toLowerCase()),
+                    );
+                    setUsers(filteredUsers);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      const filteredUsers = users.filter((user) =>
+                        searchOption === "role"
+                          ? user[searchOption].name
+                              .toString()
+                              .toLowerCase()
+                              .includes(searchValue.toLowerCase())
+                          : user[searchOption]
+                              .toString()
+                              .toLowerCase()
+                              .includes(searchValue.toLowerCase()),
+                      );
+                      setUsers(filteredUsers);
+                    }
+                  }}
+                />
+                <Select
+                  value={searchOption}
+                  className="h-12 w-[200px] py-1"
+                  options={[
+                    { value: "name", label: "By Name" },
+                    { value: "email", label: "By Email" },
+                    { value: "role", label: "By Role" },
+                  ]}
+                  onChange={setSearchOption}
+                />
               </div>
               <div className=" overflow-x-auto">
                 <Table

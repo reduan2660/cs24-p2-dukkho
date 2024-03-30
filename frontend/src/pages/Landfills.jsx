@@ -45,6 +45,8 @@ const Landfills = () => {
   const [managerIds, setManagerIds] = useState([]);
   const [landfill, setLandfill] = useState([]);
   const [timeArray, setTimeArray] = useState([]);
+  const [searchValue, setSearchValue] = useState("");
+  const [searchOption, setSearchOption] = useState("name");
 
   const showModal = () => {
     setOpenCreate(true);
@@ -312,6 +314,12 @@ const Landfills = () => {
   }, [createLocation, updateLocation]);
 
   useEffect(() => {
+    if (searchValue === "") {
+      getLandfill();
+    }
+  }, [searchValue]);
+
+  useEffect(() => {
     convertTo12HourFormat();
     getProfile();
   }, []);
@@ -355,6 +363,69 @@ const Landfills = () => {
                 ) : (
                   <div></div>
                 )}
+              </div>
+              <div className="flex items-center justify-end gap-x-2">
+                <input
+                  type="text"
+                  placeholder="Search Landfill"
+                  className="w-[300px] rounded-md border border-[#DED2D9] px-2 py-1.5 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
+                  onChange={(e) => setSearchValue(e.target.value)}
+                  onBlur={() => {
+                    const filteredLandfills = landfill.filter((landfill) =>
+                      landfill[searchOption]
+                        .toString()
+                        .toLowerCase()
+                        .includes(searchValue.toLowerCase()),
+                    );
+                    setLandfill(filteredLandfills);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      const filteredLandfills = landfill.filter((landfill) =>
+                        landfill[searchOption]
+                          .toString()
+                          .toLowerCase()
+                          .includes(searchValue.toLowerCase()),
+                      );
+                      setLandfill(filteredLandfills);
+                    }
+                  }}
+                />
+                <Select
+                  value={searchOption}
+                  className="h-12 w-[200px] py-1"
+                  options={[
+                    {
+                      value: "name",
+                      label: "By Name",
+                    },
+                    {
+                      value: "capacity",
+                      label: "By Capacity",
+                    },
+                    {
+                      value: "current_capacity",
+                      label: "By Current Capacity",
+                    },
+                    {
+                      value: "latitude",
+                      label: "By Latitude",
+                    },
+                    {
+                      value: "longitude",
+                      label: "By Longitude",
+                    },
+                    {
+                      value: "time_start",
+                      label: "By Start Time",
+                    },
+                    {
+                      value: "time_end",
+                      label: "By End Time",
+                    },
+                  ]}
+                  onChange={setSearchOption}
+                />
               </div>
               <div className="overflow-x-auto">
                 <Table

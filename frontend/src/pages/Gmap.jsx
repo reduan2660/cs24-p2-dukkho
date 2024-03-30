@@ -68,9 +68,9 @@ const Directions = ({ origin, destination, travelMode }) => {
 
     directionsService
       .route({
-        origin: start,
-        destination: end,
-        travelMode: "DRIVING",
+        origin: origin,
+        destination: destination,
+        travelMode: travelMode,
         provideRouteAlternatives: true,
       })
       .then((response) => {

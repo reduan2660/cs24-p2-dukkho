@@ -8,6 +8,7 @@ import Column from "antd/es/table/Column";
 import api from "../api";
 import { useGlobalState } from "../GlobalStateProvider";
 import { useNavigate } from "react-router-dom";
+import { Select } from "antd";
 import PdfGenerator from "../components/PDFGenerator";
 
 const TransferLandfill = () => {
@@ -26,6 +27,8 @@ const TransferLandfill = () => {
   const [weight, setWeight] = useState("");
   const [transfer, setTransfer] = useState("");
   const [viewInfo, setViewInfo] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
+  const [searchOption, setSearchOption] = useState("vehicle");
 
   function getStatusColor(statusId) {
     switch (statusId) {
@@ -118,6 +121,10 @@ const TransferLandfill = () => {
   };
 
   useEffect(() => {
+    if (searchValue === "") getTransfers();
+  }, [searchValue]);
+
+  useEffect(() => {
     getProfile();
   }, []);
 
@@ -146,6 +153,66 @@ const TransferLandfill = () => {
                   All Transfer Records
                 </div>
                 <div></div>
+              </div>
+              <div className="flex items-center justify-end gap-x-2">
+                <input
+                  type="text"
+                  placeholder="Search Transfer Records"
+                  className="w-[300px] rounded-md border border-[#DED2D9] px-2 py-1.5 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
+                  onChange={(e) => setSearchValue(e.target.value)}
+                  onBlur={() => {
+                    const filteredTransfers = transferRecords.filter(
+                      (transfer) =>
+                        searchOption === "vehicle"
+                          ? transfer.vehicle.reg_no
+                              .toString()
+                              .toLowerCase()
+                              .includes(searchValue.toLowerCase())
+                          : searchOption === "sts"
+                            ? transfer.sts.name
+                                .toString()
+                                .toLowerCase()
+                                .includes(searchValue.toLowerCase())
+                            : transfer.landfill.name
+                                .toString()
+                                .toLowerCase()
+                                .includes(searchValue.toLowerCase()),
+                    );
+                    setTransferRecords(filteredTransfers);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      const filteredTransfers = transferRecords.filter(
+                        (transfer) =>
+                          searchOption === "vehicle"
+                            ? transfer.vehicle.reg_no
+                                .toString()
+                                .toLowerCase()
+                                .includes(searchValue.toLowerCase())
+                            : searchOption === "sts"
+                              ? transfer.sts.name
+                                  .toString()
+                                  .toLowerCase()
+                                  .includes(searchValue.toLowerCase())
+                              : transfer.landfill.name
+                                  .toString()
+                                  .toLowerCase()
+                                  .includes(searchValue.toLowerCase()),
+                      );
+                      setTransferRecords(filteredTransfers);
+                    }
+                  }}
+                />
+                <Select
+                  value={searchOption}
+                  className="h-12 w-[200px] py-1"
+                  options={[
+                    { value: "vehicle", label: "By Vehicle" },
+                    { value: "sts", label: "By STS" },
+                    { value: "landfill", label: "Landfill" },
+                  ]}
+                  onChange={setSearchOption}
+                />
               </div>
               <div className="overflow-x-auto">
                 <Table

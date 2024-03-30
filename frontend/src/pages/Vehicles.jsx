@@ -31,6 +31,8 @@ const Vehicles = () => {
   const [openDelete, setOpenDelete] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [STS, setSTS] = useState([]);
+  const [searchValue, setSearchValue] = useState("");
+  const [searchOption, setSearchOption] = useState("reg_no");
 
   const [vehicles, setVehicles] = useState([]);
 
@@ -174,6 +176,12 @@ const Vehicles = () => {
   };
 
   useEffect(() => {
+    if (searchValue === "") {
+      getVehicles();
+    }
+  }, [searchValue]);
+
+  useEffect(() => {
     if (openEdit) {
       setUpdateReg(updateVehicle.reg_no);
       setUpdateVtype(updateVehicle.vtype);
@@ -233,6 +241,73 @@ const Vehicles = () => {
                 ) : (
                   <div></div>
                 )}
+              </div>
+              <div className="flex items-center justify-end gap-x-2">
+                <input
+                  type="text"
+                  placeholder="Search Vehicle"
+                  className="w-[300px] rounded-md border border-[#DED2D9] px-2 py-1.5 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
+                  onChange={(e) => setSearchValue(e.target.value)}
+                  onBlur={() => {
+                    const filteredVehicles = vehicles.filter((vehicle) =>
+                      vehicle[searchOption]
+                        .toString()
+                        .toLowerCase()
+                        .includes(searchValue.toLowerCase()),
+                    );
+                    setVehicles(filteredVehicles);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      const filteredVehicles = vehicles.filter((vehicle) =>
+                        vehicle[searchOption]
+                          .toString()
+                          .toLowerCase()
+                          .includes(searchValue.toLowerCase()),
+                      );
+                      setVehicles(filteredVehicles);
+                    }
+                  }}
+                />
+                <Select
+                  value={searchOption}
+                  className="h-12 w-[200px] py-1"
+                  options={[
+                    {
+                      value: "id",
+                      label: "By Vehicle ID",
+                    },
+                    {
+                      value: "reg_no",
+                      label: "By Reg No.",
+                    },
+                    {
+                      value: "capacity",
+                      label: "By Capacity",
+                    },
+                    {
+                      value: "vtype",
+                      label: "By Vehicle Type",
+                    },
+                    {
+                      value: "sts",
+                      label: "By Assigned STS",
+                    },
+                    {
+                      value: "available",
+                      label: "By Status",
+                    },
+                    {
+                      value: "loaded_cost",
+                      label: "By Loaded Cost",
+                    },
+                    {
+                      value: "empty_cost",
+                      label: "By Empty Cost",
+                    },
+                  ]}
+                  onChange={setSearchOption}
+                />
               </div>
               <div className="overflow-x-auto">
                 <Table

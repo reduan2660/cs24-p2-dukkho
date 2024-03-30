@@ -43,6 +43,8 @@ const Sts = () => {
   const [unassignedUsers, setUnassignedUsers] = useState([]);
   const [managerIds, setManagerIds] = useState([]);
   const [sts, setSTS] = useState([]);
+  const [searchValue, setSearchValue] = useState("");
+  const [searchOption, setSearchOption] = useState("name");
 
   const showModal = () => {
     setOpenCreate(true);
@@ -221,6 +223,12 @@ const Sts = () => {
   };
 
   useEffect(() => {
+    if (searchValue === "") {
+      getSTS();
+    }
+  }, [searchValue]);
+
+  useEffect(() => {
     if (openEdit) {
       setUpdateName(updateSTS.name);
       setUpdateWard(updateSTS.ward_no);
@@ -328,6 +336,61 @@ const Sts = () => {
                 ) : (
                   <div></div>
                 )}
+              </div>
+              <div className="flex items-center justify-end gap-x-2">
+                <input
+                  type="text"
+                  placeholder="Search STS"
+                  className="w-[300px] rounded-md border border-[#DED2D9] px-2 py-1.5 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
+                  onChange={(e) => setSearchValue(e.target.value)}
+                  onBlur={() => {
+                    const filteredSTS = sts.filter((sts) =>
+                      sts[searchOption]
+                        .toString()
+                        .toLowerCase()
+                        .includes(searchValue.toLowerCase()),
+                    );
+                    setSTS(filteredSTS);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      const filteredSTS = sts.filter((sts) =>
+                        sts[searchOption]
+                          .toString()
+                          .toLowerCase()
+                          .includes(searchValue.toLowerCase()),
+                      );
+                      setSTS(filteredSTS);
+                    }
+                  }}
+                />
+                <Select
+                  value={searchOption}
+                  className="h-12 w-[200px] py-1"
+                  options={[
+                    {
+                      value: "name",
+                      label: "By Name",
+                    },
+                    {
+                      value: "ward_no",
+                      label: "By Ward No.",
+                    },
+                    {
+                      value: "capacity",
+                      label: "By Capacity",
+                    },
+                    {
+                      value: "latitude",
+                      label: "By Latitude",
+                    },
+                    {
+                      value: "longitude",
+                      label: "By Longitude",
+                    },
+                  ]}
+                  onChange={setSearchOption}
+                />
               </div>
               <div className="overflow-x-auto">
                 <Table

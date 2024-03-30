@@ -35,8 +35,10 @@ const TransferSTS = () => {
   const [viewLandfill, setViewLandfill] = useState(false);
   const [transfer, setTransfer] = useState("");
   const [viewInfo, setViewInfo] = useState(false);
-  const [requestPDF, setRequestPDF] = useState(false);
   const [openMap, setOpenMap] = useState(false);
+  const [mySTS, setMySTS] = useState([]);
+  const [searchValue, setSearchValue] = useState("");
+  const [searchOption, setSearchOption] = useState("vehicle");
 
   const showModal = () => {
     getAvailableVehicle();
@@ -175,6 +177,19 @@ const TransferSTS = () => {
       });
   };
 
+  const getMysts = () => {
+    api
+      .get("/sts/my")
+      .then((res) => {
+        if (res.status === 200) {
+          setMySTS(res.data);
+        }
+      })
+      .catch((err) => {
+        toast.error(err.response.data?.message);
+      });
+  };
+
   const getProfile = () => {
     setProfileLoading(true);
     api
@@ -197,6 +212,10 @@ const TransferSTS = () => {
         setProfileLoading(false);
       });
   };
+
+  useEffect(() => {
+    if (searchValue === "") getTransfers();
+  }, [searchValue]);
 
   useEffect(() => {
     getProfile();
@@ -232,7 +251,10 @@ const TransferSTS = () => {
                   <div>
                     <button
                       type="button"
-                      onClick={showModal}
+                      onClick={() => {
+                        showModal();
+                        getMysts();
+                      }}
                       className="rounded-md bg-xblue px-3 py-1 font-medium text-white transition-all duration-300 hover:bg-blue-600 lg:rounded-lg lg:px-5 lg:py-2"
                     >
                       Create Transfer Record
@@ -241,6 +263,66 @@ const TransferSTS = () => {
                 ) : (
                   <div></div>
                 )}
+              </div>
+              <div className="flex items-center justify-end gap-x-2">
+                <input
+                  type="text"
+                  placeholder="Search Transfer Records"
+                  className="w-[300px] rounded-md border border-[#DED2D9] px-2 py-1.5 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
+                  onChange={(e) => setSearchValue(e.target.value)}
+                  onBlur={() => {
+                    const filteredTransfers = transferRecords.filter(
+                      (transfer) =>
+                        searchOption === "vehicle"
+                          ? transfer.vehicle.reg_no
+                              .toString()
+                              .toLowerCase()
+                              .includes(searchValue.toLowerCase())
+                          : searchOption === "sts"
+                            ? transfer.sts.name
+                                .toString()
+                                .toLowerCase()
+                                .includes(searchValue.toLowerCase())
+                            : transfer.landfill.name
+                                .toString()
+                                .toLowerCase()
+                                .includes(searchValue.toLowerCase()),
+                    );
+                    setTransferRecords(filteredTransfers);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      const filteredTransfers = transferRecords.filter(
+                        (transfer) =>
+                          searchOption === "vehicle"
+                            ? transfer.vehicle.reg_no
+                                .toString()
+                                .toLowerCase()
+                                .includes(searchValue.toLowerCase())
+                            : searchOption === "sts"
+                              ? transfer.sts.name
+                                  .toString()
+                                  .toLowerCase()
+                                  .includes(searchValue.toLowerCase())
+                              : transfer.landfill.name
+                                  .toString()
+                                  .toLowerCase()
+                                  .includes(searchValue.toLowerCase()),
+                      );
+                      setTransferRecords(filteredTransfers);
+                    }
+                  }}
+                />
+                <Select
+                  value={searchOption}
+                  className="h-12 w-[200px] py-1"
+                  options={[
+                    { value: "vehicle", label: "By Vehicle" },
+                    { value: "sts", label: "By STS" },
+                    { value: "landfill", label: "Landfill" },
+                  ]}
+                  onChange={setSearchOption}
+                />
               </div>
               <div className="overflow-x-auto">
                 <Table
@@ -362,7 +444,7 @@ const TransferSTS = () => {
                             </button>
                           </div>
                         ) : record.status.id === 4 ? (
-                          <div onClick={() => setRequestPDF(true)}>
+                          <div>
                             <PdfGenerator
                               data={record}
                               oil={() =>
@@ -464,7 +546,9 @@ const TransferSTS = () => {
                         type="number"
                         placeholder="Allocate Oil"
                         value={
-                          calculatedOil ? calculatedOil.toFixed(2) : createOil
+                          calculatedOil
+                            ? parseFloat(calculatedOil).toFixed(2)
+                            : createOil
                         }
                         onClick={() => getCalculatedOil()}
                         className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
@@ -559,12 +643,16 @@ const TransferSTS = () => {
                       height={800}
                       width={1300}
                       origin={{
-                        lat: 23.757985271113462,
-                        lng: 90.38987643530105,
+                        lat: mySTS[0]?.latitude,
+                        lng: mySTS[0]?.longitude,
                       }}
                       destination={{
-                        lat: 23.72274789134823,
-                        lng: 90.39988172573108,
+                        lat: availableLandfills.find(
+                          (item) => item.id === parseInt(createLandfill),
+                        )?.latitude,
+                        lng: availableLandfills.find(
+                          (item) => item.id === parseInt(createLandfill),
+                        )?.longitude,
                       }}
                       zoom={14}
                       travelMode="Driving"
