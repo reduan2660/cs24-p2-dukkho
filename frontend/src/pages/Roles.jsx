@@ -336,6 +336,11 @@ const Roles = () => {
                   dataSource={roles}
                   rowKey="id"
                   style={{ overflowX: "auto" }}
+                  pagination={{
+                    defaultPageSize: 10,
+                    showSizeChanger: true,
+                    pageSizeOptions: ["10", "20", "30"],
+                  }}
                 >
                   <Column
                     title="Role ID"

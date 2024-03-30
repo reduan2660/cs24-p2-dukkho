@@ -276,6 +276,11 @@ const Users = () => {
                   dataSource={users}
                   rowKey="id"
                   style={{ overflowX: "auto" }}
+                  pagination={{
+                    defaultPageSize: 10,
+                    showSizeChanger: true,
+                    pageSizeOptions: ["10", "20", "30"],
+                  }}
                 >
                   <Column
                     title="User ID"
