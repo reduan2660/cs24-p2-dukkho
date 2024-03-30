@@ -59,7 +59,12 @@ async def create_landfill(landfill: Landfillrequest, user: User = Depends(get_us
         return JSONResponse(status_code=401, content={"message": "Not enough permissions"})
     
     with SessionLocal() as db:
+        latest_landfill_id = db.query(Landfill).order_by(Landfill.id.desc()).first()
+        if latest_landfill_id is None:
+            latest_landfill_id = 0
+
         db.add(Landfill(
+            id=latest_landfill_id.id + 1,
             name=landfill.name,
             latitude=landfill.latitude,
             longitude=landfill.longitude,
