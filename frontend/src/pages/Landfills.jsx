@@ -226,6 +226,9 @@ const Landfills = () => {
           if (!res.data.role.permissions.includes("list_landfill"))
             navigate("/", { state: "access_denied" });
         }
+        res.data?.role?.permissions.includes("list_landfill") && getLandfill();
+        res.data?.role?.permissions.includes("list_all_users") &&
+          getUsersByRole([0, 3]);
       })
       .catch((err) => {
         toast.error(err.response.data?.message);
@@ -249,8 +252,6 @@ const Landfills = () => {
 
   useEffect(() => {
     convertTo12HourFormat();
-    getUsersByRole([0, 3]);
-    getLandfill();
     getProfile();
   }, []);
 

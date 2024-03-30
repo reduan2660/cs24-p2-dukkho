@@ -107,6 +107,7 @@ const TransferLandfill = () => {
           if (!res.data.role.permissions.includes("view_transfer"))
             navigate("/", { state: "access_denied" });
         }
+        res.data?.role?.permissions.includes("view_transfer") && getTransfers();
       })
       .catch((err) => {
         toast.error(err.response.data?.message);
@@ -117,7 +118,6 @@ const TransferLandfill = () => {
   };
 
   useEffect(() => {
-    getTransfers();
     getProfile();
   }, []);
 
@@ -243,6 +243,9 @@ const TransferLandfill = () => {
                     title="Allocated Oil (L)"
                     dataIndex="oil"
                     sorter={(a, b) => a.oil - b.oil}
+                    render={(oil, record) => {
+                      return <div>{parseFloat(record.oil).toFixed(2)}</div>;
+                    }}
                   ></Column>
                   {globalState.user?.role.permissions.includes(
                     "update_transfer_landfill",

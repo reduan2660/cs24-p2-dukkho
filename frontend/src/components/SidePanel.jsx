@@ -93,6 +93,22 @@ const SidePanel = () => {
             </div>
           </MenuItem>
           <hr />
+          {collapsed ? (
+            <FiUser className="text-md my-3 w-full text-center text-xgray" />
+          ) : (
+            <div>
+              <div className="ml-6 mt-3 flex items-center gap-x-2">
+                <FiUser className="text-md text-xgray" />
+                <div className="text-md font-medium text-xgray">
+                  {globalState.user?.name || "User"}
+                </div>
+              </div>
+              <div className="mb-3 ml-6 text-xs font-thin text-xlightgray">
+                {globalState.user?.role.name || "Role"}
+              </div>
+            </div>
+          )}
+          <hr />
           {!collapsed && (
             <div className="text-md ml-6 mt-7 font-medium text-xlightgray">
               Main
@@ -282,20 +298,6 @@ const SidePanel = () => {
               Account
             </div>
           )}
-          <div
-            className={`w-full ${
-              location.pathname === "/profile" ? "bg-blue-100" : ""
-            }`}
-            onClick={() => {
-              if (location.pathname !== "/profile") navigate("/profile");
-            }}
-          >
-            <MenuItem icon={<FiUser className="text-lg text-xgray" />}>
-              <div className="font-medium text-xgray">
-                {globalState.user?.name ? globalState.user?.name : "Account"}
-              </div>
-            </MenuItem>
-          </div>
           <div
             className={`w-full ${
               location.pathname === "/auth/change-password" ? "bg-blue-100" : ""

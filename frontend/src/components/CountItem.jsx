@@ -1,11 +1,11 @@
 import React from "react";
 import CountUp from "react-countup";
 
-const CountItem = ({ count, icon }) => {
+const CountItem = ({ title, count, icon }) => {
   return (
     <div className="flex items-center justify-between rounded-xl border p-8">
       <div>
-        <div className="text-sm text-xlightgray">Total Landfill</div>
+        <div className="text-sm text-xlightgray">{title}</div>
         <div className="text-5xl font-black text-xdark">
           <CountUp end={count} duration={1} />
         </div>

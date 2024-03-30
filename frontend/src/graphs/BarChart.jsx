@@ -186,16 +186,20 @@ const TitledBarChart = ({
 }) => {
   return (
     <div className="flex flex-col items-center space-y-4">
-      <p className="ml-8 text-xl font-bold">{chartTitle}</p>
-      <CustomBarChart
-        data={data}
-        width={width}
-        height={height}
-        chartTitle={chartTitle}
-        margin={margin}
-        fill={fill}
-        stroke={stroke}
-      />
+      <p className="text-xl font-bold">{chartTitle}</p>
+      {data.filter((d) => d.value !== 0).length > 0 ? (
+        <CustomBarChart
+          data={data}
+          width={width}
+          height={height}
+          chartTitle={chartTitle}
+          margin={margin}
+          fill={fill}
+          stroke={stroke}
+        />
+      ) : (
+        <div className={`pb-4 text-center`}>No data available yet</div>
+      )}
     </div>
   );
 };

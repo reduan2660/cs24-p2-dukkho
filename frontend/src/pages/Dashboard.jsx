@@ -24,8 +24,14 @@ const Dashboard = () => {
   const [wasteSTS, setWasteSTS] = useState([]);
   const [oilConsumption, setOilConsumption] = useState([]);
   const [totalTransfer, setTotalTransfer] = useState([]);
+  const [columns, setColumns] = useState(2);
 
-  //TODO: check roles and permissions
+  const permissions = [
+    "report_available_vehicles",
+    "report_vehicles_in_transfer",
+    "report_total_sts",
+    "report_total_landfill",
+  ];
 
   const getAvailableVehicle = () => {
     api
@@ -36,7 +42,7 @@ const Dashboard = () => {
         }
       })
       .catch((err) => {
-        console.log(err.response.data?.message);
+        toast.error(err.response.data?.message);
       });
   };
 
@@ -49,7 +55,7 @@ const Dashboard = () => {
         }
       })
       .catch((err) => {
-        console.log(err.response.data?.message);
+        toast.error(err.response.data?.message);
       });
   };
 
@@ -62,7 +68,7 @@ const Dashboard = () => {
         }
       })
       .catch((err) => {
-        console.log(err.response.data?.message);
+        toast.error(err.response.data?.message);
       });
   };
 
@@ -75,7 +81,7 @@ const Dashboard = () => {
         }
       })
       .catch((err) => {
-        console.log(err.response.data?.message);
+        toast.error(err.response.data?.message);
       });
   };
 
@@ -88,7 +94,7 @@ const Dashboard = () => {
         }
       })
       .catch((err) => {
-        console.log(err.response.data?.message);
+        toast.error(err.response.data?.message);
       });
   };
 
@@ -101,7 +107,7 @@ const Dashboard = () => {
         }
       })
       .catch((err) => {
-        console.log(err.response.data?.message);
+        toast.error(err.response.data?.message);
       });
   };
 
@@ -114,7 +120,7 @@ const Dashboard = () => {
         }
       })
       .catch((err) => {
-        console.log(err.response.data?.message);
+        toast.error(err.response.data?.message);
       });
   };
 
@@ -127,7 +133,7 @@ const Dashboard = () => {
         }
       })
       .catch((err) => {
-        console.log(err.response.data?.message);
+        toast.error(err.response.data?.message);
       });
   };
 
@@ -142,6 +148,41 @@ const Dashboard = () => {
             user: res.data,
           }));
         }
+        const numPermissions = permissions.reduce(
+          (count, permission) =>
+            res.data?.role?.permissions?.includes(permission)
+              ? count + 1
+              : count,
+          0,
+        );
+        if (numPermissions === 4) {
+          setColumns(4);
+        } else if (numPermissions === 3) {
+          setColumns(3);
+        } else if (numPermissions === 2) {
+          setColumns(2);
+        } else if (numPermissions === 1) {
+          setColumns(1);
+        }
+        res.data?.role?.permissions.includes("report_available_vehicles") &&
+          getAvailableVehicle();
+        res.data?.role?.permissions.includes("report_vehicles_in_transfer") &&
+          getVehicleTransfer();
+        res.data?.role?.permissions.includes("report_total_sts") &&
+          getTotalSTS();
+        res.data?.role?.permissions.includes("report_total_landfill") &&
+          getTotalLandfill();
+        res.data?.role?.permissions.includes(
+          "report_total_waste_transfer_by_landfill",
+        ) && getWasteLandfill();
+        res.data?.role?.permissions.includes(
+          "report_total_waste_transfer_by_sts",
+        ) && getWasteSTS();
+        res.data?.role?.permissions.includes(
+          "report_total_oil_consumption_by_sts",
+        ) && getOilConsumption();
+        res.data?.role?.permissions.includes("report_total_transfer") &&
+          getTotalTransfer();
       })
       .catch((err) => {
         toast.error(err.response.data?.message);
@@ -156,14 +197,6 @@ const Dashboard = () => {
       toast.error("Access Denied");
     }
     getProfile();
-    getAvailableVehicle();
-    getVehicleTransfer();
-    getTotalSTS();
-    getTotalLandfill();
-    getWasteLandfill();
-    getWasteSTS();
-    getOilConsumption();
-    getTotalTransfer();
   }, []);
 
   if (profileLoading) return <br />;
@@ -190,91 +223,133 @@ const Dashboard = () => {
                 Dashboard
               </div>
               <hr className="hidden lg:block" />
-              <div className="grid grid-cols-2 gap-2 lg:grid-cols-4 lg:gap-0 lg:gap-x-8">
-                <CountItem
-                  count={availableVehicle}
-                  icon={<GiMineTruck className="text-2xl text-xblue" />}
-                />
-                <CountItem
-                  count={vehicleTransfer}
-                  icon={<FaTruckArrowRight className="text-2xl text-xblue" />}
-                />
-                <CountItem
-                  count={totalSTS}
-                  icon={<BsBuildingsFill className="text-2xl text-xblue" />}
-                />
-                <CountItem
-                  count={totalLandfill}
-                  icon={<FaDumpster className="text-2xl text-xblue" />}
-                />
+              <div
+                className={`grid grid-cols-2 gap-2 lg:grid-cols-${columns} lg:gap-8`}
+              >
+                {globalState.user?.role.permissions.includes(
+                  "report_available_vehicles",
+                ) && (
+                  <CountItem
+                    title={"Available Vehicles"}
+                    count={availableVehicle}
+                    icon={<GiMineTruck className="text-2xl text-xblue" />}
+                  />
+                )}
+                {globalState.user?.role.permissions.includes(
+                  "report_vehicles_in_transfer",
+                ) && (
+                  <CountItem
+                    title={"Vehicles in Transfer"}
+                    count={vehicleTransfer}
+                    icon={<FaTruckArrowRight className="text-2xl text-xblue" />}
+                  />
+                )}
+                {globalState.user?.role.permissions.includes(
+                  "report_total_sts",
+                ) && (
+                  <CountItem
+                    title={"Total STS"}
+                    count={totalSTS}
+                    icon={<BsBuildingsFill className="text-2xl text-xblue" />}
+                  />
+                )}
+                {globalState.user?.role.permissions.includes(
+                  "report_total_landfill",
+                ) && (
+                  <CountItem
+                    title={"Total Landfill"}
+                    count={totalLandfill}
+                    icon={<FaDumpster className="text-2xl text-xblue" />}
+                  />
+                )}
               </div>
-              <div className="grid grid-cols-1 gap-x-4 overflow-x-auto lg:grid-cols-2">
-                <div className="-px-2 w-full rounded-lg border pt-4">
-                  <TitledBarChart
-                    chartTitle={"Waste Collected by Landfill"}
-                    data={wasteLandfill.map((item) => {
-                      return {
-                        alias: item.date,
-                        value: item.count,
-                      };
-                    })}
-                    width={700}
-                    height={400}
-                    margin={{ left: 5, right: 5, top: 5, bottom: 5 }}
-                    fill={"#3182CE"}
-                    stroke={"#3182CE"}
-                  />
-                </div>
-                <div className="-px-2 w-full rounded-lg border pt-4">
-                  <TitledBarChart
-                    chartTitle={"Waste Collected by STS"}
-                    data={wasteSTS.map((item) => {
-                      return {
-                        alias: item.date,
-                        value: item.count,
-                      };
-                    })}
-                    width={700}
-                    height={400}
-                    margin={{ left: 5, right: 5, top: 5, bottom: 5 }}
-                    fill={"#3182CE"}
-                    stroke={"#3182CE"}
-                  />
-                </div>
+              <div
+                className={`grid grid-cols-1 gap-x-4 overflow-x-auto lg:grid-cols-2`}
+              >
+                {globalState.user?.role.permissions.includes(
+                  "report_total_oil_consumption_by_sts",
+                ) && (
+                  <div className="-px-2 w-full rounded-lg border pt-4">
+                    <TitledBarChart
+                      chartTitle={"Oil Consumption by STS"}
+                      data={oilConsumption.map((item) => {
+                        return {
+                          alias: item.date,
+                          value: item.oil_consumption,
+                        };
+                      })}
+                      width={700}
+                      height={400}
+                      margin={{ left: 5, right: 5, top: 5, bottom: 5 }}
+                      fill={"#3182CE"}
+                      stroke={"#3182CE"}
+                    />
+                  </div>
+                )}
+                {globalState.user?.role.permissions.includes(
+                  "report_total_transfer",
+                ) && (
+                  <div className="-px-2 w-full rounded-lg border pt-4">
+                    <TitledBarChart
+                      chartTitle={"Total Transfer by STS"}
+                      data={totalTransfer.map((item) => {
+                        return {
+                          alias: item.date,
+                          value: item.count,
+                        };
+                      })}
+                      width={700}
+                      height={400}
+                      margin={{ left: 5, right: 5, top: 5, bottom: 5 }}
+                      fill={"#3182CE"}
+                      stroke={"#3182CE"}
+                    />
+                  </div>
+                )}
               </div>
-              <div className="grid grid-cols-2 gap-x-4 overflow-x-auto">
-                <div className="-px-2 w-full rounded-lg border pt-4">
-                  <TitledBarChart
-                    chartTitle={"Oil Consumption by STS"}
-                    data={oilConsumption.map((item) => {
-                      return {
-                        alias: item.date,
-                        value: item.oil_consumption,
-                      };
-                    })}
-                    width={700}
-                    height={400}
-                    margin={{ left: 5, right: 5, top: 5, bottom: 5 }}
-                    fill={"#3182CE"}
-                    stroke={"#3182CE"}
-                  />
-                </div>
-                <div className="-px-2 w-full rounded-lg border pt-4">
-                  <TitledBarChart
-                    chartTitle={"Total Transfer by STS"}
-                    data={totalTransfer.map((item) => {
-                      return {
-                        alias: item.date,
-                        value: item.count,
-                      };
-                    })}
-                    width={700}
-                    height={400}
-                    margin={{ left: 5, right: 5, top: 5, bottom: 5 }}
-                    fill={"#3182CE"}
-                    stroke={"#3182CE"}
-                  />
-                </div>
+              <div
+                className={`grid grid-cols-1 gap-x-4 overflow-x-auto lg:grid-cols-2`}
+              >
+                {globalState.user?.role.permissions.includes(
+                  "report_total_waste_transfer_by_landfill",
+                ) && (
+                  <div className="-px-2 w-full rounded-lg border pt-4">
+                    <TitledBarChart
+                      chartTitle={"Waste Collected by Landfill"}
+                      data={wasteLandfill.map((item) => {
+                        return {
+                          alias: item.date,
+                          value: item.count,
+                        };
+                      })}
+                      width={700}
+                      height={400}
+                      margin={{ left: 5, right: 5, top: 5, bottom: 5 }}
+                      fill={"#3182CE"}
+                      stroke={"#3182CE"}
+                    />
+                  </div>
+                )}
+                {globalState.user?.role.permissions.includes(
+                  "report_total_waste_transfer_by_sts",
+                ) && (
+                  <div className="-px-2 w-full rounded-lg border pt-4">
+                    <TitledBarChart
+                      chartTitle={"Waste Collected by STS"}
+                      data={wasteSTS.map((item) => {
+                        return {
+                          alias: item.date,
+                          value: item.count,
+                        };
+                      })}
+                      width={700}
+                      height={400}
+                      margin={{ left: 5, right: 5, top: 5, bottom: 5 }}
+                      fill={"#3182CE"}
+                      stroke={"#3182CE"}
+                    />
+                  </div>
+                )}
               </div>
             </div>
           </div>
