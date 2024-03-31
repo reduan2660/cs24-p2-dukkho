@@ -189,7 +189,11 @@ def upgrade() -> None:
     # STS
     sts_tbl = sa.Table('sts', meta, autoload_with=op.get_bind())
     op.bulk_insert(sts_tbl, [
-        {"id": 0, "name": "Farmgate", "ward_no": 1, "latitude": 23.7561, "longitude": 90.3872, "capacity": 100}
+        {"id": 0, "name": "Farmgate", "ward_no": 1, "latitude": 23.7561, "longitude": 90.3872, "capacity": 200},
+        {"id": 1, "name": "Jatrabari", "ward_no": 2, "latitude": 23.7106, "longitude": 90.4349, "capacity": 300},
+        {"id": 2, "name": "Mohakhali", "ward_no": 3, "latitude": 23.7778, "longitude": 90.4057, "capacity": 250},
+        {"id": 3, "name": "Uttara", "ward_no": 4, "latitude": 23.8759, "longitude": 90.3795, "capacity": 500},
+        {"id": 4, "name": "Gulshan", "ward_no": 5, "latitude": 23.7925, "longitude": 90.4078, "capacity": 600}
     ])
 
     # STS Manager
@@ -201,9 +205,10 @@ def upgrade() -> None:
     # Landfill
     landfill_tbl = sa.Table('landfills', meta, autoload_with=op.get_bind())
     op.bulk_insert(landfill_tbl, [
-        {"id": 0, "name": "Aminbazar", "latitude": 23.7861, "longitude": 90.3299, "capacity": 1000, "current_capacity": 100, "time_start": 0, "time_end": 23},
-        {"id": 1, "name": "Matuail", "latitude": 23.7261, "longitude": 90.4309, "capacity": 1000, "current_capacity": 100, "time_start": 0, "time_end": 23},
-        {"id": 2, "name": "Keraniganj", "latitude": 23.7031, "longitude": 90.4079, "capacity": 1000, "current_capacity": 100, "time_start": 8, "time_end": 18},
+        {"id": 0, "name": "Aminbazar", "latitude": 23.7861, "longitude": 90.3299, "capacity": 3000, "current_capacity": 3000, "time_start": 9, "time_end": 22},
+        {"id": 1, "name": "Matuail", "latitude": 23.7061, "longitude": 90.4620, "capacity": 5000, "current_capacity": 5000, "time_start": 10, "time_end": 23},
+        {"id": 2, "name": "Keraniganj", "latitude": 23.6933, "longitude": 90.3818, "capacity": 6000, "current_capacity": 6000, "time_start": 8, "time_end": 17},
+        {"id": 3, "name": "Alinogor", "latitude": 23.1142, "longitude": 90.2573, "capacity": 4000, "current_capacity": 4000, "time_start": 8, "time_end": 20}
     ])
 
     # Landfill Manager
@@ -215,8 +220,25 @@ def upgrade() -> None:
     # Vehicle
     vehicle_tbl = sa.Table('vehicles', meta, autoload_with=op.get_bind())
     op.bulk_insert(vehicle_tbl, [
-        {"id": 0, "reg_no": "BA 1 PA 1234", "capacity": 3, "vtype": "Truck", "loaded_cost": 0.3, "empty_cost": 0.1, "available": 1, "sts_id": 0},
-        {"id": 1, "reg_no": "BA 2 PA 1234", "capacity": 5, "vtype": "Truck", "loaded_cost": 0.2, "empty_cost": 0.1, "available": 1, "sts_id": 0},
+        {"id": 0, "reg_no": "BA 1 PA 1234", "capacity": 3, "vtype": "Open Truck", "loaded_cost": 1.0, "empty_cost": 0.5, "available": 1, "sts_id": 0},
+        {"id": 1, "reg_no": "BA 4 PA 7890", "capacity": 3, "vtype": "Open Truck", "loaded_cost": 0.9, "empty_cost": 0.4, "available": 1, "sts_id": 1},
+        {"id": 2, "reg_no": "BA 2 PA 3456", "capacity": 3, "vtype": "Open Truck", "loaded_cost": 1.1, "empty_cost": 0.6, "available": 1, "sts_id": 2},
+        {"id": 3, "reg_no": "BA 3 PA 5678", "capacity": 3, "vtype": "Open Truck", "loaded_cost": 1.0, "empty_cost": 0.5, "available": 1, "sts_id": 3},
+
+        {"id": 4, "reg_no": "BA 1 PA 1235", "capacity": 5, "vtype": "Dump Truck", "loaded_cost": 1.5, "empty_cost": 0.2, "available": 1, "sts_id": 0},
+        {"id": 5, "reg_no": "BA 2 PA 3457", "capacity": 5, "vtype": "Dump Truck", "loaded_cost": 1.5, "empty_cost": 0.3, "available": 1, "sts_id": 0},
+        {"id": 6, "reg_no": "BA 3 PA 5679", "capacity": 5, "vtype": "Dump Truck", "loaded_cost": 1.4, "empty_cost": 0.2, "available": 1, "sts_id": 2},
+        {"id": 7, "reg_no": "BA 4 PA 7891", "capacity": 5, "vtype": "Dump Truck", "loaded_cost": 1.3, "empty_cost": 0.1, "available": 1, "sts_id": 4},
+
+        {"id": 8, "reg_no": "BA 1 PA 1236", "capacity": 7, "vtype": "Compactor", "loaded_cost": 1.8, "empty_cost": 0.4, "available": 1, "sts_id": 1},
+        {"id": 9, "reg_no": "BA 2 PA 3458", "capacity": 7, "vtype": "Compactor", "loaded_cost": 1.7, "empty_cost": 0.3, "available": 1, "sts_id": 0},
+        {"id": 10, "reg_no": "BA 3 PA 5680", "capacity": 7, "vtype": "Compactor", "loaded_cost": 1.9, "empty_cost": 0.4, "available": 1, "sts_id": 3},
+        {"id": 11, "reg_no": "BA 5 PA 7892", "capacity": 7, "vtype": "Compactor", "loaded_cost": 1.8, "empty_cost": 0.3, "available": 1, "sts_id": 4},
+
+        {"id": 12, "reg_no": "BA 1 PA 1237", "capacity": 15, "vtype": "Container Carrier", "loaded_cost": 5.1, "empty_cost": 0.7, "available": 1, "sts_id": 2},
+        {"id": 13, "reg_no": "BA 2 PA 3459", "capacity": 15, "vtype": "Container Carrier", "loaded_cost": 5.2, "empty_cost": 0.8, "available": 1, "sts_id": 3},
+        {"id": 14, "reg_no": "BA 3 PA 5681", "capacity": 15, "vtype": "Container Carrier", "loaded_cost": 5.3, "empty_cost": 0.9, "available": 1, "sts_id": 4},
+        {"id": 15, "reg_no": "BA 4 PA 7893", "capacity": 15, "vtype": "Container Carrier", "loaded_cost": 5.4, "empty_cost": 0.8, "available": 1, "sts_id": 4},
     ])
 
 
