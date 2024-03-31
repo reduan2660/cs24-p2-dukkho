@@ -196,7 +196,7 @@ def upgrade() -> None:
         {"id": 8, "name": "Kaiser", "email": "keraniganj.landfill@ecosync.com", "password": HASHED_SUPERADMIN_PASSWORD, "role_id": 3},
         {"id": 9, "name": "Reduan", "email": "alinogor.landfill@ecosync.com", "password": HASHED_SUPERADMIN_PASSWORD, "role_id": 3},
         
-        {"id": 10, "name": "Shuvo", "email": "unassigned@ecosync.com", "password": HASHED_SUPERADMIN_PASSWORD, "role_id": 4},
+        {"id": 10, "name": "Shuvo", "email": "unassigned@ecosync.com", "password": HASHED_SUPERADMIN_PASSWORD, "role_id": 0},
     ])
 
     # STS
