@@ -167,7 +167,7 @@ const Fleet = () => {
                   </div>
                   <div className="text-xgray lg:text-center">
                     <div className="font-semibold">Total Oil Cost: </div>
-                    <div>{fleet?.cost}</div>
+                    <div>{parseFloat(fleet?.cost).toFixed(2)}</div>
                   </div>
                   <div className="text-xgray lg:text-center">
                     <div className="font-semibold">Number of Transfers: </div>
@@ -217,7 +217,7 @@ const Fleet = () => {
                     dataIndex="oil"
                     sorter={(a, b) => a.oil - b.oil}
                     render={(vehicle, record) => {
-                      return <div>{record.cost}</div>;
+                      return <div>{parseFloat(record.cost).toFixed(2)}</div>;
                     }}
                   ></Column>
                   {globalState.user?.role.permissions.includes(
