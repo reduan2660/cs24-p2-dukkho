@@ -664,7 +664,7 @@ const Landfills = () => {
                       className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
                       onChange={(e) => setCreateLocation(e.target.value)}
                     />
-                    {/* <input
+                    <input
                       type="number"
                       placeholder="Latitude"
                       className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
@@ -675,7 +675,7 @@ const Landfills = () => {
                       placeholder="Longitude"
                       className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
                       onChange={(e) => setCreateLongitude(e.target.value)}
-                    /> */}
+                    />
                     <Select
                       placeholder="Select Start Time"
                       className="w-full rounded-md focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
@@ -728,7 +728,7 @@ const Landfills = () => {
                       className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
                       onChange={(e) => setUpdateLocation(e.target.value)}
                     />
-                    {/* <input
+                    <input
                       type="number"
                       placeholder="Latitude"
                       value={updateLatitude}
@@ -741,7 +741,7 @@ const Landfills = () => {
                       value={updateLongitude}
                       className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
                       onChange={(e) => setUpdateLongitude(e.target.value)}
-                    /> */}
+                    />
                     <Select
                       placeholder="Start Time"
                       value={updateStartTime}
