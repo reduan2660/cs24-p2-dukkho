@@ -10,6 +10,7 @@ import { Select } from "antd";
 import { useGlobalState } from "../GlobalStateProvider";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import MarkerComponent from "./Marker";
 
 const Sts = () => {
   const navigate = useNavigate();
@@ -45,6 +46,8 @@ const Sts = () => {
   const [sts, setSTS] = useState([]);
   const [searchValue, setSearchValue] = useState("");
   const [searchOption, setSearchOption] = useState("name");
+  const [openMap, setOpenMap] = useState(false);
+  const [stsLocation, setStsLocation] = useState({});
 
   const showModal = () => {
     setOpenCreate(true);
@@ -425,14 +428,24 @@ const Sts = () => {
                     sorter={(a, b) => a.capacity - b.capacity}
                   ></Column>
                   <Column
-                    title="Latitude"
-                    dataIndex="latitude"
-                    sorter={(a, b) => a.latitude - b.latitude}
-                  ></Column>
-                  <Column
-                    title="Longitude"
-                    dataIndex="longitude"
-                    sorter={(a, b) => a.longitude - b.longitude}
+                    title="Location"
+                    dataIndex="location"
+                    render={(vehicle, record) => {
+                      return (
+                        <button
+                          onClick={() => {
+                            setStsLocation({
+                              lat: record.latitude,
+                              lng: record.longitude,
+                            });
+                            setOpenMap(true);
+                          }}
+                          className="w-fit rounded-md border border-xblue px-2 py-1 text-xblue transition-all duration-300 hover:bg-xblue hover:text-white"
+                        >
+                          Location
+                        </button>
+                      );
+                    }}
                   ></Column>
                   {globalState.user?.role.permissions.includes(
                     "create_sts",
@@ -545,6 +558,27 @@ const Sts = () => {
                     ) : (
                       <div>No vehicles allocated</div>
                     )}
+                  </div>
+                </Modal>
+                <Modal
+                  title="STS Location"
+                  open={openMap}
+                  onOk={() => setOpenMap(false)}
+                  width={700}
+                  height={450}
+                  okText="Close"
+                  cancelButtonProps={{ style: { display: "none" } }}
+                  closable={false}
+                  centered
+                >
+                  <div className="items-cenetr flex justify-center">
+                    <MarkerComponent
+                      height={400}
+                      width={650}
+                      center={stsLocation}
+                      zoom={14}
+                      title={"STS Location"}
+                    />
                   </div>
                 </Modal>
                 <Modal

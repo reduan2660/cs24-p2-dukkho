@@ -43,6 +43,24 @@ const Sidebar = () => {
     checkCookie();
   }, []);
 
+  const getProfile = () => {
+    api
+      .get("/auth/me")
+      .then((res) => {
+        if (res.status === 200) {
+          setGlobalState((prevState) => ({
+            ...prevState,
+            user: res.data,
+          }));
+        }
+      })
+      .catch((err) => {
+        if (err.response.status === 401) {
+          navigate("/login", { state: "session expired" });
+        }
+      });
+  };
+
   const logout = () => {
     api
       .get("/auth/logout")
@@ -60,6 +78,10 @@ const Sidebar = () => {
         setLogoutModal(false);
       });
   };
+
+  useEffect(() => {
+    getProfile();
+  }, []);
 
   return (
     <div
@@ -85,8 +107,11 @@ const Sidebar = () => {
             Dashboard
           </div>
         </div>
+        {(globalState.user?.role.permissions.includes("list_all_users") ||
+          globalState.user?.role.permissions.includes("list_all_roles")) && (
+          <div className="-mb-8 text-sm">User Management</div>
+        )}
 
-        <div className="-mb-8 text-sm">User Management</div>
         {globalState.user?.role.permissions.includes("list_all_users") && (
           <div className="menu-item -mt-8">
             <PiUsersThree className="text-xgray" />
@@ -103,7 +128,11 @@ const Sidebar = () => {
             </div>
           </div>
         )}
-        <div className="-mb-8 text-sm">Waste Management</div>
+        {globalState.user?.role.permissions.includes("list_all_sts") ||
+        globalState.user?.role.permissions.includes("list_landfill") ||
+        globalState.user?.role.permissions.includes("list_vehicle") ? (
+          <div className="-mb-8 text-sm">Waste Management</div>
+        ) : null}
         {globalState.user?.role.permissions.includes("list_all_sts") && (
           <div className="menu-item -mt-8">
             <PiBuildings className="text-xgray" />
@@ -128,7 +157,12 @@ const Sidebar = () => {
             </div>
           </div>
         )}
-        <div className="-mb-8 text-sm">Waste Management</div>
+        {globalState.user?.role.permissions.includes("view_transfer") ||
+        globalState.user?.role.permissions.includes("update_transfer_sts") ||
+        globalState.user?.role.permissions.includes("get_fleet_planning") ? (
+          <div className="-mb-8 text-sm">Waste Management</div>
+        ) : null}
+
         {globalState.user?.role.permissions.includes("view_transfer") && (
           <div
             className="menu-item -mt-8"
@@ -148,12 +182,14 @@ const Sidebar = () => {
             <div className="ml-2">Transfer Records</div>
           </div>
         )}
-        <div className="menu-item -mt-8">
-          <MdEmojiTransportation className="text-xgray" />
-          <div onClick={() => to("transfer/fleet")} className="ml-2">
-            Fleet Planning
+        {globalState.user?.role.permissions.includes("get_fleet_planning") && (
+          <div className="menu-item -mt-8">
+            <MdEmojiTransportation className="text-xgray" />
+            <div onClick={() => to("transfer/fleet")} className="ml-2">
+              Fleet Planning
+            </div>
           </div>
-        </div>
+        )}
         <div className="-mb-8 text-sm">Account</div>
         <div className="menu-item -mt-8">
           <RiKeyLine className="text-xgray" />

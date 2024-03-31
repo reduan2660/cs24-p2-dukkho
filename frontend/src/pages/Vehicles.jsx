@@ -37,10 +37,10 @@ const Vehicles = () => {
   const [vehicles, setVehicles] = useState([]);
 
   const vehicleWeight = {
-    "Open Truck": "3",
-    "Dump Truck": "5",
+    Open: "3",
+    Dump: "5",
     Compactor: "7",
-    "Container Carrier": "15",
+    Container: "15",
   };
 
   const showModal = () => {
@@ -185,7 +185,7 @@ const Vehicles = () => {
     if (openEdit) {
       setUpdateReg(updateVehicle.reg_no);
       setUpdateVtype(updateVehicle.vtype);
-      setUpdateStsId(updateVehicle.sts["name"].toString());
+      setUpdateStsId(updateVehicle.sts["id"]);
       setUpdateLoadedCost(updateVehicle.loaded_cost.toString());
       setUpdateEmptyCost(updateVehicle.empty_cost.toString());
     }
@@ -454,11 +454,11 @@ const Vehicles = () => {
                       onChange={setCreateVtype}
                       options={[
                         {
-                          value: "Open Truck",
+                          value: "Open",
                           label: "Open Truck",
                         },
                         {
-                          value: "Dump Truck",
+                          value: "Dump",
                           label: "Dump Truck",
                         },
                         {
@@ -466,7 +466,7 @@ const Vehicles = () => {
                           label: "Compactor",
                         },
                         {
-                          value: "Container Carrier",
+                          value: "Container",
                           label: "Container Carrier",
                         },
                       ]}

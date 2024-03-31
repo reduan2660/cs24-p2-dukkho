@@ -10,6 +10,7 @@ import { Select } from "antd";
 import { useGlobalState } from "../GlobalStateProvider";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import MarkerComponent from "./Marker";
 
 const Landfills = () => {
   const navigate = useNavigate();
@@ -46,6 +47,8 @@ const Landfills = () => {
   const [landfill, setLandfill] = useState([]);
   const [timeArray, setTimeArray] = useState([]);
   const [searchOption, setSearchOption] = useState("name");
+  const [openMap, setOpenMap] = useState(false);
+  const [landfillLocation, setLandfillLocation] = useState({});
 
   const showModal = () => {
     setOpenCreate(true);
@@ -441,14 +444,24 @@ const Landfills = () => {
                     sorter={(a, b) => a.current_capacity - b.current_capacity}
                   ></Column>
                   <Column
-                    title="Latitude"
-                    dataIndex="latitude"
-                    sorter={(a, b) => a.latitude - b.latitude}
-                  ></Column>
-                  <Column
-                    title="Longitude"
-                    dataIndex="longitude"
-                    sorter={(a, b) => a.longitude - b.longitude}
+                    title="Location"
+                    dataIndex="location"
+                    render={(vehicle, record) => {
+                      return (
+                        <button
+                          onClick={() => {
+                            setLandfillLocation({
+                              lat: record.latitude,
+                              lng: record.longitude,
+                            });
+                            setOpenMap(true);
+                          }}
+                          className="w-fit rounded-md border border-xblue px-2 py-1 text-xblue transition-all duration-300 hover:bg-xblue hover:text-white"
+                        >
+                          Location
+                        </button>
+                      );
+                    }}
                   ></Column>
                   <Column
                     title="Start Time"
@@ -550,6 +563,27 @@ const Landfills = () => {
                       {updateLandfill.name}
                     </p>
                     ?
+                  </div>
+                </Modal>
+                <Modal
+                  title="Landfill Location"
+                  open={openMap}
+                  onOk={() => setOpenMap(false)}
+                  width={700}
+                  height={450}
+                  okText="Close"
+                  cancelButtonProps={{ style: { display: "none" } }}
+                  closable={false}
+                  centered
+                >
+                  <div className="items-cenetr flex justify-center">
+                    <MarkerComponent
+                      height={400}
+                      width={650}
+                      center={landfillLocation}
+                      zoom={14}
+                      title={"Landfill Location"}
+                    />
                   </div>
                 </Modal>
                 <Modal

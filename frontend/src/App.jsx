@@ -38,25 +38,6 @@ const App = () => {
               <Route path="/transfer/sts" element={<TransferSTS />} />
               <Route path="/transfer/landfill" element={<TransferLandfill />} />
               <Route path="/transfer/fleet" element={<Fleet />} />
-              <Route
-                path="/map"
-                element={
-                  <Gmap
-                    height={800}
-                    width={1000}
-                    origin={{
-                      lat: 23.757985271113462,
-                      lng: 90.38987643530105,
-                    }}
-                    destination={{
-                      lat: 23.72274789134823,
-                      lng: 90.39988172573108,
-                    }}
-                    zoom={14}
-                    travelMode="Driving"
-                  />
-                }
-              />
             </Routes>
           </BrowserRouter>
         </GlobalStateProvider>

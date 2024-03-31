@@ -175,6 +175,14 @@ const Users = () => {
   }, [searchValue]);
 
   useEffect(() => {
+    if (openCreate) {
+      setName("");
+      setEmail("");
+      setPassword("");
+    }
+  }, [openCreate]);
+
+  useEffect(() => {
     if (editingUserId !== null) {
       nameInputRef.current.focus();
     }
