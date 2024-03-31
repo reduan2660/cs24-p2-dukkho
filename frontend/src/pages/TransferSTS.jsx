@@ -660,7 +660,7 @@ const TransferSTS = () => {
                         )?.longitude,
                       }}
                       zoom={14}
-                      travelMode="Driving"
+                      travelMode="DRIVING"
                     />
                   </div>
                 </Modal>

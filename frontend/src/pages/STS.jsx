@@ -662,11 +662,10 @@ const Sts = () => {
                       className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
                       onChange={(e) => setCreateCapacity(e.target.value)}
                     />
-                    {/* <input
+                    <input
                       type="number"
                       value={createLatitude}
                       placeholder="Latitude"
-                      disabled
                       className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
                       onChange={(e) => setCreateLatitude(e.target.value)}
                     />
@@ -674,10 +673,9 @@ const Sts = () => {
                       type="number"
                       value={createLongitude}
                       placeholder="Longitude"
-                      disabled
                       className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
                       onChange={(e) => setCreateLongitude(e.target.value)}
-                    /> */}
+                    />
                   </div>
                 </Modal>
                 <Modal
@@ -719,7 +717,7 @@ const Sts = () => {
                       className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
                       onChange={(e) => setUpdateCapacity(e.target.value)}
                     />
-                    {/* <input
+                    <input
                       type="number"
                       placeholder="Latitude"
                       value={updateLatitude}
@@ -732,7 +730,7 @@ const Sts = () => {
                       value={updateLongitude}
                       className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
                       onChange={(e) => setUpdateLongitude(e.target.value)}
-                    /> */}
+                    />
                   </div>
                 </Modal>
               </div>
