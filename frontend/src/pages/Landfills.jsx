@@ -362,13 +362,15 @@ const Landfills = () => {
                   type="text"
                   placeholder="Search Landfill"
                   className="w-[300px] rounded-md border border-[#DED2D9] px-2 py-1.5 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
-                  onChange={(e) => {const filteredLandfills = landfill.filter((landfill) =>
-                    landfill[searchOption]
-                      .toString()
-                      .toLowerCase()
-                      .includes(e.target.value.toLowerCase()),
-                  );
-                  setLandfill(filteredLandfills);}}
+                  onChange={(e) => {
+                    const filteredLandfills = landfill.filter((landfill) =>
+                      landfill[searchOption]
+                        .toString()
+                        .toLowerCase()
+                        .includes(e.target.value.toLowerCase()),
+                    );
+                    setLandfill(filteredLandfills);
+                  }}
                 />
                 <Select
                   value={searchOption}
@@ -690,38 +692,21 @@ const Landfills = () => {
                     />
                     <input
                       type="number"
-                      placeholder="Capacity"
-                      value={updateCapacity}
-                      className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
-                      onChange={(e) => setUpdateCapacity(e.target.value)}
-                    />
-                    <input
-                      type="number"
-                      placeholder="Current Capacity"
+                      placeholder={`Location (max: ${updateCapacity})`}
+                      max={updateCapacity}
                       value={updateCurrentCapacity}
                       className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
-                      onChange={(e) => setUpdateCurrentCapacity(e.target.value)}
-                    />
-                    <input
-                      type="text"
-                      placeholder="Location"
-                      value={updateLocation}
-                      className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
-                      onChange={(e) => setUpdateLocation(e.target.value)}
-                    />
-                    <input
-                      type="number"
-                      placeholder="Latitude"
-                      value={updateLatitude}
-                      className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
-                      onChange={(e) => setUpdateLatitude(e.target.value)}
-                    />
-                    <input
-                      type="number"
-                      placeholder="Longitude"
-                      value={updateLongitude}
-                      className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
-                      onChange={(e) => setUpdateLongitude(e.target.value)}
+                      onChange={(e) => {
+                        const inputValue = e.target.value;
+                        const maxValue = updateCapacity;
+
+                        if (
+                          inputValue === "" ||
+                          (inputValue >= 0 && inputValue <= maxValue)
+                        ) {
+                          setUpdateCurrentCapacity(inputValue);
+                        }
+                      }}
                     />
                     <Select
                       placeholder="Start Time"
