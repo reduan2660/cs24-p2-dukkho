@@ -182,8 +182,21 @@ def upgrade() -> None:
     users_tbl = sa.Table('users', meta, autoload_with=op.get_bind())
     op.bulk_insert(users_tbl, [
         {"id": 0, "name": "System Admin", "email": "admin@ecosync.com", "password": HASHED_SUPERADMIN_PASSWORD, "role_id": 1},
-        {"id": 1, "name": "STS Manager", "email": "sts@ecosync.com", "password": HASHED_SUPERADMIN_PASSWORD, "role_id": 2},
-        {"id": 2, "name": "Landfil Manager", "email": "landfill@ecosync.com", "password": HASHED_SUPERADMIN_PASSWORD, "role_id": 3}
+
+
+        {"id": 1, "name": "Srizon", "email": "farmgate.sts@ecosync.com", "password": HASHED_SUPERADMIN_PASSWORD, "role_id": 2},
+        {"id": 2, "name": "Jim", "email": "jatrabari.sts@ecosync.com", "password": HASHED_SUPERADMIN_PASSWORD, "role_id": 2},
+        {"id": 3, "name": "Banik", "email": "mohakhali.sts@ecosync.com", "password": HASHED_SUPERADMIN_PASSWORD, "role_id": 2},
+        {"id": 4, "name": "Shoeb", "email": "uttara.sts@ecosync.com", "password": HASHED_SUPERADMIN_PASSWORD, "role_id": 2},
+        {"id": 5, "name": "Jawad", "email": "gulshan.sts@ecosync.com", "password": HASHED_SUPERADMIN_PASSWORD, "role_id": 2},
+        
+        
+        {"id": 6, "name": "Yeamin", "email": "aminbazar.landfill@ecosync.com", "password": HASHED_SUPERADMIN_PASSWORD, "role_id": 3},
+        {"id": 7, "name": "Alve", "email": "matuail.landfill@ecosync.com", "password": HASHED_SUPERADMIN_PASSWORD, "role_id": 3},
+        {"id": 8, "name": "Kaiser", "email": "keraniganj.landfill@ecosync.com", "password": HASHED_SUPERADMIN_PASSWORD, "role_id": 3},
+        {"id": 9, "name": "Reduan", "email": "alinogor.landfill@ecosync.com", "password": HASHED_SUPERADMIN_PASSWORD, "role_id": 3},
+        
+        {"id": 10, "name": "Shuvo", "email": "unassigned@ecosync.com", "password": HASHED_SUPERADMIN_PASSWORD, "role_id": 4},
     ])
 
     # STS
@@ -199,7 +212,11 @@ def upgrade() -> None:
     # STS Manager
     sts_manager_tbl = sa.Table('sts_managers', meta, autoload_with=op.get_bind())
     op.bulk_insert(sts_manager_tbl, [
-        {"id": 0, "sts_id": 0, "user_id": 1}
+        {"id": 0, "sts_id": 0, "user_id": 1},
+        {"id": 1, "sts_id": 1, "user_id": 2},
+        {"id": 2, "sts_id": 2, "user_id": 3},
+        {"id": 3, "sts_id": 3, "user_id": 4},
+        {"id": 4, "sts_id": 4, "user_id": 5},
     ])
 
     # Landfill
@@ -214,7 +231,10 @@ def upgrade() -> None:
     # Landfill Manager
     landfill_manager_tbl = sa.Table('landfill_managers', meta, autoload_with=op.get_bind())
     op.bulk_insert(landfill_manager_tbl, [
-        {"id": 0, "landfill_id": 0, "user_id": 2}
+        {"id": 0, "landfill_id": 0, "user_id": 6},
+        {"id": 1, "landfill_id": 1, "user_id": 7},
+        {"id": 2, "landfill_id": 2, "user_id": 8},
+        {"id": 3, "landfill_id": 3, "user_id": 9}
     ])
 
     # Vehicle
