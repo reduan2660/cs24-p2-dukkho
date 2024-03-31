@@ -148,22 +148,6 @@ const Dashboard = () => {
             user: res.data,
           }));
         }
-        const numPermissions = permissions.reduce(
-          (count, permission) =>
-            res.data?.role?.permissions?.includes(permission)
-              ? count + 1
-              : count,
-          0,
-        );
-        if (numPermissions === 4) {
-          setColumns(4);
-        } else if (numPermissions === 3) {
-          setColumns(3);
-        } else if (numPermissions === 2) {
-          setColumns(2);
-        } else if (numPermissions === 1) {
-          setColumns(1);
-        }
         res.data?.role?.permissions.includes("report_available_vehicles") &&
           getAvailableVehicle();
         res.data?.role?.permissions.includes("report_vehicles_in_transfer") &&
@@ -191,6 +175,27 @@ const Dashboard = () => {
         setProfileLoading(false);
       });
   };
+
+  useEffect(() => {
+    if (!profileLoading && globalState.user) {
+      const numPermissions = permissions.reduce(
+        (count, permission) =>
+          globalState.user?.role?.permissions?.includes(permission)
+            ? count + 1
+            : count,
+        0,
+      );
+      if (numPermissions === 4) {
+        setColumns(4);
+      } else if (numPermissions === 3) {
+        setColumns(3);
+      } else if (numPermissions === 2) {
+        setColumns(2);
+      } else if (numPermissions === 1) {
+        setColumns(1);
+      }
+    }
+  }, [profileLoading, globalState.user, permissions]);
 
   useEffect(() => {
     if (state === "access_denied") {

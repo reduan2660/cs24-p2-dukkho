@@ -17,8 +17,7 @@ const TransferSTS = () => {
   const [createVehicle, setCreateVehicle] = useState("");
   const [createWeight, setCreateWeight] = useState("");
   const [createLandfill, setCreateLandfill] = useState("");
-  const [createOil, setCreateOil] = useState("");
-  const [calculatedOil, setCalculatedOil] = useState("");
+  const [optimalOil, setOptimalOil] = useState("");
   const [profileLoading, setProfileLoading] = useState(false);
   const [transferLoading, setTransferLoading] = useState(false);
   const { globalState, setGlobalState } = useGlobalState();
@@ -57,7 +56,7 @@ const TransferSTS = () => {
         weight: createWeight,
       })
       .then((res) => {
-        setCalculatedOil(res.data.round_trip);
+        setOptimalOil(parseFloat(res.data.round_trip).toFixed(2));
       })
       .catch((err) => {
         toast.error(err.response.data?.message);
@@ -141,9 +140,7 @@ const TransferSTS = () => {
         vehicle_id: parseInt(createVehicle),
         landfill_id: parseInt(createLandfill),
         weight: parseFloat(createWeight),
-        oil: calculatedOil
-          ? parseFloat(calculatedOil).toFixed(2)
-          : parseFloat(createOil),
+        oil: parseFloat(optimalOil).toFixed(2),
       })
       .then((res) => {
         if (res.status === 201) {
@@ -157,7 +154,6 @@ const TransferSTS = () => {
       .finally(() => {
         setOpenCreate(false);
         setConfirmLoading(false);
-        setCalculatedOil("");
       });
   };
 
@@ -217,6 +213,15 @@ const TransferSTS = () => {
   useEffect(() => {
     if (searchValue === "") getTransfers();
   }, [searchValue]);
+
+  useEffect(() => {
+    if (openCreate) {
+      setCreateWeight("");
+      setCreateVehicle("");
+      setCreateLandfill("");
+      setOptimalOil("");
+    }
+  }, [openCreate]);
 
   useEffect(() => {
     getProfile();
@@ -551,16 +556,10 @@ const TransferSTS = () => {
                       <input
                         type="number"
                         placeholder="Allocate Oil"
-                        value={
-                          calculatedOil
-                            ? parseFloat(calculatedOil).toFixed(2)
-                            : createOil
-                        }
-                        onClick={() => getCalculatedOil()}
+                        value={optimalOil}
                         className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
                         onChange={(e) => {
-                          setCreateOil(e.target.value);
-                          setCalculatedOil("");
+                          setOptimalOil(e.target.value);
                         }}
                       />
                       <button

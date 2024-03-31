@@ -5,9 +5,6 @@ import {
   useMapsLibrary,
   useMap,
 } from "@vis.gl/react-google-maps";
-import axios from "axios";
-const start = { lat: 23.75784288649373, lng: 90.39014465616876 };
-const end = { lat: 23.722757658696015, lng: 90.39990316565954 };
 
 export default function Gmap({
   height,
@@ -15,7 +12,6 @@ export default function Gmap({
   origin,
   destination,
   travelMode,
-  center,
   zoom,
 }) {
   const position = {

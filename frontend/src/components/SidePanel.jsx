@@ -38,7 +38,26 @@ const SidePanel = () => {
       });
   };
 
+  const getProfile = () => {
+    api
+      .get("/auth/me")
+      .then((res) => {
+        if (res.status === 200) {
+          setGlobalState((prevState) => ({
+            ...prevState,
+            user: res.data,
+          }));
+        }
+      })
+      .catch((err) => {
+        if (err.response.status === 401) {
+          navigate("/login", { state: "session expired" });
+        }
+      });
+  };
+
   useEffect(() => {
+    getProfile();
     const checkCookie = () => {
       const cookies = document.cookie.split("; ");
       const sessionCookie = cookies.find((cookie) =>
