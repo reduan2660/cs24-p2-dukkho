@@ -170,7 +170,6 @@ def upgrade() -> None:
         {"role_id": 3, "permission_id": 25},  
 
         # Landfill Manager - Report
-        {"role_id": 3, "permission_id": 27},
         {"role_id": 3, "permission_id": 28},
         {"role_id": 3, "permission_id": 30},
         {"role_id": 2, "permission_id": 33},
