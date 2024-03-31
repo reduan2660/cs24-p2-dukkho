@@ -159,7 +159,7 @@ const Fleet = () => {
                   <div></div>
                 )}
               </div>
-              {fleet && fleet.transfers.max_possible_weight && (
+              {fleet && fleet.max_possible_weight && (
                 <div className="mx-5 grid lg:-mb-8 lg:grid-cols-3">
                   <div className="text-xgray lg:text-center">
                     <div className="font-semibold">Max Possible Weight: </div>
