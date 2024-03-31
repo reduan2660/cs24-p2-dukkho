@@ -2,7 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BiSolidLeaf } from "react-icons/bi";
 import api from "../api";
-import ResetPassword from "./ResetPassword";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const ChangePassword = () => {
   const navigate = useNavigate();
@@ -35,6 +36,17 @@ const ChangePassword = () => {
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center gap-y-8">
+      <ToastContainer
+        position="top-right"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop={true}
+        closeOnClick
+        rtl={false}
+        draggable={true}
+        pauseOnHover={false}
+        theme="colored"
+      />
       <div className="fixed top-8 flex items-center gap-x-4 lg:top-16">
         <BiSolidLeaf className="text-5xl text-green-600" />
         <p className="text-3xl font-bold text-xdark lg:text-5xl">EcoSync</p>

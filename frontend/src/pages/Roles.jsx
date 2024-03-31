@@ -310,6 +310,12 @@ const Roles = () => {
                         }),
                       };
                     })}
+                    onClick={() => {
+                      if (searchValue !== "") {
+                        setSearchValue("");
+                        getRoles();
+                      }
+                    }}
                     onChange={(e) => {
                       const filteredRoles = roles.filter((role) =>
                         role.permissions.includes(e),

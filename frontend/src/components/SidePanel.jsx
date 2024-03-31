@@ -278,20 +278,24 @@ const SidePanel = () => {
             ) : (
               <div></div>
             ))}
-          <div
-            className={`w-full ${
-              location.pathname === "/transfer/fleet" ? "bg-blue-100" : ""
-            }`}
-            onClick={() => {
-              if (location.pathname !== "/transfer/fleet")
-                navigate("/transfer/fleet");
-              else setCollapsed(!collapsed);
-            }}
-          >
-            <MenuItem icon={<MdEmojiTransportation className="text-xgray" />}>
-              <div className="font-medium text-xgray">Fleet Planning</div>
-            </MenuItem>
-          </div>
+          {globalState.user?.role.permissions.includes(
+            "get_fleet_planning",
+          ) && (
+            <div
+              className={`w-full ${
+                location.pathname === "/transfer/fleet" ? "bg-blue-100" : ""
+              }`}
+              onClick={() => {
+                if (location.pathname !== "/transfer/fleet")
+                  navigate("/transfer/fleet");
+                else setCollapsed(!collapsed);
+              }}
+            >
+              <MenuItem icon={<MdEmojiTransportation className="text-xgray" />}>
+                <div className="font-medium text-xgray">Fleet Planning</div>
+              </MenuItem>
+            </div>
+          )}
           {!collapsed && (
             <div className="text-md ml-6 mt-7 font-medium text-xlightgray">
               Account
