@@ -138,6 +138,7 @@ async def get_available_vehicle(user: User = Depends(get_user_from_session)):
                 return JSONResponse(status_code=404, content={"message": "STS not found"})
             
             vehicles = db.query(Vehicle).filter(Vehicle.sts_id == sts.sts_id).filter(Vehicle.available == 1).all()
+            
         else:
             return JSONResponse(status_code=401, content={"message": "Not enough permissions"})
         

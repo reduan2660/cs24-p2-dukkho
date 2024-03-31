@@ -21,16 +21,35 @@ def get_available_vehicles(user: User = Depends(get_user_from_session)):
         return JSONResponse(status_code=401, content={"message": "Not enough permissions"})
     
     with SessionLocal() as db:
-        
-        if user["role"]["id"] == 1: # Admin
-            vehicle_count = db.query(Vehicle).count()
+        # If user is system admin, return all available vehicles
+        if user["role"]["id"] == 1: # System Admin
+            vehicles = db.query(Vehicle).filter(Vehicle.available == 1).all()
         elif user["role"]["id"] == 2: # STS Manager
+            # get sts from sts_manager table
             sts = db.query(STSmanager).filter(STSmanager.user_id == user["id"]).first()
             if sts is None:
                 return JSONResponse(status_code=404, content={"message": "STS not found"})
-            vehicle_count = db.query(Vehicle).filter(Vehicle.sts_id == sts.sts_id).count()
+            
+            vehicles = db.query(Vehicle).filter(Vehicle.sts_id == sts.sts_id).filter(Vehicle.available == 1).all()
+            
+        else:
+            return JSONResponse(status_code=401, content={"message": "Not enough permissions"})
+        
+        vehicle_count = 0
+        for v in vehicles:
+            # Check if there are more than 3 records of the vehicle for today in transfer table
+            today_starts_timestamp = int(datetime.combine(datetime.today(), datetime.min.time()).timestamp()) # Get today's start timestamp
+            transfer_count = db.query(Transfer).filter(Transfer.vehicle_id == v.id).filter(Transfer.sts_departure_time >= today_starts_timestamp).count()
+            
+            if transfer_count >= 3:
+                continue
 
-        return JSONResponse(status_code=200, content={"count": vehicle_count})
+            vehicle_count += 1
+
+            
+        return JSONResponse(status_code=200, content={
+            "count": vehicle_count,
+        })
     
 # Vehicles in Transfer
 @router.get("/vehicles_in_transfer")
@@ -40,21 +59,25 @@ def get_vehicles_in_transfer(user: User = Depends(get_user_from_session)):
         return JSONResponse(status_code=401, content={"message": "Not enough permissions"})
     
     with SessionLocal() as db:
-        
-        if user["role"]["id"] == 1: # Admin
-            vehicle_count = db.query(Transfer).filter(Transfer.status < 4).count()
+        # If user is system admin, return all available vehicles
+        if user["role"]["id"] == 1: # System Admin
+            vehicles = db.query(Vehicle).filter(Vehicle.available == 0).all()
         elif user["role"]["id"] == 2: # STS Manager
+            # get sts from sts_manager table
             sts = db.query(STSmanager).filter(STSmanager.user_id == user["id"]).first()
             if sts is None:
                 return JSONResponse(status_code=404, content={"message": "STS not found"})
-            vehicle_count = db.query(Transfer).filter(Transfer.sts_id == sts.sts_id, Transfer.status < 4).count()
-        elif user["role"]["id"] == 3: # Landfill Manager
-            landfill = db.query(LandfillManager).filter(LandfillManager.user_id == user["id"]).first()
-            if landfill is None:
-                return JSONResponse(status_code=404, content={"message": "Landfill not found"})
-            vehicle_count = db.query(Transfer).filter(Transfer.landfill_id == landfill.landfill_id, Transfer.status < 4).count()
+            
+            vehicles = db.query(Vehicle).filter(Vehicle.sts_id == sts.sts_id).filter(Vehicle.available == 0).all()
+            
+        else:
+            return JSONResponse(status_code=401, content={"message": "Not enough permissions"})
+        
+        vehicle_count = len(vehicles)
 
-        return JSONResponse(status_code=200, content={"count": vehicle_count})
+        return JSONResponse(status_code=200, content={
+            "count": vehicle_count,
+        })
 
 # Total sts
 @router.get("/total_sts")
