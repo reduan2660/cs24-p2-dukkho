@@ -46,7 +46,8 @@ const TransferLandfill = () => {
   }
 
   const convertUTC = (time) => {
-    return new Date(time).toLocaleString();
+    if(time === null) return "N/A";
+    return new Date(time * 1000).toLocaleString();
   };
 
   const setArrivedAtLandfill = () => {
