@@ -80,7 +80,7 @@ const Fleet = () => {
       .then((res) => {
         if (res.status === 201) {
           toast.success("Transfer created successfully");
-          navigate("/transfers/sts");
+          navigate("/transfer/sts");
           setFleet(res.data);
         }
       })

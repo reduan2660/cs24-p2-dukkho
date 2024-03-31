@@ -45,7 +45,6 @@ const Landfills = () => {
   const [managerIds, setManagerIds] = useState([]);
   const [landfill, setLandfill] = useState([]);
   const [timeArray, setTimeArray] = useState([]);
-  const [searchValue, setSearchValue] = useState("");
   const [searchOption, setSearchOption] = useState("name");
 
   const showModal = () => {
@@ -314,12 +313,6 @@ const Landfills = () => {
   }, [createLocation, updateLocation]);
 
   useEffect(() => {
-    if (searchValue === "") {
-      getLandfill();
-    }
-  }, [searchValue]);
-
-  useEffect(() => {
     convertTo12HourFormat();
     getProfile();
   }, []);
@@ -369,27 +362,13 @@ const Landfills = () => {
                   type="text"
                   placeholder="Search Landfill"
                   className="w-[300px] rounded-md border border-[#DED2D9] px-2 py-1.5 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
-                  onChange={(e) => setSearchValue(e.target.value)}
-                  onBlur={() => {
-                    const filteredLandfills = landfill.filter((landfill) =>
-                      landfill[searchOption]
-                        .toString()
-                        .toLowerCase()
-                        .includes(searchValue.toLowerCase()),
-                    );
-                    setLandfill(filteredLandfills);
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      const filteredLandfills = landfill.filter((landfill) =>
-                        landfill[searchOption]
-                          .toString()
-                          .toLowerCase()
-                          .includes(searchValue.toLowerCase()),
-                      );
-                      setLandfill(filteredLandfills);
-                    }
-                  }}
+                  onChange={(e) => {const filteredLandfills = landfill.filter((landfill) =>
+                    landfill[searchOption]
+                      .toString()
+                      .toLowerCase()
+                      .includes(e.target.value.toLowerCase()),
+                  );
+                  setLandfill(filteredLandfills);}}
                 />
                 <Select
                   value={searchOption}
@@ -667,12 +646,14 @@ const Landfills = () => {
                     <input
                       type="number"
                       placeholder="Latitude"
+                      value={createLatitude}
                       className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
                       onChange={(e) => setCreateLatitude(e.target.value)}
                     />
                     <input
                       type="number"
                       placeholder="Longitude"
+                      value={createLongitude}
                       className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
                       onChange={(e) => setCreateLongitude(e.target.value)}
                     />
