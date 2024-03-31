@@ -157,6 +157,7 @@ const TransferSTS = () => {
       .finally(() => {
         setOpenCreate(false);
         setConfirmLoading(false);
+        setCalculatedOil("");
       });
   };
 
