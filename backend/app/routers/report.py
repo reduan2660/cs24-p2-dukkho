@@ -109,7 +109,7 @@ def get_total_waste_transfer_by_landfill( landfill_id: int = Query(None), user: 
                 
                 transfer_response = []
                 for ts in last_7_days_timestamp:
-                    transfer_count = -1
+                    transfers = -1
 
                     if user["role"]["id"] == 3: # Landfill Manager
                         landfill_manager = db.query(LandfillManager).filter(LandfillManager.user_id == user["id"]).first()
@@ -118,16 +118,22 @@ def get_total_waste_transfer_by_landfill( landfill_id: int = Query(None), user: 
                         landfill = db.query(Landfill).filter(Landfill.id == landfill_manager.landfill_id).first()
                         if landfill is None:
                             return JSONResponse(status_code=404, content={"message": "Landfill not found"})
-                        transfer_count = db.query(Transfer).filter(Transfer.landfill_id == landfill.id, Transfer.landfill_arrival_time >= ts, Transfer.landfill_arrival_time < ts + 86400).count()
+                        transfers = db.query(Transfer).filter(Transfer.landfill_id == landfill.id, Transfer.landfill_arrival_time >= ts, Transfer.landfill_arrival_time < ts + 86400).all()
 
                     elif landfill_id is not None:
                         landfill = db.query(Landfill).filter(Landfill.id == landfill_id).first()
                         if landfill is None:
                             return JSONResponse(status_code=400, content={"message": "Landfill not found"})
-                        transfer_count = db.query(Transfer).filter(Transfer.landfill_id == landfill_id, Transfer.landfill_arrival_time >= ts, Transfer.landfill_arrival_time < ts + 86400).count()
+                        transfers = db.query(Transfer).filter(Transfer.landfill_id == landfill_id, Transfer.landfill_arrival_time >= ts, Transfer.landfill_arrival_time < ts + 86400).all()
                     else:
                         print("No landfill_id")
-                        transfer_count = db.query(Transfer).filter(Transfer.landfill_arrival_time >= ts, Transfer.landfill_arrival_time < ts + 86400).count()
+                        transfers = db.query(Transfer).filter(Transfer.landfill_arrival_time >= ts, Transfer.landfill_arrival_time < ts + 86400).all()
+
+                    # sum transfer.landfill_arrival_weight
+                    transfer_count = 0
+                    for transfer in transfers:
+                        transfer_count += transfer.landfill_arrival_weight
+                        
                     transfer_response.append({
                         "date": datetime.fromtimestamp(ts).strftime("%Y-%m-%d"),
                         "count": transfer_count
@@ -156,7 +162,7 @@ def get_total_waste_transfer_by_sts( sts_id: int = Query(None), user: User = Dep
 
                 transfer_response = []
                 for ts in last_7_days_timestamp:
-                    transfer_count = -1
+                    transfers = None
 
                     if user["role"]["id"] == 2:
                         sts_manager = db.query(STSmanager).filter(STSmanager.user_id == user["id"]).first()
@@ -165,16 +171,22 @@ def get_total_waste_transfer_by_sts( sts_id: int = Query(None), user: User = Dep
                         sts = db.query(STS).filter(STS.id == sts_manager.sts_id).first()
                         if sts is None:
                             return JSONResponse(status_code=404, content={"message": "STS not found"})
-                        transfer_count = db.query(Transfer).filter(Transfer.sts_id == sts.id, Transfer.sts_arrival_time >= ts, Transfer.sts_arrival_time < ts + 86400).count()
+                        transfers = db.query(Transfer).filter(Transfer.sts_id == sts.id, Transfer.sts_arrival_time >= ts, Transfer.sts_arrival_time < ts + 86400).all()
 
                     elif sts_id is not None:
                         sts = db.query(STS).filter(STS.id == sts_id).first()
                         if sts is None:
                             return JSONResponse(status_code=400, content={"message": "STS not found"})
-                        transfer_count = db.query(Transfer).filter(Transfer.sts_id == sts_id, Transfer.sts_arrival_time >= ts, Transfer.sts_arrival_time < ts + 86400).count()
+                        transfers = db.query(Transfer).filter(Transfer.sts_id == sts_id, Transfer.sts_arrival_time >= ts, Transfer.sts_arrival_time < ts + 86400).all()
 
                     else:
-                        transfer_count = db.query(Transfer).filter(Transfer.sts_arrival_time >= ts, Transfer.sts_arrival_time < ts + 86400).count()
+                        transfers = db.query(Transfer).filter(Transfer.sts_arrival_time >= ts, Transfer.sts_arrival_time < ts + 86400).all()
+
+                    # sum transfer.sts_departure_weight
+                    transfer_count = 0
+                    for transfer in transfers:
+                        transfer_count += transfer.sts_departure_weight
+
                     transfer_response.append({
                         "date": datetime.fromtimestamp(ts).strftime("%Y-%m-%d"),
                         "count": transfer_count
