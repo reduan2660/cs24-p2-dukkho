@@ -175,6 +175,11 @@ async def landfill_arrival(transfer_id: int, arrival: LandfillArrival, user: Use
         transfer.landfill_arrival_time = int(datetime.now().timestamp())
         transfer.landfill_arrival_weight = arrival.weight
         transfer.status = 2 # Arrived at landfill
+
+        if transfer.sts_departure_weight != arrival.weight:
+            landfill = db.query(Landfill).filter(Landfill.id == transfer.landfill_id).first()
+            landfill.current_capacity = landfill.current_capacity + (transfer.sts_departure_weight - arrival.weight)
+
         db.commit()
 
         return JSONResponse(status_code=200, content={"message": "Transfer updated successfully"})
@@ -347,8 +352,8 @@ async def get_fleet( fleetRequest: FleetRequest, sts_id : int = Query(None), use
             vehicle_remaining_trips.append(3 - transfer_count)
 
         # all_landfill = db.query(Landfill).all()
-        now = datetime.now()
-        current_hour = now.hour
+        now = datetime.utcnow()
+        current_hour = now.hour + 6
     
         available_landfill = db.query(Landfill).filter(Landfill.time_start <= current_hour).filter(Landfill.time_end >= current_hour).all() # TODO: filter(Landfill.current_capacity >= weight).all() ?
 

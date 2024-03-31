@@ -20,7 +20,10 @@ async def get_landfill(user: User = Depends(get_user_from_session)):
         return JSONResponse(status_code=401, content={"message": "Not enough permissions"})
     
     with SessionLocal() as db:
-        landfill = db.query(Landfill).all()
+        if user["role"]["id"] == 3: # Landfill Manager
+            landfill = db.query(Landfill).join(LandfillManager).filter(LandfillManager.user_id == user["id"]).all()
+        else:
+            landfill = db.query(Landfill).all()
         response = []
         for lf in landfill:
             response.append({
@@ -108,7 +111,13 @@ async def update_landfill(landfill_id: int, landfillReq: LandfillUpdateRequest, 
         return JSONResponse(status_code=401, content={"message": "Not enough permissions"})
     
     with SessionLocal() as db:
-        landfill = db.query(Landfill).filter(Landfill.id == landfill_id).first()
+        
+        if user["role"]["id"] == 3:
+            landfill = db.query(LandfillManager).filter(LandfillManager.user_id == user["id"]).filter(LandfillManager.landfill_id == landfill_id).first()
+            if not landfill:
+                return JSONResponse(status_code=401, content={"message": "Not enough permissions"})
+        else:
+            landfill = db.query(Landfill).filter(Landfill.id == landfill_id).first()
         if not landfill:
             return JSONResponse(status_code=404, content={"message": "Landfill not found"})
         
@@ -183,8 +192,8 @@ async def available_landfil(weight: float = Query(None), user: User = Depends(ge
     with SessionLocal() as db:
 
         # get now hour in 24 format
-        now = datetime.now()
-        current_hour = now.hour
+        now = datetime.utcnow()
+        current_hour = now.hour + 6
 
         landfills = db.query(Landfill).filter(Landfill.current_capacity >= weight).filter(Landfill.time_start <= current_hour).filter(Landfill.time_end >= current_hour).all()
         

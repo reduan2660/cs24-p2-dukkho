@@ -201,9 +201,9 @@ def upgrade() -> None:
     # Landfill
     landfill_tbl = sa.Table('landfills', meta, autoload_with=op.get_bind())
     op.bulk_insert(landfill_tbl, [
-        {"id": 0, "name": "Aminbazar", "latitude": 23.7861, "longitude": 90.3299, "capacity": 10, "current_capacity": 1000, "time_start": 0, "time_end": 23},
-        {"id": 1, "name": "Matuail", "latitude": 23.7261, "longitude": 90.4309, "capacity": 10, "current_capacity": 1000, "time_start": 0, "time_end": 23},
-        {"id": 2, "name": "Keraniganj", "latitude": 23.7031, "longitude": 90.4079, "capacity": 10, "current_capacity": 1000, "time_start": 8, "time_end": 18},
+        {"id": 0, "name": "Aminbazar", "latitude": 23.7861, "longitude": 90.3299, "capacity": 1000, "current_capacity": 100, "time_start": 0, "time_end": 23},
+        {"id": 1, "name": "Matuail", "latitude": 23.7261, "longitude": 90.4309, "capacity": 1000, "current_capacity": 100, "time_start": 0, "time_end": 23},
+        {"id": 2, "name": "Keraniganj", "latitude": 23.7031, "longitude": 90.4079, "capacity": 1000, "current_capacity": 100, "time_start": 8, "time_end": 18},
     ])
 
     # Landfill Manager
