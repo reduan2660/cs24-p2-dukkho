@@ -65,7 +65,12 @@ async def create_sts(sts: STSrequest, user: User = Depends(get_user_from_session
         return JSONResponse(status_code=401, content={"message": "Not enough permissions"})
     
     with SessionLocal() as db:
+
+        latest_id = db.query(STS).order_by(STS.id.desc()).first()
+        if latest_id is None:
+            sts_id = 1
         db.add(STS(
+            id=latest_id.id + 1,
             name=sts.name,
             ward_no=sts.ward_no,
             latitude=sts.latitude,
