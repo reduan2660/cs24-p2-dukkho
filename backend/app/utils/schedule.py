@@ -1,4 +1,4 @@
-def schedule(times, duration, plan_id, number_of_plans, employee_pay_rate, employee_id, number_of_employees, sts_open, sts_close):
+def cost_schedule(times, duration, plan_id, number_of_plans, employee_pay_rate, employee_id, number_of_employees, sts_open, sts_close):
     
     # Adjacency list to represent the graph of task dependencies
     global adj
@@ -117,8 +117,6 @@ def schedule(times, duration, plan_id, number_of_plans, employee_pay_rate, emplo
     for i in range(number_of_employees):
         ops.append([employee_pay_rate[i], i])  
     ops.sort()  # Sort employees based on pay rates
-    print(ops)
-    print(adj)
     used = [0 for _ in range(number_of_plans)] 
     assigned = {}
     assignment = {} 
@@ -128,7 +126,6 @@ def schedule(times, duration, plan_id, number_of_plans, employee_pay_rate, emplo
         for i in range(number_of_plans):
             if vis[i] == 1 or used[i] == 1:
                 continue
-            print(i)
             dfs(i)  # Calculate time for each task
         mx_val = -1  # Maximum time for a task
         mx_root = -1  # Task with maximum time
@@ -139,8 +136,6 @@ def schedule(times, duration, plan_id, number_of_plans, employee_pay_rate, emplo
         dfs2(mx_root, mx_val, employee_id[ops[emp_used][1]])  # Assign tasks to employee with lowest pay rate
         min_cost = float(mx_val * ops[emp_used][0]) / 60  # Calculate cost for assigned tasks
         emp_used += 1  # Increment employee counter
-        print(val)
-        print(emp_used, taken)
 
     return min_cost, assigned, assignment
     
@@ -154,7 +149,7 @@ e_id=[9,8,2]
 y = 3
 p = '6:10'
 q = '12:00'
-m, n, o = schedule(a, b, p_id,c, x, e_id,y, p, q)
+m, n, o = cost_schedule(a, b, p_id,c, x, e_id,y, p, q)
 
 print(m)
 print(n)
