@@ -67,6 +67,7 @@ class STS(Base):
     vehicle = relationship("Vehicle", back_populates="sts")
     sts_manager = relationship("STSmanager", back_populates="sts")
     transfer = relationship("Transfer", back_populates="sts")
+    contract = relationship("Contract", back_populates="sts")
 
 class STSmanager(Base):
     __tablename__ = "sts_managers"
@@ -157,3 +158,22 @@ class Transfer(Base):
 
 # arrival vehicle options = all vehicles of sts - status with 1, 2, 3
 # landfill options = all landfills with current_capacity >= weight of waste
+
+
+class Contract(Base):
+    __tablename__ = "contracts"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    reg_id = Column(String, unique=True, index=True, nullable=False)
+    reg_date = Column(Integer, nullable=False) # utc timestamp
+    tin = Column(String, unique=True, index=True, nullable=False)
+    contact = Column(String, nullable=False)
+    workforce_size = Column(Integer, nullable=False, default=0) # dynamic
+    pay_per_ton = Column(Float, nullable=False)
+    required_waste_ton = Column(Float, nullable=False)
+    contract_duration = Column(Integer, nullable=False) # in months
+    area_of_collection = Column(String, nullable=False)
+    sts_id = Column(Integer, ForeignKey("sts.id"))
+
+    sts = relationship("STS", back_populates="contract")
