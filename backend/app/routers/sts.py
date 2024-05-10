@@ -29,6 +29,10 @@ async def get_sts(user: User = Depends(get_user_from_session)):
                 "latitude": st.latitude,
                 "longitude": st.longitude,
                 "capacity": st.capacity,
+                "current_load": st.current_load,
+                "time_start": st.time_start,
+                "time_end": st.time_end,
+                "fine": st.fine,
                 "managers": [
                     {
                         "id": m.user_id,
@@ -57,6 +61,9 @@ class STSrequest(BaseModel):
     latitude: float
     longitude: float
     capacity: float
+    time_start: int
+    time_end: int
+    fine: float
 
 @router.post("/")
 async def create_sts(sts: STSrequest, user: User = Depends(get_user_from_session)):
@@ -75,7 +82,11 @@ async def create_sts(sts: STSrequest, user: User = Depends(get_user_from_session
             ward_no=sts.ward_no,
             latitude=sts.latitude,
             longitude=sts.longitude,
-            capacity=sts.capacity
+            capacity=sts.capacity,
+            time_start=sts.time_start,
+            time_end=sts.time_end,
+            fine=sts.fine,
+            current_load=0
         ))
         db.commit()
         return JSONResponse(status_code=201, content={"message": "STS created successfully"})
@@ -99,6 +110,9 @@ class STSUpdateRequest(BaseModel):
     latitude: float
     longitude: float
     capacity: float
+    time_start: int
+    time_end: int
+    fine: float
 
 @router.put("/{sts_id}")
 async def update_sts(sts_id: int, sts: STSUpdateRequest, user: User = Depends(get_user_from_session)):
@@ -112,7 +126,10 @@ async def update_sts(sts_id: int, sts: STSUpdateRequest, user: User = Depends(ge
                 "ward_no": sts.ward_no,
                 "latitude": sts.latitude,
                 "longitude": sts.longitude,
-                "capacity": sts.capacity
+                "capacity": sts.capacity,
+                "time_start": sts.time_start,
+                "time_end": sts.time_end,
+                "fine": sts.fine
             })
             db.commit()
             return JSONResponse(status_code=200, content={"message": "STS updated successfully"})

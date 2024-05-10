@@ -103,6 +103,8 @@ def upgrade() -> None:
         {"id": 49, "name": "end_collection", "category": "collection"}, # contract manager
         {"id": 50, "name": "view_collection", "category": "collection"}, # sts manager, contract manager, admin
 
+        {"id": 51, "name": "schedule", "category": "schedule"}, # contract manager
+
 
     ])
 
@@ -241,6 +243,9 @@ def upgrade() -> None:
         {"role_id": 4, "permission_id": 47},
         {"role_id": 4, "permission_id": 49},
         {"role_id": 4, "permission_id": 50},
+
+        # Contract Manager - Schedule
+        {"role_id": 4, "permission_id": 51},
     ])
 
     # Users
@@ -269,11 +274,11 @@ def upgrade() -> None:
     # STS
     sts_tbl = sa.Table('sts', meta, autoload_with=op.get_bind())
     op.bulk_insert(sts_tbl, [
-        {"id": 0, "name": "Farmgate", "ward_no": 1, "latitude": 23.7561, "longitude": 90.3872, "capacity": 200},
-        {"id": 1, "name": "Jatrabari", "ward_no": 2, "latitude": 23.7106, "longitude": 90.4349, "capacity": 300},
-        {"id": 2, "name": "Mohakhali", "ward_no": 3, "latitude": 23.7778, "longitude": 90.4057, "capacity": 250},
-        {"id": 3, "name": "Uttara", "ward_no": 4, "latitude": 23.8759, "longitude": 90.3795, "capacity": 500},
-        {"id": 4, "name": "Gulshan", "ward_no": 5, "latitude": 23.7925, "longitude": 90.4078, "capacity": 600}
+        {"id": 0, "name": "Farmgate", "ward_no": 1, "latitude": 23.7561, "longitude": 90.3872, "capacity": 200, "time_start": 8, "time_end": 20, "fine": 12, "current_load": 0},
+        {"id": 1, "name": "Jatrabari", "ward_no": 2, "latitude": 23.7106, "longitude": 90.4349, "capacity": 300, "time_start": 8, "time_end": 20, "fine": 12, "current_load": 0},
+        {"id": 2, "name": "Mohakhali", "ward_no": 3, "latitude": 23.7778, "longitude": 90.4057, "capacity": 250, "time_start": 8, "time_end": 20, "fine": 12, "current_load": 0},
+        {"id": 3, "name": "Uttara", "ward_no": 4, "latitude": 23.8759, "longitude": 90.3795, "capacity": 500, "time_start": 8, "time_end": 20, "fine": 12, "current_load": 0},
+        {"id": 4, "name": "Gulshan", "ward_no": 5, "latitude": 23.7925, "longitude": 90.4078, "capacity": 600, "time_start": 8, "time_end": 20, "fine": 12, "current_load": 0}
     ])
 
     # STS Manager
