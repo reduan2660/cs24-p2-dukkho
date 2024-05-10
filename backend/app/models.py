@@ -56,6 +56,7 @@ class User(Base):
     sts_manager = relationship("STSmanager", back_populates="user")
     landfill_manager = relationship("LandfillManager", back_populates="user")
     contract_manager = relationship("ContractManager", back_populates="user")
+    employee = relationship("Employee", back_populates="user")
 
 
 class STS(Base):
@@ -213,3 +214,37 @@ class CollectionPlan(Base):
     contract_id = Column(Integer, ForeignKey("contracts.id"))
 
     contract = relationship("Contract", back_populates="collection_plan")
+    employee = relationship("EmployeeActivity", back_populates="plan")
+
+
+class Employee(Base):
+    __tablename__ = "employees"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    date_of_birth = Column(Integer, nullable=False) # utc timestamp
+    date_of_hire = Column(Integer, nullable=False) # utc timestamp
+    job_title = Column(String, nullable=False)
+    pay_per_hour = Column(Float, nullable=False)
+    plan_id = Column(Integer, ForeignKey("collection_plans.id"))
+
+    user = relationship("User", back_populates="employee")
+    activity = relationship("EmployeeActivity", back_populates="employee")
+
+
+class EmployeeActivity(Base):
+    __tablename__ = "employee_activities"
+
+    id = Column(Integer, primary_key=True, index=True)
+    employee_id = Column(Integer, ForeignKey("employees.id"))
+    date = Column(Integer, nullable=False) # utc timestamp
+    plan_id = Column(Integer, ForeignKey("collection_plans.id"))
+    login = Column(Integer, nullable=True) # utc timestamp
+    logout = Column(Integer, nullable=True) # utc timestamp
+    work_duration = Column(Integer, nullable=True) # in minutes
+    is_absent = Column(Integer, nullable=False, default=0) # 0 for present, 1 for absent
+    is_on_leave = Column(Integer, nullable=False, default=0) # 0 for not on leave, 1 for on leave
+
+
+    employee = relationship("Employee", back_populates="activity")
+    plan = relationship("CollectionPlan", back_populates="employee")
