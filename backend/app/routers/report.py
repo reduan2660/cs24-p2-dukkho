@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from typing import List
 from app.dependencies import get_user_from_session
-from app.models import Transfer, Vehicle, STS, Landfill, User, STSmanager, LandfillManager, GarbageCollection
+from app.models import Transfer, Vehicle, STS, Landfill, User, STSmanager, LandfillManager, GarbageCollection, Contract, ContractManager, EmployeeActivity, CollectionPlan, Employee
 from app.config import SessionLocal
 from datetime import datetime
 
@@ -372,7 +372,58 @@ def get_total_collection_by_sts(user: User = Depends(get_user_from_session)):
         return JSONResponse(status_code=200, content=collection_response)
 
         
+@router.get("/employee")
+def get_employee_count(user: User = Depends(get_user_from_session)):
+    
+    if "report_employee" not in user["role"]["permissions"]:
+        return JSONResponse(status_code=401, content={"message": "Not enough permissions"})
+    
+    with SessionLocal() as db:
+        if user["role"]["id"] != 4:
+            return JSONResponse(status_code=401, content={"message": "Not enough permissions"})
+        
+        today_starts_timestamp = int(datetime.combine(datetime.today(), datetime.min.time()).timestamp())
+        last_7_days_timestamp = []
+        last_7_days_timestamp.append(today_starts_timestamp)
+        for i in range(1, 8):
+            last_7_days_timestamp.append(today_starts_timestamp - (i * 86400))
+        
+        contract = db.query(ContractManager).filter(ContractManager.user_id == user["id"]).first()
+        # get all plans for the contract
+        plans = db.query(CollectionPlan).filter(CollectionPlan.contract_id == contract.contract_id).all()
 
+        print(today_starts_timestamp)
+
+        on_duty_employee_no = 0
+        off_duty_employee_no = 0
+        leave_employee_no = 0
+        for plan in plans:
+            on_duty_employees = db.query(EmployeeActivity).filter(EmployeeActivity.plan_id == plan.id).filter(EmployeeActivity.date >= today_starts_timestamp).filter(EmployeeActivity.login != None).filter(EmployeeActivity.logout == None)
+            on_duty_employee_no += on_duty_employees.count()
+
+            # off_duty_employees = db.query(EmployeeActivity).filter(EmployeeActivity.plan_id == plan.id).filter(EmployeeActivity.date >= today_starts_timestamp).filter(EmployeeActivity.login == None).filter(EmployeeActivity.logout == None)
+            # off_duty_employee_no += off_duty_employees.count()
+
+            # off_duty_employees = db.query(EmployeeActivity).filter(EmployeeActivity.plan_id == plan.id).filter(EmployeeActivity.date >= today_starts_timestamp).filter(EmployeeActivity.login != None).filter(EmployeeActivity.logout != None)
+            # off_duty_employee_no += off_duty_employees.count()
+
+            leave_employees = db.query(EmployeeActivity).filter(EmployeeActivity.plan_id == plan.id).filter(EmployeeActivity.date >= today_starts_timestamp).filter(EmployeeActivity.is_on_leave == 1)
+            leave_employee_no += leave_employees.count()
+
+            all_employee_count = db.query(Employee).filter(Employee.plan_id == plan.id).count()
+            off_duty_employee_no = all_employee_count - on_duty_employee_no - leave_employee_no
+
+
+        return JSONResponse(status_code=200, content={
+            "on_duty": on_duty_employee_no,
+            "off_duty": off_duty_employee_no,
+            "on_leave": leave_employee_no,
+
+        })
+
+
+
+        
 
             
 # Historical
