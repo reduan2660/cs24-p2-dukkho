@@ -61,6 +61,7 @@ class User(Base):
     ticket = relationship("Ticket", back_populates="user")
     post = relationship("Post", back_populates="user")
     like = relationship("PostLike", back_populates="user")
+    event = relationship("EventFollower", back_populates="user")
 
 
 class STS(Base):
@@ -326,3 +327,28 @@ class PostLike(Base):
 
     post = relationship("Post", back_populates="like")
     user = relationship("User", back_populates="like")
+
+
+class Event(Base):
+    __tablename__ = "events"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    description = Column(String, nullable=True)
+    location = Column(String, nullable=True)
+    start_time = Column(Integer, nullable=True) # utc timestamp
+    end_time = Column(Integer, nullable=True) # utc timestamp
+    created_at = Column(Integer, nullable=True) # utc timestamp
+
+    follower = relationship("EventFollower", back_populates="event")
+
+
+class EventFollower(Base):
+    __tablename__ = "event_followers"
+
+    id = Column(Integer, primary_key=True, index=True)
+    event_id = Column(Integer, ForeignKey("events.id"))
+    user_id = Column(Integer, ForeignKey("users.id"))
+
+    event = relationship("Event", back_populates="follower")
+    user = relationship("User", back_populates="event")
