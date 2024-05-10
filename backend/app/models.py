@@ -57,6 +57,8 @@ class User(Base):
     landfill_manager = relationship("LandfillManager", back_populates="user")
     contract_manager = relationship("ContractManager", back_populates="user")
     employee = relationship("Employee", back_populates="user")
+    
+    ticket = relationship("Ticket", back_populates="user")
 
 
 class STS(Base):
@@ -279,3 +281,21 @@ class GarbageCollection(Base):
     collection_plan = relationship("CollectionPlan", back_populates="garbage_collection")
     employee = relationship("Employee", back_populates="garbage_collection")
     contract = relationship("Contract", back_populates="garbage_collection")
+
+
+
+# app
+
+class Ticket(Base):
+    __tablename__ = "tickets"
+
+    id = Column(Integer, primary_key=True, index=True)
+    location = Column(String, nullable=False)
+    category = Column(String, nullable=False)
+    description = Column(String, nullable=False)
+    anonymous = Column(Integer, nullable=False, default=0) # 0 for not anonymous, 1 for anonymous
+    reply = Column(String, nullable=True)
+    created_by = Column(Integer, ForeignKey("users.id"))
+    created_at = Column(Integer, nullable=False) # utc timestamp
+
+    user = relationship("User", back_populates="ticket")
