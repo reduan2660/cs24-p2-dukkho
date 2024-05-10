@@ -194,3 +194,37 @@ async def assign_role(user_id: int, assignRoleRequest: AssignRoleRequest, user: 
         db.query(LandfillManager).filter(LandfillManager.user_id == user_id).delete()
         db.commit()
         return JSONResponse(status_code=200, content={"message": "Role assigned to user"})
+    
+class NewUserRequest(BaseModel):
+    name: str
+    email: str
+    password: str
+    contact: str = None
+    username: str = None
+
+@router.post("/register")
+async def register_user(userRequest: NewUserRequest):
+
+    with SessionLocal() as db:
+
+        latest_user_id = db.query(User).order_by(User.id.desc()).first().id
+        
+        # check if email already exists
+        user = db.query(User).filter(User.email == userRequest.email).first()
+        if user is not None:
+            return JSONResponse(status_code=400, content={"message": "Email already exists"})
+
+        newUser = User(
+            id=latest_user_id + 1,
+            name=userRequest.name,
+            email=userRequest.email,
+            password=pwd_context.hash(userRequest.password),
+            role_id=6, # user
+
+            username=userRequest.username,
+            contact=userRequest.contact,
+            created_at=  int(datetime.utcnow().timestamp())
+        )
+        db.add(newUser)
+        db.commit()
+        return JSONResponse(status_code=201, content={"message": "User created"})
