@@ -58,7 +58,7 @@ const Employees = () => {
 
   const getPlans = () => {
     api
-      .get("/plans")
+      .get("/plan")
       .then((res) => setPlan(res.data))
       .catch((err) => {
         toast.error(err.response.data?.message);
@@ -459,11 +459,11 @@ const Employees = () => {
                     render={(status, record) => {
                       return (
                         <div>
-                          {record.activities[0].is_absent === 1
+                          {record.activities[0]?.is_absent === 1
                             ? "Absent"
-                            : record.activities[0].is_on_leave === 1
+                            : record.activities[0]?.is_on_leave === 1
                               ? "On Leave"
-                              : record.activities[0].logout === null
+                              : record.activities[0]?.logout === null
                                 ? "On Duty"
                                 : "Off Duty"}
                         </div>
@@ -780,72 +780,78 @@ const Employees = () => {
                   onCancel={() => setOpenActivity(false)}
                   centered
                 >
-                  <div className="overflow-x-auto">
-                    <Table
-                      dataSource={activity}
-                      rowKey="id"
-                      style={{ overflowX: "auto" }}
-                      pagination={{
-                        defaultPageSize: 10,
-                        showSizeChanger: true,
-                        pageSizeOptions: ["10", "20", "30"],
-                      }}
-                    >
-                      <Column title="Activity ID" dataIndex="id"></Column>
-                      <Column
-                        title="Date"
-                        dataIndex="date"
-                        render={(date) => {
-                          return (
-                            <div>
-                              {new Date(date * 1000).toLocaleDateString()}
-                            </div>
-                          );
+                  {activity.length === 0 ? (
+                    <div>No activities yet</div>
+                  ) : (
+                    <div className="overflow-x-auto">
+                      <Table
+                        dataSource={activity}
+                        rowKey="id"
+                        style={{ overflowX: "auto" }}
+                        pagination={{
+                          defaultPageSize: 10,
+                          showSizeChanger: true,
+                          pageSizeOptions: ["10", "20", "30"],
                         }}
-                      ></Column>
-                      <Column
-                        title="Absent"
-                        dataIndex="is_absent"
-                        render={(is_absent) => {
-                          return <div>{is_absent === 1 ? "Yes" : "No"}</div>;
-                        }}
-                      ></Column>
-                      <Column
-                        title="Leave"
-                        dataIndex="is_on_leave"
-                        render={(is_on_leave) => {
-                          return <div>{is_on_leave === 1 ? "Yes" : "No"}</div>;
-                        }}
-                      ></Column>
-                      <Column
-                        title="Logout"
-                        dataIndex="logout"
-                        render={(logout) => {
-                          return (
-                            <div>
-                              {new Date(logout * 1000).toLocaleDateString()}
-                            </div>
-                          );
-                        }}
-                      ></Column>
-                      <Column
-                        title="Login"
-                        dataIndex="login"
-                        render={(login) => {
-                          return (
-                            <div>
-                              {new Date(login * 1000).toLocaleDateString()}
-                            </div>
-                          );
-                        }}
-                      ></Column>
-                      <Column
-                        title="Work Duration"
-                        dataIndex="work_duration"
-                      ></Column>
-                      <Column title="Plan ID" dataIndex="plan"></Column>
-                    </Table>
-                  </div>
+                      >
+                        <Column title="Activity ID" dataIndex="id"></Column>
+                        <Column
+                          title="Date"
+                          dataIndex="date"
+                          render={(date) => {
+                            return (
+                              <div>
+                                {new Date(date * 1000).toLocaleDateString()}
+                              </div>
+                            );
+                          }}
+                        ></Column>
+                        <Column
+                          title="Absent"
+                          dataIndex="is_absent"
+                          render={(is_absent) => {
+                            return <div>{is_absent === 1 ? "Yes" : "No"}</div>;
+                          }}
+                        ></Column>
+                        <Column
+                          title="Leave"
+                          dataIndex="is_on_leave"
+                          render={(is_on_leave) => {
+                            return (
+                              <div>{is_on_leave === 1 ? "Yes" : "No"}</div>
+                            );
+                          }}
+                        ></Column>
+                        <Column
+                          title="Logout"
+                          dataIndex="logout"
+                          render={(logout) => {
+                            return (
+                              <div>
+                                {new Date(logout * 1000).toLocaleDateString()}
+                              </div>
+                            );
+                          }}
+                        ></Column>
+                        <Column
+                          title="Login"
+                          dataIndex="login"
+                          render={(login) => {
+                            return (
+                              <div>
+                                {new Date(login * 1000).toLocaleDateString()}
+                              </div>
+                            );
+                          }}
+                        ></Column>
+                        <Column
+                          title="Work Duration"
+                          dataIndex="work_duration"
+                        ></Column>
+                        <Column title="Plan ID" dataIndex="plan"></Column>
+                      </Table>
+                    </div>
+                  )}
                 </Modal>
               </div>
             </div>

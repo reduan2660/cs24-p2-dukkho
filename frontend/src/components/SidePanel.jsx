@@ -10,6 +10,7 @@ import { FiUser } from "react-icons/fi";
 import { MdLogout, MdLogin } from "react-icons/md";
 import { FaRegNewspaper } from "react-icons/fa6";
 import { CiTrash } from "react-icons/ci";
+import { GrPlan } from "react-icons/gr";
 import {
   RiShieldKeyholeLine,
   RiKeyLine,
@@ -205,7 +206,8 @@ const SidePanel = () => {
             globalState.user?.role.permissions.includes("list_landfill") ||
             globalState.user?.role.permissions.includes("list_contract") ||
             globalState.user?.role.permissions.includes("list_plan") ||
-            globalState.user?.role.permissions.includes("list_employee")) &&
+            globalState.user?.role.permissions.includes("list_employee") ||
+            globalState.user?.role.permissions.includes("schedule")) &&
             !collapsed && (
               <SubMenu
                 label="Waste Management"
@@ -334,6 +336,23 @@ const SidePanel = () => {
                     <MenuItem icon={<CiTrash className="text-xgray" />}>
                       <div className="font-medium text-xgray">
                         Garbage Collection
+                      </div>
+                    </MenuItem>
+                  </div>
+                )}
+                {globalState.user?.role.permissions.includes("schedule") && (
+                  <div
+                    className={`w-full ${
+                      location.pathname === "/schedule" ? "bg-blue-100" : ""
+                    }`}
+                    onClick={() => {
+                      if (location.pathname !== "/schedule") navigate("/schedule");
+                      else setCollapsed(!collapsed);
+                    }}
+                  >
+                    <MenuItem icon={<GrPlan className="text-xgray" />}>
+                      <div className="font-medium text-xgray">
+                        Schedule Planning
                       </div>
                     </MenuItem>
                   </div>
