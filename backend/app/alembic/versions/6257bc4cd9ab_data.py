@@ -30,6 +30,7 @@ def upgrade() -> None:
         {"id": 1, "name": "System Admin"},
         {"id": 2, "name": "STS Manager"},
         {"id": 3, "name": "Landfill Manager"},
+        {"id": 4, "name": "Contract Manager"}
     ])
 
     permissions_tbl = sa.Table('permissions', meta, autoload_with=op.get_bind())

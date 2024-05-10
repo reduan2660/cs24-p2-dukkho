@@ -6,6 +6,7 @@ from app.dependencies import get_user_from_session
 from app.models import User, Role, Permission, RolePermission, STSmanager, LandfillManager
 from app.config import SessionLocal
 import os
+from datetime import datetime
 
 from passlib.context import CryptContext
 SECRET_KEY     = os.getenv("SECRET_KEY")
@@ -49,7 +50,10 @@ async def get_users(roles: List[int] = Query([]),  user: User = Depends(get_user
                     "id": role.id,
                     "name": role.name,
                     "permissions": permissions
-                }
+                },
+                "username": user.username,
+                "contact": user.contact,
+                "created_at": user.created_at
             })
 
         return JSONResponse(status_code=200, content=response)
@@ -81,7 +85,10 @@ async def get_user(user_id: int, user: User = Depends(get_user_from_session)):
                 "id": role.id,
                 "name": role.name,
                 "permissions": permissions
-            }
+            },
+            "username": user.username,
+            "contact": user.contact,
+            "created_at": user.created_at
         }
 
         return JSONResponse(status_code=200, content=response)
@@ -91,6 +98,8 @@ class NewUserRequest(BaseModel):
     name: str
     email: str
     password: str
+    contact: str = None
+    username: str = None
 
 @router.post("/")
 async def create_user(userRequest: NewUserRequest, user: User = Depends(get_user_from_session)):
@@ -101,14 +110,22 @@ async def create_user(userRequest: NewUserRequest, user: User = Depends(get_user
     with SessionLocal() as db:
 
         latest_user_id = db.query(User).order_by(User.id.desc()).first().id
-
+        
+        # check if email already exists
+        user = db.query(User).filter(User.email == userRequest.email).first()
+        if user is not None:
+            return JSONResponse(status_code=400, content={"message": "Email already exists"})
 
         newUser = User(
             id=latest_user_id + 1,
             name=userRequest.name,
             email=userRequest.email,
             password=pwd_context.hash(userRequest.password),
-            role_id=0 # default role, unassigned
+            role_id=0, # default role, unassigned
+
+            username=userRequest.username,
+            contact=userRequest.contact,
+            created_at=  int(datetime.utcnow().timestamp())
         )
         db.add(newUser)
         db.commit()
