@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from typing import List
 from app.dependencies import get_user_from_session
-from app.models import Transfer, Vehicle, STS, Landfill, User, STSmanager, LandfillManager
+from app.models import Transfer, Vehicle, STS, Landfill, User, STSmanager, LandfillManager, GarbageCollection
 from app.config import SessionLocal
 from datetime import datetime
 
@@ -335,6 +335,44 @@ def get_total_transfer(sts_id:int = Query(None), landfill_id:int = Query(None), 
                 })
             return JSONResponse(status_code=200, content=transfer_response)
         
+
+
+# Total collection - per day - 7 days
+# Access: STS Manager
+
+@router.get("/total_collection_by_sts")
+def get_total_collection_by_sts(user: User = Depends(get_user_from_session)):
+    
+    if "report_total_collection_by_sts" not in user["role"]["permissions"]:
+        return JSONResponse(status_code=401, content={"message": "Not enough permissions"})
+    
+    with SessionLocal() as db:
+        if user["role"]["id"] != 2:
+            return JSONResponse(status_code=401, content={"message": "Not enough permissions"})
+        
+        today_starts_timestamp = int(datetime.combine(datetime.today(), datetime.min.time()).timestamp())
+        last_7_days_timestamp = []
+        last_7_days_timestamp.append(today_starts_timestamp)
+        for i in range(1, 8):
+            last_7_days_timestamp.append(today_starts_timestamp - (i * 86400))
+
+        sts = db.query(STSmanager).filter(STSmanager.user_id == user["id"]).first()
+
+        collection_response = []
+        for ts in last_7_days_timestamp:
+            collections = db.query(GarbageCollection).filter(GarbageCollection.sts_id == sts.sts_id, GarbageCollection.collection_end_time >= ts, GarbageCollection.collection_end_time < ts + 86400).all()
+            collection_count = 0
+            for collection in collections:
+                collection_count += collection.collected_weight
+            collection_response.append({
+                "date": datetime.fromtimestamp(ts).strftime("%Y-%m-%d"),
+                "count": collection_count
+            })
+
+        return JSONResponse(status_code=200, content=collection_response)
+
+        
+
 
             
 # Historical
