@@ -112,3 +112,75 @@ async def get_all_employees(user: User = Depends(get_user_from_session)):
             })
 
         return JSONResponse(status_code=200, content=response)
+    
+
+
+class EmployeeUpdateRequest(BaseModel):
+    name: str
+    email: str
+    username: str
+    contact: str
+    date_of_birth: int
+    date_of_hire: int
+    job_title: str
+    pay_per_hour: float
+    plan_id: int
+
+
+@router.put("/{employee_id}")
+async def update_employee(employee_id: int, employeeReq: EmployeeUpdateRequest, user: User = Depends(get_user_from_session)):
+
+    if "edit_employee" not in user["role"]["permissions"]:
+        return JSONResponse(status_code=401, content={"message": "Not enough permissions"})
+
+    with SessionLocal() as db:
+        employee = db.query(Employee).filter(Employee.id == employee_id).first()
+        if not employee:
+            return JSONResponse(status_code=404, content={"message": "Employee not found"})
+        
+        user = db.query(User).filter(User.id == employee.user_id).first()
+        if not user:
+            return JSONResponse(status_code=404, content={"message": "User not found"})
+
+
+        db.query(User).filter(User.id == employee.user_id).update({
+            "name": employeeReq.name,
+            "email": employeeReq.email,
+            "username": employeeReq.username,
+            "contact": employeeReq.contact
+        })
+        db.commit()
+
+        db.query(Employee).filter(Employee.id == employee_id).update({
+            "date_of_birth": employeeReq.date_of_birth,
+            "date_of_hire": employeeReq.date_of_hire,
+            "job_title": employeeReq.job_title,
+            "pay_per_hour": employeeReq.pay_per_hour,
+            "plan_id": employeeReq.plan_id
+        })
+        db.commit()
+        return JSONResponse(status_code=200, content={"message": "Employee updated successfully"})
+    
+
+
+@router.delete("/{employee_id}")
+async def delete_employee(employee_id: int, user: User = Depends(get_user_from_session)):
+
+    if "delete_employee" not in user["role"]["permissions"]:
+        return JSONResponse(status_code=401, content={"message": "Not enough permissions"})
+
+    with SessionLocal() as db:
+        employee = db.query(Employee).filter(Employee.id == employee_id).first()
+        if not employee:
+            return JSONResponse(status_code=404, content={"message": "Employee not found"})
+        
+        user = db.query(User).filter(User.id == employee.user_id).first()
+        if not user:
+            return JSONResponse(status_code=404, content={"message": "User not found"})
+
+        db.query(User).filter(User.id == employee.user_id).delete()
+        db.commit()
+
+        db.query(Employee).filter(Employee.id == employee_id).delete()
+        db.commit()
+        return JSONResponse(status_code=200, content={"message": "Employee deleted successfully"})
