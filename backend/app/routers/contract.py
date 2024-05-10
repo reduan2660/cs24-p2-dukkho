@@ -169,7 +169,7 @@ async def delete_contract(contract_id: int, user: User = Depends(get_user_from_s
 
 class ContractManagerRequest(BaseModel):
     contract_id: int
-    user_id: int
+    user_id: List[int]
 
 @router.post("/manager")
 async def add_contract_manager(manager: ContractManagerRequest, user: User = Depends(get_user_from_session)):
