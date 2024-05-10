@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from typing import List
 from app.dependencies import get_user_from_session
-from app.models import User, CollectionPlan, GarbageCollection, STS, ContractManager, Contract, EmployeeActivity
+from app.models import User, CollectionPlan, GarbageCollection, STS, ContractManager, Contract, EmployeeActivity, STSmanager
 from app.config import SessionLocal
 from datetime import datetime
 
@@ -108,7 +108,7 @@ async def get_all_collections(user: User = Depends(get_user_from_session)):
         collections = db.query(GarbageCollection).all()
 
         if user["role"]["id"] == 2:
-            user_sts_id = db.query(STS).filter(STS.user_id == user["id"]).first().id
+            user_sts_id = db.query(STSmanager).filter(STSmanager.user_id == user["id"]).first().sts_id
             collections = db.query(GarbageCollection).filter(GarbageCollection.sts_id == user_sts_id).all()
 
         response = []
