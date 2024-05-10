@@ -84,6 +84,11 @@ def upgrade() -> None:
         {"id": 37, "name": "edit_contract", "category": "contract"},
         {"id": 38, "name": "delete_contract", "category": "contract"},
 
+        {"id": 39, "name": "list_plan", "category": "plan"}, # admin, contract manager
+        {"id": 40, "name": "create_plan", "category": "plan"}, # contract manager
+        {"id": 41, "name": "edit_plan", "category": "plan"}, # contract manager
+        {"id": 42, "name": "delete_plan", "category": "plan"}, # contract manager
+
     ])
 
     roles_permissions_tbl = sa.Table('roles_permissions', meta, autoload_with=op.get_bind())
@@ -143,6 +148,8 @@ def upgrade() -> None:
         {"role_id": 1, "permission_id": 37},
         {"role_id": 1, "permission_id": 38},
         
+        # System Admin - Plan
+        {"role_id": 1, "permission_id": 39},
 
         # -------------------------------------
 
@@ -188,6 +195,15 @@ def upgrade() -> None:
         {"role_id": 2, "permission_id": 33},
 
         # -------------------------------------
+
+        # Contract Manager
+        # -------------------------------------
+
+        # Contract Manager - Plan
+        {"role_id": 4, "permission_id": 39},
+        {"role_id": 4, "permission_id": 40},
+        {"role_id": 4, "permission_id": 41},
+        {"role_id": 4, "permission_id": 42},
     ])
 
     # Users
@@ -209,6 +225,8 @@ def upgrade() -> None:
         {"id": 9, "name": "Reduan", "email": "alinogor.landfill@ecosync.com", "password": HASHED_SUPERADMIN_PASSWORD, "role_id": 3},
         
         {"id": 10, "name": "Shuvo", "email": "unassigned@ecosync.com", "password": HASHED_SUPERADMIN_PASSWORD, "role_id": 0},
+
+        {"id": 11, "name": "Rahat", "email": "contract_manager@ecosync.com", "password": HASHED_SUPERADMIN_PASSWORD, "role_id": 4},
     ])
 
     # STS

@@ -174,7 +174,7 @@ class Contract(Base):
     reg_date = Column(Integer, nullable=False) # utc timestamp
     tin = Column(String, unique=True, index=True, nullable=False)
     contact = Column(String, nullable=False)
-    workforce_size = Column(Integer, nullable=False, default=0) # dynamic
+    workforce_size = Column(Integer, nullable=False, default=0) # updated when employee is created
     pay_per_ton = Column(Float, nullable=False)
     required_waste_ton = Column(Float, nullable=False)
     contract_duration = Column(Integer, nullable=False) # in months
@@ -183,6 +183,7 @@ class Contract(Base):
 
     sts = relationship("STS", back_populates="contract")
     contract_manager = relationship("ContractManager", back_populates="contract")
+    collection_plan = relationship("CollectionPlan", back_populates="contract")
 
 
 class ContractManager(Base):
@@ -194,3 +195,20 @@ class ContractManager(Base):
 
     contract = relationship("Contract", back_populates="contract_manager")
     user = relationship("User", back_populates="contract_manager")
+
+
+class CollectionPlan(Base):
+    __tablename__ = "collection_plans"
+
+    id = Column(Integer, primary_key=True, index=True)
+    area_of_collection = Column(String, nullable=False)
+    start_time_hr = Column(Integer, nullable=False)
+    start_time_min = Column(Integer, nullable=False)
+    duration = Column(Integer, nullable=False) # in minutes
+    no_of_labour = Column(Integer, nullable=False, default=0) # updated when employee is created
+    no_of_vehicle = Column(Integer, nullable=False)
+    daily_waste_ton = Column(Float, nullable=False)
+
+    contract_id = Column(Integer, ForeignKey("contracts.id"))
+
+    contract = relationship("Contract", back_populates="collection_plan")
