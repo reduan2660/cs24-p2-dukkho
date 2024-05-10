@@ -8,6 +8,7 @@ import { PiUsersThree, PiBuildings } from "react-icons/pi";
 import { FaTruck } from "react-icons/fa";
 import { FiUser } from "react-icons/fi";
 import { MdLogout, MdLogin } from "react-icons/md";
+import { FaRegNewspaper } from "react-icons/fa6";
 import {
   RiShieldKeyholeLine,
   RiKeyLine,
@@ -75,7 +76,7 @@ const SidePanel = () => {
       }
     };
 
-    // checkCookie();
+    checkCookie();
   }, []);
 
   return (
@@ -189,7 +190,9 @@ const SidePanel = () => {
           )}
           {(globalState.user?.role.permissions.includes("list_vehicle") ||
             globalState.user?.role.permissions.includes("list_all_sts") ||
-            globalState.user?.role.permissions.includes("list_landfill")) &&
+            globalState.user?.role.permissions.includes("list_landfill") ||
+            globalState.user?.role.permissions.includes("list_contract") ||
+            globalState.user?.role.permissions.includes("list_plan")) &&
             !collapsed && (
               <div className="text-md ml-6 mt-7 font-medium text-xlightgray">
                 Waste Management
@@ -246,12 +249,28 @@ const SidePanel = () => {
                 location.pathname === "/contractors" ? "bg-blue-100" : ""
               }`}
               onClick={() => {
-                if (location.pathname !== "/contractors") navigate("/contractors");
+                if (location.pathname !== "/contractors")
+                  navigate("/contractors");
                 else setCollapsed(!collapsed);
               }}
             >
               <MenuItem icon={<RiHomeOfficeLine className="text-xgray" />}>
                 <div className="font-medium text-xgray">Contractors</div>
+              </MenuItem>
+            </div>
+          )}
+          {globalState.user?.role.permissions.includes("list_plan") && (
+            <div
+              className={`w-full ${
+                location.pathname === "/plans" ? "bg-blue-100" : ""
+              }`}
+              onClick={() => {
+                if (location.pathname !== "/plans") navigate("/plans");
+                else setCollapsed(!collapsed);
+              }}
+            >
+              <MenuItem icon={<FaRegNewspaper className="text-xgray" />}>
+                <div className="font-medium text-xgray">Collection Plans</div>
               </MenuItem>
             </div>
           )}

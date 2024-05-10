@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import SidePanel from "../components/SidePanel";
@@ -52,6 +52,8 @@ const Contractors = () => {
   const [searchValue, setSearchValue] = useState("");
   const [searchOption, setSearchOption] = useState("name");
 
+  //TODO: status 201 for create, display date in datepicker
+
   const showModal = () => {
     setOpenCreate(true);
   };
@@ -71,7 +73,7 @@ const Contractors = () => {
   const assignManagers = () => {
     api
       .post(`/contract/manager`, {
-        contractors_id: parseInt(updateContractors.id),
+        contract_id: parseInt(updateContractors.id),
         user_id: managerIds,
       })
       .then((res) => {
@@ -131,10 +133,11 @@ const Contractors = () => {
     api
       .put(`/contract/${updateContractors.id}`, {
         name: updateName,
-        reg_id: parseInt(updateRegId),
+        reg_id: updateRegId,
         reg_date: parseFloat(updateRegDate),
         tin: updateTin,
-        contact: parseFloat(updateContact),
+        contact: updateContact,
+        workforce_size: 0,
         pay_per_ton: parseFloat(updatePayPerTon),
         required_waste_ton: parseFloat(updateRequiredWasteTon),
         contract_duration: parseFloat(updateContractDuration),
@@ -161,10 +164,11 @@ const Contractors = () => {
     api
       .post("/contract", {
         name: createName,
-        reg_id: parseInt(createRegId),
+        reg_id: createRegId,
         reg_date: parseFloat(createRegDate),
         tin: createTin,
-        contact: parseFloat(createContact),
+        contact: createContact,
+        workforce_size: 0,
         pay_per_ton: parseFloat(createPayPerTon),
         required_waste_ton: parseFloat(createRequiredWasteTon),
         contract_duration: parseFloat(createContractDuration),
@@ -255,7 +259,7 @@ const Contractors = () => {
           getContractors();
         res.data?.role?.permissions.includes("list_all_sts") && getSts();
         res.data?.role?.permissions.includes("list_all_users") &&
-          getUsersByRole([0, 2]);
+          getUsersByRole([0, 4]);
       })
       .catch((err) => {
         toast.error(err.response.data?.message);
@@ -681,12 +685,6 @@ const Contractors = () => {
                       onChange={(e) => setCreateRegId(e.target.value)}
                     />
                     <DatePicker onChange={HandleCreateDate} />
-                    <input
-                      type="number"
-                      placeholder="Reg Date"
-                      className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
-                      onChange={(e) => setCreateRegDate(e.target.value)}
-                    />
                     <input
                       type="text"
                       placeholder="Tin"

@@ -6,6 +6,7 @@ import { Modal } from "antd";
 import api from "../api";
 import { useGlobalState } from "../GlobalStateProvider";
 import { GoGraph } from "react-icons/go";
+import { FaRegNewspaper } from "react-icons/fa6";
 import { PiBuildings, PiUsersThree } from "react-icons/pi";
 import {
   RiKeyLine,
@@ -134,6 +135,8 @@ const Sidebar = () => {
         )}
         {globalState.user?.role.permissions.includes("list_all_sts") ||
         globalState.user?.role.permissions.includes("list_landfill") ||
+        globalState.user?.role.permissions.includes("list_contract") ||
+        globalState.user?.role.permissions.includes("list_plan") ||
         globalState.user?.role.permissions.includes("list_vehicle") ? (
           <div className="-mb-8 text-sm">Waste Management</div>
         ) : null}
@@ -166,6 +169,14 @@ const Sidebar = () => {
             <RiHomeOfficeLine className="text-xgray" />
             <div onClick={() => to("contractors")} className="ml-2">
               Contractors
+            </div>
+          </div>
+        )}
+        {globalState.user?.role.permissions.includes("list_plan") && (
+          <div className="menu-item -mt-8">
+            <FaRegNewspaper className="text-xgray" />
+            <div onClick={() => to("plans")} className="ml-2">
+              Collection Plans
             </div>
           </div>
         )}
