@@ -18,7 +18,8 @@ app.include_router(report.router)
 origins = [
     "http://localhost",
     "http://localhost:5173",
-    "http://localhost:3000"
+    "http://localhost:3000",
+    "https://dukkho.alvereduan.com"
 ]
 
 app.add_middleware(
