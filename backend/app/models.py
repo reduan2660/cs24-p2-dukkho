@@ -74,6 +74,7 @@ class STS(Base):
     sts_manager = relationship("STSmanager", back_populates="sts")
     transfer = relationship("Transfer", back_populates="sts")
     contract = relationship("Contract", back_populates="sts")
+    garbage_collection = relationship("GarbageCollection", back_populates="sts")
 
 class STSmanager(Base):
     __tablename__ = "sts_managers"
@@ -185,6 +186,7 @@ class Contract(Base):
     sts = relationship("STS", back_populates="contract")
     contract_manager = relationship("ContractManager", back_populates="contract")
     collection_plan = relationship("CollectionPlan", back_populates="contract")
+    garbage_collection = relationship("GarbageCollection", back_populates="contract")
 
 
 class ContractManager(Base):
@@ -215,6 +217,7 @@ class CollectionPlan(Base):
 
     contract = relationship("Contract", back_populates="collection_plan")
     employee = relationship("EmployeeActivity", back_populates="plan")
+    garbage_collection = relationship("GarbageCollection", back_populates="collection_plan")
 
 
 class Employee(Base):
@@ -230,6 +233,7 @@ class Employee(Base):
 
     user = relationship("User", back_populates="employee")
     activity = relationship("EmployeeActivity", back_populates="employee")
+    garbage_collection = relationship("GarbageCollection", back_populates="employee")
 
 
 class EmployeeActivity(Base):
@@ -248,3 +252,24 @@ class EmployeeActivity(Base):
 
     employee = relationship("Employee", back_populates="activity")
     plan = relationship("CollectionPlan", back_populates="employee")
+
+
+
+class GarbageCollection(Base):
+    __tablename__ = "garbage_collection"
+
+    id = Column(Integer, primary_key=True, index=True)
+    employee_id = Column(Integer, ForeignKey("employees.id"))
+    collection_plan_id = Column(Integer, ForeignKey("collection_plans.id"))
+    contract_id = Column(Integer, ForeignKey("contracts.id"))
+    sts_id = Column(Integer, ForeignKey("sts.id"))
+    collection_start_time = Column(Integer, nullable=False) # utc timestamp
+    collection_end_time = Column(Integer, nullable=True) # utc timestamp
+    collected_weight = Column(Float, nullable=True)
+    vehicle = Column(String, nullable=True)
+    status = Column(Integer, nullable=False) # 0 for started, 1 for arrived at sts, 2 for completed
+
+    sts = relationship("STS", back_populates="garbage_collection")
+    collection_plan = relationship("CollectionPlan", back_populates="garbage_collection")
+    employee = relationship("Employee", back_populates="garbage_collection")
+    contract = relationship("Contract", back_populates="garbage_collection")

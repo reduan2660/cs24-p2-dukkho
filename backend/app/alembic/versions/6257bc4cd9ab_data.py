@@ -97,6 +97,13 @@ def upgrade() -> None:
         {"id": 45, "name": "edit_employee", "category": "employee"}, # contract manager
         {"id": 46, "name": "delete_employee", "category": "employee"}, # contract manager
 
+
+        {"id": 47, "name": "start_collection", "category": "collection"}, # contract manager
+        {"id": 48, "name": "arrived_collection", "category": "collection"}, # sts manager
+        {"id": 49, "name": "end_collection", "category": "collection"}, # contract manager
+        {"id": 50, "name": "view_collection", "category": "collection"}, # sts manager, contract manager, admin
+
+
     ])
 
     roles_permissions_tbl = sa.Table('roles_permissions', meta, autoload_with=op.get_bind())
@@ -162,6 +169,10 @@ def upgrade() -> None:
         # System Admin - Employee
         {"role_id": 1, "permission_id": 44},
 
+
+        # System Admin - Collection
+        {"role_id": 1, "permission_id": 50},
+
         # -------------------------------------
 
         # STS Manager
@@ -186,6 +197,10 @@ def upgrade() -> None:
         {"role_id": 2, "permission_id": 31},
         {"role_id": 2, "permission_id": 32},
         {"role_id": 2, "permission_id": 33},
+
+        # STS Manager - Collection
+        {"role_id": 2, "permission_id": 48},
+        {"role_id": 2, "permission_id": 50},
 
         # -------------------------------------
 
@@ -221,6 +236,11 @@ def upgrade() -> None:
         {"role_id": 4, "permission_id": 44},
         {"role_id": 4, "permission_id": 45},
         {"role_id": 4, "permission_id": 46},
+
+        # Contract Manager - Collection
+        {"role_id": 4, "permission_id": 47},
+        {"role_id": 4, "permission_id": 49},
+        {"role_id": 4, "permission_id": 50},
     ])
 
     # Users
