@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { Sidebar, Menu, MenuItem } from "react-pro-sidebar";
+import { Sidebar, Menu, MenuItem, SubMenu } from "react-pro-sidebar";
 import { useNavigate, useLocation } from "react-router-dom";
 import { IoChevronForwardOutline } from "react-icons/io5";
 import { BiSolidLeaf } from "react-icons/bi";
 import { GoGraph } from "react-icons/go";
 import { PiUsersThree, PiBuildings } from "react-icons/pi";
-import { FaTruck } from "react-icons/fa";
+import { FaTruck, FaUsers } from "react-icons/fa";
 import { FiUser } from "react-icons/fi";
 import { MdLogout, MdLogin } from "react-icons/md";
 import { FaRegNewspaper } from "react-icons/fa6";
@@ -120,20 +120,20 @@ const SidePanel = () => {
             <FiUser className="text-md my-3 w-full text-center text-xgray" />
           ) : (
             <div>
-              <div className="ml-6 mt-3 flex items-center gap-x-2">
+              <div className="ml-5 mt-3 flex items-center gap-x-2">
                 <FiUser className="text-md text-xgray" />
                 <div className="text-md font-medium text-xgray">
                   {globalState.user?.name || "User"}
                 </div>
               </div>
-              <div className="mb-3 ml-6 text-xs font-thin text-xlightgray">
+              <div className="mb-3 ml-5 text-xs font-thin text-xlightgray">
                 {globalState.user?.role.name || "Role"}
               </div>
             </div>
           )}
           <hr />
           {!collapsed && (
-            <div className="text-md ml-6 mt-7 font-medium text-xlightgray">
+            <div className="text-md ml-5 mt-7 font-medium text-xlightgray">
               Main
             </div>
           )}
@@ -152,209 +152,279 @@ const SidePanel = () => {
           {(globalState.user?.role.permissions.includes("list_all_users") ||
             globalState.user?.role.permissions.includes("list_all_roles")) &&
             !collapsed && (
-              <div className="text-md ml-6 mt-7 font-medium text-xlightgray">
-                User Management
-              </div>
+              <SubMenu
+                label="User Management"
+                className="text-md mt-7 font-medium text-xlightgray"
+              >
+                {globalState.user?.role.permissions.includes(
+                  "list_all_users",
+                ) && (
+                  <div
+                    className={`w-full ${
+                      location.pathname === "/users" ? "bg-blue-100" : ""
+                    }`}
+                    onClick={() => {
+                      if (location.pathname !== "/users") navigate("/users");
+                      else setCollapsed(!collapsed);
+                    }}
+                  >
+                    <MenuItem
+                      icon={<PiUsersThree className="text-lg text-xgray" />}
+                    >
+                      <div className="font-medium text-xgray">Users</div>
+                    </MenuItem>
+                  </div>
+                )}
+                {globalState.user?.role.permissions.includes(
+                  "list_all_roles",
+                ) && (
+                  <div
+                    className={`w-full ${
+                      location.pathname === "/roles" ? "bg-blue-100" : ""
+                    }`}
+                    onClick={() => {
+                      if (location.pathname !== "/roles") navigate("/roles");
+                      else setCollapsed(!collapsed);
+                    }}
+                  >
+                    <MenuItem
+                      icon={<RiShieldKeyholeLine className="text-xgray" />}
+                    >
+                      <div className="font-medium text-xgray">
+                        Roles & Permissions
+                      </div>
+                    </MenuItem>
+                  </div>
+                )}
+              </SubMenu>
             )}
-          {globalState.user?.role.permissions.includes("list_all_users") && (
-            <div
-              className={`w-full ${
-                location.pathname === "/users" ? "bg-blue-100" : ""
-              }`}
-              onClick={() => {
-                if (location.pathname !== "/users") navigate("/users");
-                else setCollapsed(!collapsed);
-              }}
-            >
-              <MenuItem icon={<PiUsersThree className="text-lg text-xgray" />}>
-                <div className="font-medium text-xgray">Users</div>
-              </MenuItem>
-            </div>
-          )}
-          {globalState.user?.role.permissions.includes("list_all_roles") && (
-            <div
-              className={`w-full ${
-                location.pathname === "/roles" ? "bg-blue-100" : ""
-              }`}
-              onClick={() => {
-                if (location.pathname !== "/roles") navigate("/roles");
-                else setCollapsed(!collapsed);
-              }}
-            >
-              <MenuItem icon={<RiShieldKeyholeLine className="text-xgray" />}>
-                <div className="font-medium text-xgray">
-                  Roles & Permissions
-                </div>
-              </MenuItem>
-            </div>
-          )}
+
           {(globalState.user?.role.permissions.includes("list_vehicle") ||
             globalState.user?.role.permissions.includes("list_all_sts") ||
             globalState.user?.role.permissions.includes("list_landfill") ||
             globalState.user?.role.permissions.includes("list_contract") ||
-            globalState.user?.role.permissions.includes("list_plan")) &&
+            globalState.user?.role.permissions.includes("list_plan") ||
+            globalState.user?.role.permissions.includes("list_employee")) &&
             !collapsed && (
-              <div className="text-md ml-6 mt-7 font-medium text-xlightgray">
-                Waste Management
-              </div>
+              <SubMenu
+                label="Waste Management"
+                className="text-md mt-7 font-medium text-xlightgray"
+              >
+                {globalState.user?.role.permissions.includes(
+                  "list_all_sts",
+                ) && (
+                  <div
+                    className={`w-full ${
+                      location.pathname === "/sts" ? "bg-blue-100" : ""
+                    }`}
+                    onClick={() => {
+                      if (location.pathname !== "/sts") navigate("/sts");
+                      else setCollapsed(!collapsed);
+                    }}
+                  >
+                    <MenuItem icon={<PiBuildings className="text-xgray" />}>
+                      <div className="font-medium text-xgray">STS</div>
+                    </MenuItem>
+                  </div>
+                )}
+                {globalState.user?.role.permissions.includes(
+                  "list_landfill",
+                ) && (
+                  <div
+                    className={`w-full ${
+                      location.pathname === "/landfills" ? "bg-blue-100" : ""
+                    }`}
+                    onClick={() => {
+                      if (location.pathname !== "/landfills")
+                        navigate("/landfills");
+                      else setCollapsed(!collapsed);
+                    }}
+                  >
+                    <MenuItem
+                      icon={<LiaDumpsterSolid className="text-xgray" />}
+                    >
+                      <div className="font-medium text-xgray">Landfills</div>
+                    </MenuItem>
+                  </div>
+                )}
+                {globalState.user?.role.permissions.includes(
+                  "list_vehicle",
+                ) && (
+                  <div
+                    className={`w-full ${
+                      location.pathname === "/vehicles" ? "bg-blue-100" : ""
+                    }`}
+                    onClick={() => {
+                      if (location.pathname !== "/vehicles")
+                        navigate("/vehicles");
+                      else setCollapsed(!collapsed);
+                    }}
+                  >
+                    <MenuItem icon={<FaTruck className="text-xgray" />}>
+                      <div className="font-medium text-xgray">Vehicles</div>
+                    </MenuItem>
+                  </div>
+                )}
+                {globalState.user?.role.permissions.includes(
+                  "list_contract",
+                ) && (
+                  <div
+                    className={`w-full ${
+                      location.pathname === "/contractors" ? "bg-blue-100" : ""
+                    }`}
+                    onClick={() => {
+                      if (location.pathname !== "/contractors")
+                        navigate("/contractors");
+                      else setCollapsed(!collapsed);
+                    }}
+                  >
+                    <MenuItem
+                      icon={<RiHomeOfficeLine className="text-xgray" />}
+                    >
+                      <div className="font-medium text-xgray">Contractors</div>
+                    </MenuItem>
+                  </div>
+                )}
+                {globalState.user?.role.permissions.includes(
+                  "list_employee",
+                ) && (
+                  <div
+                    className={`w-full ${
+                      location.pathname === "/employees" ? "bg-blue-100" : ""
+                    }`}
+                    onClick={() => {
+                      if (location.pathname !== "/employees")
+                        navigate("/employees");
+                      else setCollapsed(!collapsed);
+                    }}
+                  >
+                    <MenuItem icon={<FaUsers className="text-xgray" />}>
+                      <div className="font-medium text-xgray">Employees</div>
+                    </MenuItem>
+                  </div>
+                )}
+                {globalState.user?.role.permissions.includes("list_plan") && (
+                  <div
+                    className={`w-full ${
+                      location.pathname === "/plans" ? "bg-blue-100" : ""
+                    }`}
+                    onClick={() => {
+                      if (location.pathname !== "/plans") navigate("/plans");
+                      else setCollapsed(!collapsed);
+                    }}
+                  >
+                    <MenuItem icon={<FaRegNewspaper className="text-xgray" />}>
+                      <div className="font-medium text-xgray">
+                        Collection Plans
+                      </div>
+                    </MenuItem>
+                  </div>
+                )}
+              </SubMenu>
             )}
-          {globalState.user?.role.permissions.includes("list_all_sts") && (
-            <div
-              className={`w-full ${
-                location.pathname === "/sts" ? "bg-blue-100" : ""
-              }`}
-              onClick={() => {
-                if (location.pathname !== "/sts") navigate("/sts");
-                else setCollapsed(!collapsed);
-              }}
-            >
-              <MenuItem icon={<PiBuildings className="text-xgray" />}>
-                <div className="font-medium text-xgray">STS</div>
-              </MenuItem>
-            </div>
-          )}
-          {globalState.user?.role.permissions.includes("list_landfill") && (
-            <div
-              className={`w-full ${
-                location.pathname === "/landfills" ? "bg-blue-100" : ""
-              }`}
-              onClick={() => {
-                if (location.pathname !== "/landfills") navigate("/landfills");
-                else setCollapsed(!collapsed);
-              }}
-            >
-              <MenuItem icon={<LiaDumpsterSolid className="text-xgray" />}>
-                <div className="font-medium text-xgray">Landfills</div>
-              </MenuItem>
-            </div>
-          )}
-          {globalState.user?.role.permissions.includes("list_vehicle") && (
-            <div
-              className={`w-full ${
-                location.pathname === "/vehicles" ? "bg-blue-100" : ""
-              }`}
-              onClick={() => {
-                if (location.pathname !== "/vehicles") navigate("/vehicles");
-                else setCollapsed(!collapsed);
-              }}
-            >
-              <MenuItem icon={<FaTruck className="text-xgray" />}>
-                <div className="font-medium text-xgray">Vehicles</div>
-              </MenuItem>
-            </div>
-          )}
-          {globalState.user?.role.permissions.includes("list_contract") && (
-            <div
-              className={`w-full ${
-                location.pathname === "/contractors" ? "bg-blue-100" : ""
-              }`}
-              onClick={() => {
-                if (location.pathname !== "/contractors")
-                  navigate("/contractors");
-                else setCollapsed(!collapsed);
-              }}
-            >
-              <MenuItem icon={<RiHomeOfficeLine className="text-xgray" />}>
-                <div className="font-medium text-xgray">Contractors</div>
-              </MenuItem>
-            </div>
-          )}
-          {globalState.user?.role.permissions.includes("list_plan") && (
-            <div
-              className={`w-full ${
-                location.pathname === "/plans" ? "bg-blue-100" : ""
-              }`}
-              onClick={() => {
-                if (location.pathname !== "/plans") navigate("/plans");
-                else setCollapsed(!collapsed);
-              }}
-            >
-              <MenuItem icon={<FaRegNewspaper className="text-xgray" />}>
-                <div className="font-medium text-xgray">Collection Plans</div>
-              </MenuItem>
-            </div>
-          )}
+
           {globalState.user?.role.permissions.includes("view_transfer") &&
             !collapsed && (
-              <div className="text-md ml-6 mt-7 font-medium text-xlightgray">
-                Waste Record
-              </div>
+              <SubMenu
+                label="Waste Records"
+                className="text-md mt-7 font-medium text-xlightgray"
+              >
+                {globalState.user?.role.permissions.includes("view_transfer") &&
+                  (globalState.user?.role.permissions.includes(
+                    "update_transfer_sts",
+                  ) ? (
+                    <div
+                      className={`w-full ${
+                        location.pathname === "/transfer/sts"
+                          ? "bg-blue-100"
+                          : ""
+                      }`}
+                      onClick={() => {
+                        if (location.pathname !== "/transfer/sts")
+                          navigate("/transfer/sts");
+                        else setCollapsed(!collapsed);
+                      }}
+                    >
+                      <MenuItem icon={<BiTransfer className="text-xgray" />}>
+                        <div className="font-medium text-xgray">
+                          Transfer Records
+                        </div>
+                      </MenuItem>
+                    </div>
+                  ) : globalState.user?.role.permissions.includes(
+                      "update_transfer_landfill",
+                    ) ? (
+                    <div
+                      className={`w-full ${
+                        location.pathname === "/transfer/landfill"
+                          ? "bg-blue-100"
+                          : ""
+                      }`}
+                      onClick={() => {
+                        if (location.pathname !== "/transfer/landfill")
+                          navigate("/transfer/landfill");
+                        else setCollapsed(!collapsed);
+                      }}
+                    >
+                      <MenuItem icon={<BiTransfer className="text-xgray" />}>
+                        <div className="font-medium text-xgray">
+                          Transfer Records
+                        </div>
+                      </MenuItem>
+                    </div>
+                  ) : globalState.user?.role.permissions.includes(
+                      "view_transfer",
+                    ) ? (
+                    <div
+                      className={`w-full ${
+                        location.pathname === "/transfer/sts"
+                          ? "bg-blue-100"
+                          : ""
+                      }`}
+                      onClick={() => {
+                        if (location.pathname !== "/transfer/sts")
+                          navigate("/transfer/sts");
+                        else setCollapsed(!collapsed);
+                      }}
+                    >
+                      <MenuItem icon={<BiTransfer className="text-xgray" />}>
+                        <div className="font-medium text-xgray">
+                          Transfer Records
+                        </div>
+                      </MenuItem>
+                    </div>
+                  ) : (
+                    <div></div>
+                  ))}
+                {globalState.user?.role.permissions.includes(
+                  "get_fleet_planning",
+                ) && (
+                  <div
+                    className={`w-full ${
+                      location.pathname === "/transfer/fleet"
+                        ? "bg-blue-100"
+                        : ""
+                    }`}
+                    onClick={() => {
+                      if (location.pathname !== "/transfer/fleet")
+                        navigate("/transfer/fleet");
+                      else setCollapsed(!collapsed);
+                    }}
+                  >
+                    <MenuItem
+                      icon={<MdEmojiTransportation className="text-xgray" />}
+                    >
+                      <div className="font-medium text-xgray">
+                        Fleet Planning
+                      </div>
+                    </MenuItem>
+                  </div>
+                )}
+              </SubMenu>
             )}
-          {globalState.user?.role.permissions.includes("view_transfer") &&
-            (globalState.user?.role.permissions.includes(
-              "update_transfer_sts",
-            ) ? (
-              <div
-                className={`w-full ${
-                  location.pathname === "/transfer/sts" ? "bg-blue-100" : ""
-                }`}
-                onClick={() => {
-                  if (location.pathname !== "/transfer/sts")
-                    navigate("/transfer/sts");
-                  else setCollapsed(!collapsed);
-                }}
-              >
-                <MenuItem icon={<BiTransfer className="text-xgray" />}>
-                  <div className="font-medium text-xgray">Transfer Records</div>
-                </MenuItem>
-              </div>
-            ) : globalState.user?.role.permissions.includes(
-                "update_transfer_landfill",
-              ) ? (
-              <div
-                className={`w-full ${
-                  location.pathname === "/transfer/landfill"
-                    ? "bg-blue-100"
-                    : ""
-                }`}
-                onClick={() => {
-                  if (location.pathname !== "/transfer/landfill")
-                    navigate("/transfer/landfill");
-                  else setCollapsed(!collapsed);
-                }}
-              >
-                <MenuItem icon={<BiTransfer className="text-xgray" />}>
-                  <div className="font-medium text-xgray">Transfer Records</div>
-                </MenuItem>
-              </div>
-            ) : globalState.user?.role.permissions.includes("view_transfer") ? (
-              <div
-                className={`w-full ${
-                  location.pathname === "/transfer/sts" ? "bg-blue-100" : ""
-                }`}
-                onClick={() => {
-                  if (location.pathname !== "/transfer/sts")
-                    navigate("/transfer/sts");
-                  else setCollapsed(!collapsed);
-                }}
-              >
-                <MenuItem icon={<BiTransfer className="text-xgray" />}>
-                  <div className="font-medium text-xgray">Transfer Records</div>
-                </MenuItem>
-              </div>
-            ) : (
-              <div></div>
-            ))}
-          {globalState.user?.role.permissions.includes(
-            "get_fleet_planning",
-          ) && (
-            <div
-              className={`w-full ${
-                location.pathname === "/transfer/fleet" ? "bg-blue-100" : ""
-              }`}
-              onClick={() => {
-                if (location.pathname !== "/transfer/fleet")
-                  navigate("/transfer/fleet");
-                else setCollapsed(!collapsed);
-              }}
-            >
-              <MenuItem icon={<MdEmojiTransportation className="text-xgray" />}>
-                <div className="font-medium text-xgray">Fleet Planning</div>
-              </MenuItem>
-            </div>
-          )}
+
           {!collapsed && (
-            <div className="text-md ml-6 mt-7 font-medium text-xlightgray">
+            <div className="text-md ml-5 mt-7 font-medium text-xlightgray">
               Account
             </div>
           )}

@@ -13,7 +13,7 @@ import {
   RiShieldKeyholeLine,
   RiHomeOfficeLine,
 } from "react-icons/ri";
-import { FaTruck } from "react-icons/fa";
+import { FaTruck, FaUsers } from "react-icons/fa";
 import { LiaDumpsterSolid } from "react-icons/lia";
 import { BiTransfer } from "react-icons/bi";
 import { MdEmojiTransportation, MdLogin, MdLogout } from "react-icons/md";
@@ -137,7 +137,8 @@ const Sidebar = () => {
         globalState.user?.role.permissions.includes("list_landfill") ||
         globalState.user?.role.permissions.includes("list_contract") ||
         globalState.user?.role.permissions.includes("list_plan") ||
-        globalState.user?.role.permissions.includes("list_vehicle") ? (
+        globalState.user?.role.permissions.includes("list_vehicle") ||
+        globalState.user?.role.permissions.includes("list_employee") ? (
           <div className="-mb-8 text-sm">Waste Management</div>
         ) : null}
         {globalState.user?.role.permissions.includes("list_all_sts") && (
@@ -172,6 +173,14 @@ const Sidebar = () => {
             </div>
           </div>
         )}
+        {globalState.user?.role.permissions.includes("list_employee") && (
+          <div className="menu-item -mt-8">
+            <FaUsers className="text-xgray" />
+            <div onClick={() => to("employees")} className="ml-2">
+              Employees
+            </div>
+          </div>
+        )}
         {globalState.user?.role.permissions.includes("list_plan") && (
           <div className="menu-item -mt-8">
             <FaRegNewspaper className="text-xgray" />
@@ -183,7 +192,7 @@ const Sidebar = () => {
         {globalState.user?.role.permissions.includes("view_transfer") ||
         globalState.user?.role.permissions.includes("update_transfer_sts") ||
         globalState.user?.role.permissions.includes("get_fleet_planning") ? (
-          <div className="-mb-8 text-sm">Waste Management</div>
+          <div className="-mb-8 text-sm">Waste Record</div>
         ) : null}
 
         {globalState.user?.role.permissions.includes("view_transfer") && (

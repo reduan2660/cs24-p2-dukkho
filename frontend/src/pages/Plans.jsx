@@ -40,12 +40,6 @@ const Plans = () => {
     setOpenCreate(true);
   };
 
-  const HandleCreateDate = (date, dateString) => {
-    const RegDate = new Date(dateString);
-    const epochTimeSeconds = Math.floor(RegDate.getTime() / 1000);
-    setCreateRegDate(epochTimeSeconds);
-  };
-
   const handleCreateTime = (time, timeString) => {
     const timeStringArray = timeString.split(":");
     setCreateStartHr(timeStringArray[0]);
@@ -56,12 +50,6 @@ const Plans = () => {
     const timeStringArray = timeString.split(":");
     setUpdateStartHr(timeStringArray[0]);
     setUpdateStartMin(timeStringArray[1]);
-  };
-
-  const handleUpdateDate = (date, dateString) => {
-    const RegDate = new Date(dateString);
-    const epochTimeSeconds = Math.floor(RegDate.getTime() / 1000);
-    setUpdateRegDate(epochTimeSeconds);
   };
 
   const updatePlansInfo = () => {
