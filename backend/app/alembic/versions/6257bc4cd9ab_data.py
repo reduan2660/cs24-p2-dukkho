@@ -78,6 +78,11 @@ def upgrade() -> None:
         
         {"id": 34, "name": "get_fleet_planning", "category": "transfer"},
 
+        {"id": 35, "name": "list_contract", "category": "contract"},
+        {"id": 36, "name": "create_contract", "category": "contract"},
+        {"id": 37, "name": "edit_contract", "category": "contract"},
+        {"id": 38, "name": "delete_contract", "category": "contract"},
+
     ])
 
     roles_permissions_tbl = sa.Table('roles_permissions', meta, autoload_with=op.get_bind())
@@ -130,6 +135,13 @@ def upgrade() -> None:
         {"role_id": 1, "permission_id": 31},
         {"role_id": 1, "permission_id": 32},
         {"role_id": 1, "permission_id": 33},
+
+        # Syetem Admin - Contract
+        {"role_id": 1, "permission_id": 35},
+        {"role_id": 1, "permission_id": 36},
+        {"role_id": 1, "permission_id": 37},
+        {"role_id": 1, "permission_id": 38},
+        
 
         # -------------------------------------
 
