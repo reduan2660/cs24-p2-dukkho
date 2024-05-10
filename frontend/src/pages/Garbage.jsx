@@ -118,8 +118,8 @@ const Garbage = () => {
   const startCollection = () => {
     api
       .post(`/collection`, {
-        collection_plan_id: createEmployee,
-        employee_id: createPlan,
+        collection_plan_id: createPlan,
+        employee_id: createEmployee,
       })
       .then((res) => {
         if (res.status === 201) {

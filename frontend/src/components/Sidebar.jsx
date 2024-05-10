@@ -9,6 +9,7 @@ import { GoGraph } from "react-icons/go";
 import { FaRegNewspaper } from "react-icons/fa6";
 import { PiBuildings, PiUsersThree } from "react-icons/pi";
 import { CiTrash } from "react-icons/ci";
+import { GrPlan } from "react-icons/gr";
 import {
   RiKeyLine,
   RiShieldKeyholeLine,
@@ -139,7 +140,8 @@ const Sidebar = () => {
         globalState.user?.role.permissions.includes("list_contract") ||
         globalState.user?.role.permissions.includes("list_plan") ||
         globalState.user?.role.permissions.includes("list_vehicle") ||
-        globalState.user?.role.permissions.includes("list_employee") ? (
+        globalState.user?.role.permissions.includes("list_employee") ||
+        globalState.user?.role.permissions.includes("schedule") ? (
           <div className="-mb-8 text-sm">Waste Management</div>
         ) : null}
         {globalState.user?.role.permissions.includes("list_all_sts") && (
@@ -195,6 +197,14 @@ const Sidebar = () => {
             <CiTrash className="text-xgray" />
             <div onClick={() => to("garbage")} className="ml-2">
               Garbage Collection
+            </div>
+          </div>
+        )}
+        {globalState.user?.role.permissions.includes("schedule") && (
+          <div className="menu-item -mt-8">
+            <GrPlan className="text-xgray" />
+            <div onClick={() => to("schedule")} className="ml-2">
+              Schedule Planning
             </div>
           </div>
         )}
