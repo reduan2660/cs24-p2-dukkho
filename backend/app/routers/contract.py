@@ -182,14 +182,29 @@ async def add_contract_manager(manager: ContractManagerRequest, user: User = Dep
         if not contract:
             return JSONResponse(status_code=404, content={"message": "Contract not found"})
         
-        user = db.query(User).filter(User.id == manager.user_id).first()
-        if not user:
-            return JSONResponse(status_code=404, content={"message": "User not found"})
+        for user_id in manager.user_id:
+            user = db.query(User).filter(User.id == user_id).first()
+            if not user:
+                return JSONResponse(status_code=404, content={"message": "User not found"})
+            
+            if user.role_id != 4 and user.role_id != 0:
+                return JSONResponse(status_code=400, content={"message": "User is not a Contract manager or Unassigned"})
+            
+            # check if manager already exists
+            # if yes, then remove that manager and assign to this contract
+            manager = db.query(ContractManager).filter(ContractManager.user_id == user_id).first()
+            if manager is not None:
+                db.query(ContractManager).filter(ContractManager.user_id == user_id).delete()
+
+            if user.role_id == 0:
+                # update the role to Contract manager
+                db.query(User).filter(User.id == user_id).update({"role_id": 4})
+
+            contract_manager = ContractManager(
+                contract_id=manager.contract_id,
+                user_id=user_id
+            )
+            db.add(contract_manager)
         
-        manager = ContractManager(
-            contract_id=manager.contract_id,
-            user_id=manager.user_id
-        )
-        db.add(manager)
         db.commit()
         return JSONResponse(status_code=200, content={"message": "Manager added successfully"})
