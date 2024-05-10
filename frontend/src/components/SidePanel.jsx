@@ -71,7 +71,7 @@ const SidePanel = () => {
       }
     };
 
-    checkCookie();
+    // checkCookie();
   }, []);
 
   return (
