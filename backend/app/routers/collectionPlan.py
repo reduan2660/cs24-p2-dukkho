@@ -40,6 +40,7 @@ async def get_collection_plan(user: User = Depends(get_user_from_session)):
             response.append({
                 "id": collection_plan.id,
                 "area_of_collection": collection_plan.area_of_collection,
+                "ward": collection_plan.ward,
                 "contract": {
                     "id": collection_plan.contract.id,
                     "name": collection_plan.contract.name,
@@ -64,6 +65,7 @@ class CollectionPlanRequest(BaseModel):
         duration: int
         no_of_vehicle: int
         daily_waste_ton: float
+        ward: str
 
 
 @router.post("/")
@@ -99,7 +101,8 @@ async def create_collection_plan(
             no_of_labour=0,
             no_of_vehicle=collection_plan.no_of_vehicle,
             daily_waste_ton=collection_plan.daily_waste_ton,
-            contract_id=contract_id
+            contract_id=contract_id,
+            ward=collection_plan.ward
         )
 
         db.add(new_collection_plan)
@@ -116,6 +119,7 @@ class CollectionPlanUpdateRequest(BaseModel):
     duration: int
     no_of_vehicle: int
     daily_waste_ton: float
+    ward: str
 
 
 @router.put("/{plan_id}")
@@ -146,6 +150,7 @@ async def update_collection_plan(
         collection_plan.duration = collection_plan.duration
         collection_plan.no_of_vehicle = collection_plan.no_of_vehicle
         collection_plan.daily_waste_ton = collection_plan.daily_waste_ton
+        collection_plan.ward = collection_plan.ward
 
         db.commit()
 
