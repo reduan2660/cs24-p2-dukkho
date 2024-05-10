@@ -135,18 +135,19 @@ async def update_contract(contract_id: int, contract: ContractUpdateRequest, use
         sts = db.query(STS).filter(STS.id == contract.sts_id).first()
         if sts is None:
             return JSONResponse(status_code=404, content={"message": "STS not found"})
-
-        contract.name = contract.name
-        contract.sts_id = contract.sts_id
-        contract.reg_id = contract.reg_id
-        contract.reg_date = contract.reg_date
-        contract.tin = contract.tin
-        contract.contact = contract.contact
-        contract.workforce_size = contract.workforce_size
-        contract.pay_per_ton = contract.pay_per_ton
-        contract.required_waste_ton = contract.required_waste_ton
-        contract.contract_duration = contract.contract_duration
-        contract.area_of_collection = contract.area_of_collection
+        db.query(Contract).filter(Contract.id == contract_id).update({
+            "name": contract.name,
+            "sts_id": contract.sts_id,
+            "reg_id": contract.reg_id,
+            "reg_date": contract.reg_date,
+            "tin": contract.tin,
+            "contact": contract.contact,
+            "workforce_size": contract.workforce_size,
+            "pay_per_ton": contract.pay_per_ton,
+            "required_waste_ton": contract.required_waste_ton,
+            "contract_duration": contract.contract_duration,
+            "area_of_collection": contract.area_of_collection
+        })
         db.commit()
         return JSONResponse(status_code=200, content={"message": "Contract updated successfully"})
     
