@@ -62,28 +62,53 @@ async def get_cost(user: User = Depends(get_user_from_session)):
         response = []
         # travase the keys of the assignment dictionary
         for key in assignment.keys():
+
+            plan_id = key
+            emp_id = assignment[key]
+
+            plan = db.query(CollectionPlan).filter(CollectionPlan.id == plan_id).first()
+            employee = db.query(Employee).filter(Employee.id == emp_id).first()
+
             response.append({
-                "plan_id": key,
-                "employee_id": assignment[key]
+                "plan_id": {
+                    "id": plan.id,
+                    "area_of_collection": plan.area_of_collection,
+                    "ward": plan.ward,
+                    "contract": {
+                        "id": plan.contract.id,
+                        "name": plan.contract.name,
+                    },
+                    "start_time_hr": plan.start_time_hr,
+                    "start_time_min": plan.start_time_min,
+                    "duration": plan.duration,
+                    "no_of_labour": plan.no_of_labour,
+                    "no_of_vehicle": plan.no_of_vehicle,
+                    "daily_waste_ton": plan.daily_waste_ton,
+                
+                },
+                "employee": {
+                    "id": employee.id,
+                    "name": employee.user.name
+                }
             })
 
 
 
         return JSONResponse(status_code=200, content={
-            "times": times,
-            "duration": duration,
-            "plan_id": plan_id,
-            "number_of_plans": number_of_plans,
-            "employee_pay_rate": employee_pay_rate,
-            "employee_id": employee_id,
-            "number_of_employees": number_of_employees,
-            "sts_open": sts_open,
-            "sts_close": sts_close,
+            # "times": times,
+            # "duration": duration,
+            # "plan_id": plan_id,
+            # "number_of_plans": number_of_plans,
+            # "employee_pay_rate": employee_pay_rate,
+            # "employee_id": employee_id,
+            # "number_of_employees": number_of_employees,
+            # "sts_open": sts_open,
+            # "sts_close": sts_close,
 
+            # "assigned": assigned,
+            # "assignment": assignment,
             "min_cost": min_cost,
-            "assigned": assigned,
-            "assignment": assignment,
-            "response": response
+            "collections": response
         })
     
 
@@ -132,28 +157,52 @@ async def get_time(user: User = Depends(get_user_from_session)):
         response = []
         # travase the keys of the assignment dictionary
         for key in assignment.keys():
+
+            plan_id = key
+            emp_id = assignment[key][0]
+
+            plan = db.query(CollectionPlan).filter(CollectionPlan.id == plan_id).first()
+            employee = db.query(Employee).filter(Employee.id == emp_id).first()
+
             response.append({
-                "plan_id": key,
-                "employee_id": assignment[key][0],
-                "start_time": assignment[key][1],
+                "plan_id": {
+                    "id": plan.id,
+                    "area_of_collection": plan.area_of_collection,
+                    "ward": plan.ward,
+                    "contract": {
+                        "id": plan.contract.id,
+                        "name": plan.contract.name,
+                    },
+                    "start_time_hr": plan.start_time_hr,
+                    "start_time_min": plan.start_time_min,
+                    "duration": plan.duration,
+                    "no_of_labour": plan.no_of_labour,
+                    "no_of_vehicle": plan.no_of_vehicle,
+                    "daily_waste_ton": plan.daily_waste_ton,
+                
+                },
+                "employee": {
+                    "id": employee.id,
+                    "name": employee.user.name
+                }
             })
 
 
 
         return JSONResponse(status_code=200, content={
-            "times": times,
-            "duration": duration,
-            "plan_id": plan_id,
-            "number_of_plans": number_of_plans,
-            "employee_pay_rate": employee_pay_rate,
-            "employee_id": employee_id,
-            "number_of_employees": number_of_employees,
-            "sts_open": sts_open,
-            "sts_close": sts_close,
+            # "times": times,
+            # "duration": duration,
+            # "plan_id": plan_id,
+            # "number_of_plans": number_of_plans,
+            # "employee_pay_rate": employee_pay_rate,
+            # "employee_id": employee_id,
+            # "number_of_employees": number_of_employees,
+            # "sts_open": sts_open,
+            # "sts_close": sts_close,
 
+            # "assignment": assignment,
             "min_cost": min_cost,
-            "assignment": assignment,
-            "response": response
+            "collections": response
         })
 
 
