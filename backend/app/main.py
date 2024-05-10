@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.routers import auth, users, roles, sts, landfill, vehicle, transfer, report, contract
+from app.routers import auth, users, roles, sts, landfill, vehicle, transfer, report, contract, collectionPlan
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -14,7 +14,7 @@ app.include_router(vehicle.router)
 app.include_router(transfer.router)
 app.include_router(report.router)
 app.include_router(contract.router)
-
+app.include_router(collectionPlan.router)
 # Allow CORS
 origins = [
     "http://localhost",
