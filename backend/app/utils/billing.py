@@ -2,7 +2,7 @@ def sts_daily_billing(garbage_inflow,contract_id,number_of_inflow,contracts,requ
     id=0
     contracts_dict={}
     for x in contracts:
-        contract_id[x]=id
+        contracts_dict[x]=id
         id=id+1
     waste_sent=[0 for _ in range(number_of_contracts)]
     for i in range(number_of_inflow):
