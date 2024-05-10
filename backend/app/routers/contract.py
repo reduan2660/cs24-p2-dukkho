@@ -104,7 +104,7 @@ async def create_contract(contract: ContractRequest, user: User = Depends(get_us
         )
         db.add(contract)
         db.commit()
-        return JSONResponse(status_code=200, content={"message": "Contract created successfully"})
+        return JSONResponse(status_code=201, content={"message": "Contract created successfully"})
     
 
 
