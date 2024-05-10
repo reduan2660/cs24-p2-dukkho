@@ -57,6 +57,7 @@ const SidePanel = () => {
   };
 
   useEffect(() => {
+    console.log("VERSION CHECK")
     getProfile();
     const checkCookie = () => {
       const cookies = document.cookie.split("; ");
