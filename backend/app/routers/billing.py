@@ -61,15 +61,25 @@ async def get_bill(
 
         response_profit = []
         for key in profit.keys():
+            contract_id = key
+            contract = db.query(Contract).filter(Contract.id == contract_id).first()
             response_profit.append({
-                "contract_id": key,
+                "contract": {
+                    "id": contract.id,
+                    "name": contract.name
+                },
                 "profit": profit[key]
             })
 
         response_deficit = []
         for key in deficit.keys():
+            contract_id = key
+            contract = db.query(Contract).filter(Contract.id == contract_id).first()
             response_deficit.append({
-                "contract_id": key,
+                "contract": {
+                    "id": contract.id,
+                    "name": contract.name
+                },
                 "deficit": deficit[key]
             })
 
@@ -84,8 +94,8 @@ async def get_bill(
             # "fine_factor": fine_factor,
             # "profit": profit,
             # "deficit": deficit,
-            "response_profit": response_profit,
-            "response_deficit": response_deficit
+            "profit": response_profit,
+            "deficit": response_deficit
 
         })
 
