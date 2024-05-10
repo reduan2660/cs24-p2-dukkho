@@ -31,8 +31,16 @@ def time_schedule(times, duration, plan_id, number_of_plans, employee_pay_rate, 
 
     def min_to_time(minutes):
         # Convert minutes to time string in HH:MM format.
-        hour = str(minutes // 60)
-        min = str(minutes % 60)
+        hour = minutes // 60
+        if hour<10:
+            hour='0'+str(hour)
+        else:
+            hour=str(hour)
+        min = minutes % 60
+        if min<10:
+            min='0'+str(min)
+        else:
+            min=str(min)
         time_string = hour + ':' + min
         return time_string
 
@@ -80,16 +88,16 @@ def time_schedule(times, duration, plan_id, number_of_plans, employee_pay_rate, 
     return min_cost, assignment
 
 # Example usage:
-# p_id = [10, 15, 3]
-# a = ['10:50', '11:30', '7:23']
-# b = [10, 50, 600]
-# c = 3
-# x = [10, 25, 5]
-# e_id = [9, 8, 2]
-# y = 3
-# p = '6:10'
-# q = '12:00'
-# m, n = time_schedule(a, b, p_id, c, x, e_id, y, p, q)
+p_id = [10, 15, 3]
+a = ['10:50', '11:30', '7:23']
+b = [10, 50, 600]
+c = 3
+x = [10, 25, 5]
+e_id = [9, 8, 2]
+y = 3
+p = '6:10'
+q = '12:00'
+m, n = time_schedule(a, b, p_id, c, x, e_id, y, p, q)
 
-# print("Minimum cost:", m)
-# print("Task assignments:", n)
+print("Minimum cost:", m)
+print("Task assignments:", n)
