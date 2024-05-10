@@ -49,6 +49,7 @@ const SidePanel = () => {
       .get("/auth/me")
       .then((res) => {
         if (res.status === 200) {
+          setIsLoggedIn(true);
           setGlobalState((prevState) => ({
             ...prevState,
             user: res.data,
@@ -57,6 +58,7 @@ const SidePanel = () => {
       })
       .catch((err) => {
         if (err.response.status === 401) {
+          setIsLoggedIn(false);
           navigate("/login", { state: "session expired" });
         }
       });
@@ -77,7 +79,7 @@ const SidePanel = () => {
       }
     };
 
-    checkCookie();
+    // checkCookie();
   }, []);
 
   return (
