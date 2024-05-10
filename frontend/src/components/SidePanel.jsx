@@ -9,6 +9,7 @@ import { FaTruck, FaUsers } from "react-icons/fa";
 import { FiUser } from "react-icons/fi";
 import { MdLogout, MdLogin } from "react-icons/md";
 import { FaRegNewspaper } from "react-icons/fa6";
+import { CiTrash } from "react-icons/ci";
 import {
   RiShieldKeyholeLine,
   RiKeyLine,
@@ -316,6 +317,23 @@ const SidePanel = () => {
                     <MenuItem icon={<FaRegNewspaper className="text-xgray" />}>
                       <div className="font-medium text-xgray">
                         Collection Plans
+                      </div>
+                    </MenuItem>
+                  </div>
+                )}
+                {globalState.user?.role.permissions.includes("view_collection") && (
+                  <div
+                    className={`w-full ${
+                      location.pathname === "/garbage" ? "bg-blue-100" : ""
+                    }`}
+                    onClick={() => {
+                      if (location.pathname !== "/garbage") navigate("/garbage");
+                      else setCollapsed(!collapsed);
+                    }}
+                  >
+                    <MenuItem icon={<CiTrash className="text-xgray" />}>
+                      <div className="font-medium text-xgray">
+                        Garbage Collection
                       </div>
                     </MenuItem>
                   </div>
