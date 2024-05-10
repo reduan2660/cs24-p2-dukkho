@@ -52,22 +52,10 @@ const Contractors = () => {
   const [searchValue, setSearchValue] = useState("");
   const [searchOption, setSearchOption] = useState("name");
 
-  //TODO: status 201 for create, display date in datepicker
+  //TODO: display date in datepicker
 
   const showModal = () => {
     setOpenCreate(true);
-  };
-
-  const HandleCreateDate = (date, dateString) => {
-    const RegDate = new Date(dateString);
-    const epochTimeSeconds = Math.floor(RegDate.getTime() / 1000);
-    setCreateRegDate(epochTimeSeconds);
-  };
-
-  const handleUpdateDate = (date, dateString) => {
-    const RegDate = new Date(dateString);
-    const epochTimeSeconds = Math.floor(RegDate.getTime() / 1000);
-    setUpdateRegDate(epochTimeSeconds);
   };
 
   const assignManagers = () => {
@@ -77,7 +65,7 @@ const Contractors = () => {
         user_id: managerIds,
       })
       .then((res) => {
-        if (res.status === 201) {
+        if (res.status === 200) {
           toast.success("Manager(s) assigned successfully");
           getContractors();
         }
@@ -684,7 +672,14 @@ const Contractors = () => {
                       className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
                       onChange={(e) => setCreateRegId(e.target.value)}
                     />
-                    <DatePicker onChange={HandleCreateDate} />
+                    <DatePicker
+                      onChange={(date, dateString) =>
+                        setCreateRegDate(
+                          Math.floor(new Date(dateString).getTime() / 1000),
+                        )
+                      }
+                      placeholder="Reg Date"
+                    />
                     <input
                       type="text"
                       placeholder="Tin"
@@ -763,7 +758,14 @@ const Contractors = () => {
                       className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
                       onChange={(e) => setUpdateRegId(e.target.value)}
                     />
-                    <DatePicker onChange={handleUpdateDate} />
+                    <DatePicker
+                      onChange={(date, dateString) =>
+                        setUpdateRegDate(
+                          Math.floor(new Date(dateString).getTime() / 1000),
+                        )
+                      }
+                      placeholder="Reg Date"
+                    />
                     <input
                       type="text"
                       placeholder="Tin"
