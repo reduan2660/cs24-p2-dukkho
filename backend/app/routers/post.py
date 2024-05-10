@@ -34,7 +34,7 @@ async def create_post(
         )
         db.add(post)
         db.commit()
-        return JSONResponse(status_code=200, content={"message": "Post created successfully"})
+        return JSONResponse(status_code=201, content={"message": "Post created successfully"})
     
 
 @router.get("/")
