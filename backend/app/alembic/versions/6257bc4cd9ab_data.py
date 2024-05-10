@@ -30,7 +30,9 @@ def upgrade() -> None:
         {"id": 1, "name": "System Admin"},
         {"id": 2, "name": "STS Manager"},
         {"id": 3, "name": "Landfill Manager"},
-        {"id": 4, "name": "Contract Manager"}
+        {"id": 4, "name": "Contract Manager"},
+        {"id": 5, "name": "Employee"},
+        {"id": 6, "name": "User"}
     ])
 
     permissions_tbl = sa.Table('permissions', meta, autoload_with=op.get_bind())
@@ -88,6 +90,12 @@ def upgrade() -> None:
         {"id": 40, "name": "create_plan", "category": "plan"}, # contract manager
         {"id": 41, "name": "edit_plan", "category": "plan"}, # contract manager
         {"id": 42, "name": "delete_plan", "category": "plan"}, # contract manager
+
+
+        {"id": 43, "name": "create_employee", "category": "employee"}, # contract manager
+        {"id": 44, "name": "list_employee", "category": "employee"}, # contract manager
+        {"id": 45, "name": "edit_employee", "category": "employee"}, # contract manager
+        {"id": 46, "name": "delete_employee", "category": "employee"}, # contract manager
 
     ])
 
@@ -151,6 +159,9 @@ def upgrade() -> None:
         # System Admin - Plan
         {"role_id": 1, "permission_id": 39},
 
+        # System Admin - Employee
+        {"role_id": 1, "permission_id": 44},
+
         # -------------------------------------
 
         # STS Manager
@@ -204,6 +215,12 @@ def upgrade() -> None:
         {"role_id": 4, "permission_id": 40},
         {"role_id": 4, "permission_id": 41},
         {"role_id": 4, "permission_id": 42},
+
+        # Contract Manager - Employee
+        {"role_id": 4, "permission_id": 43},
+        {"role_id": 4, "permission_id": 44},
+        {"role_id": 4, "permission_id": 45},
+        {"role_id": 4, "permission_id": 46},
     ])
 
     # Users
