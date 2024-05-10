@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from typing import List
 from app.dependencies import get_user_from_session
-from app.models import User, Employee, CollectionPlan
+from app.models import User, Employee, CollectionPlan, EmployeeActivity
 from app.config import SessionLocal
 import os
 from datetime import datetime
@@ -108,7 +108,19 @@ async def get_all_employees(user: User = Depends(get_user_from_session)):
                 "plan_id": {
                     "id": e.plan_id,
                     "name": db.query(CollectionPlan).filter(CollectionPlan.id == e.plan_id).first().area_of_collection
-                }
+                },
+                "activities": [
+                    {
+                        "id": a.id,
+                        "date": a.date,
+                        "is_absent": a.is_absent,
+                        "is_on_leave": a.is_on_leave,
+                        "logout": a.logout,
+                        "login": a.login,
+                        "work_duration": a.work_duration,
+                        "plan": a.plan_id
+                    } for a in db.query(EmployeeActivity).filter(EmployeeActivity.employee_id == e.id).order_by(EmployeeActivity.date.desc()).all()
+                ]
             })
 
         return JSONResponse(status_code=200, content=response)
