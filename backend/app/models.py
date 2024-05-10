@@ -59,6 +59,8 @@ class User(Base):
     employee = relationship("Employee", back_populates="user")
     
     ticket = relationship("Ticket", back_populates="user")
+    post = relationship("Post", back_populates="user")
+    like = relationship("PostLike", back_populates="user")
 
 
 class STS(Base):
@@ -299,3 +301,28 @@ class Ticket(Base):
     created_at = Column(Integer, nullable=False) # utc timestamp
 
     user = relationship("User", back_populates="ticket")
+
+
+class Post(Base):
+    __tablename__ = "posts"
+
+    id = Column(Integer, primary_key=True, index=True)
+    content = Column(String, nullable=False)
+    like_count = Column(Integer, nullable=False, default=0)
+    approval = Column(Integer, nullable=False, default=0) # 0 for not approved, 1 for approved
+    created_by = Column(Integer, ForeignKey("users.id"))
+    created_at = Column(Integer, nullable=False) # utc timestamp
+
+    user = relationship("User", back_populates="post")
+    like = relationship("PostLike", back_populates="post")
+
+
+class PostLike(Base):
+    __tablename__ = "post_likes"
+
+    id = Column(Integer, primary_key=True, index=True)
+    post_id = Column(Integer, ForeignKey("posts.id"))
+    user_id = Column(Integer, ForeignKey("users.id"))
+
+    post = relationship("Post", back_populates="like")
+    user = relationship("User", back_populates="like")
