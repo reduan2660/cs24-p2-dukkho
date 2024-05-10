@@ -202,6 +202,7 @@ class CollectionPlan(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     area_of_collection = Column(String, nullable=False)
+    ward = Column(String, nullable=True)
     start_time_hr = Column(Integer, nullable=False)
     start_time_min = Column(Integer, nullable=False)
     duration = Column(Integer, nullable=False) # in minutes
