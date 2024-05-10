@@ -48,9 +48,14 @@ class User(Base):
     password = Column(String, nullable=False)
     role_id = Column(Integer, ForeignKey("roles.id"))
 
+    username = Column(String, nullable=True)
+    contact = Column(String, nullable=True)
+    created_at = Column(Integer, nullable=True) # utc timestamp
+
     role = relationship("Role", back_populates="users")
     sts_manager = relationship("STSmanager", back_populates="user")
     landfill_manager = relationship("LandfillManager", back_populates="user")
+    contract_manager = relationship("ContractManager", back_populates="user")
 
 
 class STS(Base):
@@ -177,3 +182,15 @@ class Contract(Base):
     sts_id = Column(Integer, ForeignKey("sts.id"))
 
     sts = relationship("STS", back_populates="contract")
+    contract_manager = relationship("ContractManager", back_populates="contract")
+
+
+class ContractManager(Base):
+    __tablename__ = "contract_managers"
+
+    id = Column(Integer, primary_key=True, index=True)
+    contract_id = Column(Integer, ForeignKey("contracts.id"))
+    user_id = Column(Integer, ForeignKey("users.id"))
+
+    contract = relationship("Contract", back_populates="contract_manager")
+    user = relationship("User", back_populates="contract_manager")

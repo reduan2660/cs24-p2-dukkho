@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from typing import List
 from app.dependencies import get_user_from_session
-from app.models import User, STS, Contract
+from app.models import User, STS, Contract, ContractManager
 from app.config import SessionLocal
 from datetime import datetime
 
@@ -24,6 +24,7 @@ async def get_contract(user: User = Depends(get_user_from_session)):
     with SessionLocal() as db:
         
         contracts = db.query(Contract).all()
+        
         response = []
         for contract in contracts:
             response.append({
@@ -42,6 +43,13 @@ async def get_contract(user: User = Depends(get_user_from_session)):
                 "required_waste_ton": contract.required_waste_ton,
                 "contract_duration": contract.contract_duration,
                 "area_of_collection": contract.area_of_collection,
+                "managers": [
+                    {
+                        "id": m.user_id,
+                        "name": m.user.name,
+                        "email": m.user.email
+                    } for m in db.query(ContractManager).filter(ContractManager.contract_id == contract.id).all()
+                ]
 
             })
 
@@ -157,3 +165,31 @@ async def delete_contract(contract_id: int, user: User = Depends(get_user_from_s
         db.delete(contract)
         db.commit()
         return JSONResponse(status_code=200, content={"message": "Contract deleted successfully"})
+    
+
+class ContractManagerRequest(BaseModel):
+    contract_id: int
+    user_id: int
+
+@router.post("/manager")
+async def add_contract_manager(manager: ContractManagerRequest, user: User = Depends(get_user_from_session)):
+
+    if "assign_role_to_user" not in user["role"]["permissions"]:
+        return JSONResponse(status_code=401, content={"message": "Not enough permissions"})
+    
+    with SessionLocal() as db:
+        contract = db.query(Contract).filter(Contract.id == manager.contract_id).first()
+        if not contract:
+            return JSONResponse(status_code=404, content={"message": "Contract not found"})
+        
+        user = db.query(User).filter(User.id == manager.user_id).first()
+        if not user:
+            return JSONResponse(status_code=404, content={"message": "User not found"})
+        
+        manager = ContractManager(
+            contract_id=manager.contract_id,
+            user_id=manager.user_id
+        )
+        db.add(manager)
+        db.commit()
+        return JSONResponse(status_code=200, content={"message": "Manager added successfully"})
