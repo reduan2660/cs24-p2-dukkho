@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.routers import auth, users, roles, sts, landfill, vehicle, transfer, report, contract, collectionPlan, employee, garbageCollection, employeeActivity, schedule
+from app.routers import auth, users, roles, sts, landfill, vehicle, transfer, report, contract, collectionPlan, employee, garbageCollection, employeeActivity, schedule, billing
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -19,6 +19,7 @@ app.include_router(employee.router)
 app.include_router(garbageCollection.router)
 app.include_router(employeeActivity.router)
 app.include_router(schedule.router)
+app.include_router(billing.router)
 
 
 # Allow CORS

@@ -104,6 +104,7 @@ def upgrade() -> None:
         {"id": 50, "name": "view_collection", "category": "collection"}, # sts manager, contract manager, admin
 
         {"id": 51, "name": "schedule", "category": "schedule"}, # contract manager
+        {"id": 52, "name": "billing", "category": "billing"}, # sts
 
 
     ])
@@ -203,6 +204,9 @@ def upgrade() -> None:
         # STS Manager - Collection
         {"role_id": 2, "permission_id": 48},
         {"role_id": 2, "permission_id": 50},
+
+        # STS Manager - Schedule
+        {"role_id": 2, "permission_id": 52},
 
         # -------------------------------------
 
