@@ -3,7 +3,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import SidePanel from "../components/SidePanel";
 import Navbar from "../components/Navbar";
-import { Modal, Table } from "antd";
+import { Modal, Table, Tooltip } from "antd";
 import Column from "antd/es/table/Column";
 import api from "../api";
 import { Select } from "antd";
@@ -341,22 +341,21 @@ const Sts = () => {
                 )}
               </div>
               <div className="flex items-center justify-end gap-x-2">
-                <input
-                  type="text"
-                  placeholder="Search STS"
-                  className="w-[300px] rounded-md border border-[#DED2D9] px-2 py-1.5 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
-                  onChange={(e) => setSearchValue(e.target.value)}
-                  onBlur={() => {
-                    const filteredSTS = sts.filter((sts) =>
-                      sts[searchOption]
-                        .toString()
-                        .toLowerCase()
-                        .includes(searchValue.toLowerCase()),
-                    );
-                    setSTS(filteredSTS);
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
+                <Tooltip
+                  placement="top"
+                  title={
+                    <span>
+                      Press &apos;Enter&apos; to Search <br />
+                      Clear Input to Reset
+                    </span>
+                  }
+                >
+                  <input
+                    type="text"
+                    placeholder="Search STS"
+                    className="w-[300px] rounded-md border border-[#DED2D9] px-2 py-1.5 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
+                    onChange={(e) => setSearchValue(e.target.value)}
+                    onBlur={() => {
                       const filteredSTS = sts.filter((sts) =>
                         sts[searchOption]
                           .toString()
@@ -364,9 +363,20 @@ const Sts = () => {
                           .includes(searchValue.toLowerCase()),
                       );
                       setSTS(filteredSTS);
-                    }
-                  }}
-                />
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        const filteredSTS = sts.filter((sts) =>
+                          sts[searchOption]
+                            .toString()
+                            .toLowerCase()
+                            .includes(searchValue.toLowerCase()),
+                        );
+                        setSTS(filteredSTS);
+                      }
+                    }}
+                  />
+                </Tooltip>
                 <Select
                   value={searchOption}
                   className="h-12 w-[200px] py-1"

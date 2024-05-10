@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import SidePanel from "../components/SidePanel";
 import api from "../api";
-import { Modal, Table } from "antd";
+import { Modal, Table, Tooltip } from "antd";
 import Column from "antd/es/table/Column";
 import Navbar from "../components/Navbar";
 import { Select } from "antd";
@@ -231,27 +231,21 @@ const Users = () => {
                 )}
               </div>
               <div className="flex items-center justify-end gap-x-2">
-                <input
-                  type="text"
-                  placeholder="Search User"
-                  className="w-[300px] rounded-md border border-[#DED2D9] px-2 py-1.5 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
-                  onChange={(e) => setSearchValue(e.target.value)}
-                  onBlur={() => {
-                    const filteredUsers = users.filter((user) =>
-                      searchOption === "role"
-                        ? user[searchOption].name
-                            .toString()
-                            .toLowerCase()
-                            .includes(searchValue.toLowerCase())
-                        : user[searchOption]
-                            .toString()
-                            .toLowerCase()
-                            .includes(searchValue.toLowerCase()),
-                    );
-                    setUsers(filteredUsers);
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
+                <Tooltip
+                  placement="top"
+                  title={
+                    <span>
+                      Press &apos;Enter&apos; to Search <br />
+                      Clear Input to Reset
+                    </span>
+                  }
+                >
+                  <input
+                    type="text"
+                    placeholder="Search User"
+                    className="w-[300px] rounded-md border border-[#DED2D9] px-2 py-1.5 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
+                    onChange={(e) => setSearchValue(e.target.value)}
+                    onBlur={() => {
                       const filteredUsers = users.filter((user) =>
                         searchOption === "role"
                           ? user[searchOption].name
@@ -264,9 +258,25 @@ const Users = () => {
                               .includes(searchValue.toLowerCase()),
                       );
                       setUsers(filteredUsers);
-                    }
-                  }}
-                />
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        const filteredUsers = users.filter((user) =>
+                          searchOption === "role"
+                            ? user[searchOption].name
+                                .toString()
+                                .toLowerCase()
+                                .includes(searchValue.toLowerCase())
+                            : user[searchOption]
+                                .toString()
+                                .toLowerCase()
+                                .includes(searchValue.toLowerCase()),
+                        );
+                        setUsers(filteredUsers);
+                      }
+                    }}
+                  />
+                </Tooltip>
                 <Select
                   value={searchOption}
                   className="h-12 w-[200px] py-1"

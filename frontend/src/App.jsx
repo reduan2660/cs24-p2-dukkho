@@ -14,6 +14,7 @@ import Dashboard from "./pages/Dashboard";
 import Fleet from "./pages/Fleet";
 import Sidebar from "./components/Sidebar";
 import Gmap from "./pages/Gmap";
+import Contractors from "./pages/Contractors";
 
 const App = () => {
   return (
@@ -35,6 +36,7 @@ const App = () => {
               <Route path="/vehicles" element={<Vehicles />} />
               <Route path="/sts" element={<STS />} />
               <Route path="/landfills" element={<Landfills />} />
+              <Route path="/contractors" element={<Contractors />} />
               <Route path="/transfer/sts" element={<TransferSTS />} />
               <Route path="/transfer/landfill" element={<TransferLandfill />} />
               <Route path="/transfer/fleet" element={<Fleet />} />

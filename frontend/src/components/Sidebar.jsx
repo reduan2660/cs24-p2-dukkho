@@ -7,7 +7,11 @@ import api from "../api";
 import { useGlobalState } from "../GlobalStateProvider";
 import { GoGraph } from "react-icons/go";
 import { PiBuildings, PiUsersThree } from "react-icons/pi";
-import { RiKeyLine, RiShieldKeyholeLine } from "react-icons/ri";
+import {
+  RiKeyLine,
+  RiShieldKeyholeLine,
+  RiHomeOfficeLine,
+} from "react-icons/ri";
 import { FaTruck } from "react-icons/fa";
 import { LiaDumpsterSolid } from "react-icons/lia";
 import { BiTransfer } from "react-icons/bi";
@@ -154,6 +158,14 @@ const Sidebar = () => {
             <FaTruck className="text-xgray" />
             <div onClick={() => to("vehicles")} className="ml-2">
               Vehicles
+            </div>
+          </div>
+        )}
+        {globalState.user?.role.permissions.includes("list_contract") && (
+          <div className="menu-item -mt-8">
+            <RiHomeOfficeLine className="text-xgray" />
+            <div onClick={() => to("contractors")} className="ml-2">
+              Contractors
             </div>
           </div>
         )}

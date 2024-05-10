@@ -8,7 +8,11 @@ import { PiUsersThree, PiBuildings } from "react-icons/pi";
 import { FaTruck } from "react-icons/fa";
 import { FiUser } from "react-icons/fi";
 import { MdLogout, MdLogin } from "react-icons/md";
-import { RiShieldKeyholeLine, RiKeyLine } from "react-icons/ri";
+import {
+  RiShieldKeyholeLine,
+  RiKeyLine,
+  RiHomeOfficeLine,
+} from "react-icons/ri";
 import { LiaDumpsterSolid } from "react-icons/lia";
 import api from "../api";
 import { useGlobalState } from "../GlobalStateProvider";
@@ -57,7 +61,6 @@ const SidePanel = () => {
   };
 
   useEffect(() => {
-    console.log("VERSION CHECK")
     getProfile();
     const checkCookie = () => {
       const cookies = document.cookie.split("; ");
@@ -234,6 +237,21 @@ const SidePanel = () => {
             >
               <MenuItem icon={<FaTruck className="text-xgray" />}>
                 <div className="font-medium text-xgray">Vehicles</div>
+              </MenuItem>
+            </div>
+          )}
+          {globalState.user?.role.permissions.includes("list_contract") && (
+            <div
+              className={`w-full ${
+                location.pathname === "/contractors" ? "bg-blue-100" : ""
+              }`}
+              onClick={() => {
+                if (location.pathname !== "/contractors") navigate("/contractors");
+                else setCollapsed(!collapsed);
+              }}
+            >
+              <MenuItem icon={<RiHomeOfficeLine className="text-xgray" />}>
+                <div className="font-medium text-xgray">Contractors</div>
               </MenuItem>
             </div>
           )}
