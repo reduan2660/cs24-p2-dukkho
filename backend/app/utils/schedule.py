@@ -1,8 +1,5 @@
-from datetime import datetime, timezone
-import pytz
-
-def schedule(times, duration, number_of_plans, employee_pay_rate, number_of_employees, sts_open, sts_close):
-
+def schedule(times, duration, plan_id, number_of_plans, employee_pay_rate, employee_id, number_of_employees, sts_open, sts_close):
+    
     # Adjacency list to represent the graph of task dependencies
     global adj
     adj = [[] for _ in range(number_of_plans)]
@@ -77,8 +74,10 @@ def schedule(times, duration, number_of_plans, employee_pay_rate, number_of_empl
         global taken
 
         nreq = req - duration[i]  # Remaining time needed for dependent tasks
-        assigned[emp].append(i)  # Assign task to employee
-        assignment[i] = emp  # Record task assignment
+        if emp not in assigned:
+            assigned[emp]=[]
+        assigned[emp].append(plan_id[i])  # Assign task to employee
+        assignment[plan_id[i]] = emp  # Record task assignment
         used[i] = 1  # Mark task as used
         taken += 1  # Increment number of tasks taken
         if nreq == 0:
@@ -121,8 +120,8 @@ def schedule(times, duration, number_of_plans, employee_pay_rate, number_of_empl
     print(ops)
     print(adj)
     used = [0 for _ in range(number_of_plans)] 
-    assigned = [[] for _  in range(number_of_employees)]  
-    assignment = [None for _ in range(number_of_plans)]  
+    assigned = {}
+    assignment = {} 
     while taken < number_of_plans and emp_used < number_of_employees:
         vis = [0 for _ in range(number_of_plans)]  # Reset visited array
         val = [0 for _ in range(number_of_plans)]  # Reset time calculation array
@@ -137,7 +136,7 @@ def schedule(times, duration, number_of_plans, employee_pay_rate, number_of_empl
             if val[i] > mx_val:
                 mx_val = val[i]
                 mx_root = i
-        dfs2(mx_root, mx_val, ops[emp_used][1])  # Assign tasks to employee with lowest pay rate
+        dfs2(mx_root, mx_val, employee_id[ops[emp_used][1]])  # Assign tasks to employee with lowest pay rate
         min_cost = float(mx_val * ops[emp_used][0]) / 60  # Calculate cost for assigned tasks
         emp_used += 1  # Increment employee counter
         print(val)
@@ -146,14 +145,16 @@ def schedule(times, duration, number_of_plans, employee_pay_rate, number_of_empl
     return min_cost, assigned, assignment
     
 # Example usage
+p_id=[10,15,3]
 a = ['10:50', '11:30', '7:23']
 b = [10, 50, 600]
 c = 3
 x = [10, 25, 5]
+e_id=[9,8,2]
 y = 3
 p = '6:10'
 q = '12:00'
-m, n, o = schedule(a, b, c, x, y, p, q)
+m, n, o = schedule(a, b, p_id,c, x, e_id,y, p, q)
 
 print(m)
 print(n)
