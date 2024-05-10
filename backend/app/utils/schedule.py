@@ -139,18 +139,18 @@ def cost_schedule(times, duration, plan_id, number_of_plans, employee_pay_rate, 
 
     return min_cost, assigned, assignment
     
-# Example usage
-p_id=[10,15,3]
-a = ['10:50', '11:30', '7:23']
-b = [10, 50, 600]
-c = 3
-x = [10, 25, 5]
-e_id=[9,8,2]
-y = 3
-p = '6:10'
-q = '12:00'
-m, n, o = cost_schedule(a, b, p_id,c, x, e_id,y, p, q)
+# # Example usage
+# p_id=[10,15,3]
+# a = ['10:50', '11:30', '7:23']
+# b = [10, 50, 600]
+# c = 3
+# x = [10, 25, 5]
+# e_id=[9,8,2]
+# y = 3
+# p = '6:10'
+# q = '12:00'
+# m, n, o = cost_schedule(a, b, p_id,c, x, e_id,y, p, q)
 
-print(m)
-print(n)
-print(o)
+# print(m)
+# print(n)
+# print(o)

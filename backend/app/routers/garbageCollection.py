@@ -179,6 +179,14 @@ async def arrived_collection(collection_id: int, garbageCollectionReq: GarbageCo
             "status": 1
         })
 
+
+        # update capacity of STS
+        sts = db.query(STS).filter(STS.id == collection.sts_id).first()
+        sts.capacity -= garbageCollectionReq.collected_weight / 1000
+        db.query(STS).filter(STS.id == collection.sts_id).update({
+            "capacity": sts.capacity
+        })
+
         db.commit()
 
         return JSONResponse(status_code=200, content={"message": "Garbage collection ended successfully"})

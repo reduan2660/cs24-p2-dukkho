@@ -68,7 +68,13 @@ class STS(Base):
     ward_no = Column(Integer, nullable=False)
     latitude = Column(Float, nullable=False)
     longitude = Column(Float, nullable=False)
-    capacity = Column(Float, nullable=False)
+    capacity = Column(Float, nullable=False) # in ton
+    current_load = Column(Float, nullable=False, default=0) # in ton
+
+    time_start = Column(Integer, nullable=False) # 24 hour format
+    time_end = Column(Integer, nullable=False) # 24 hour format
+    fine = Column(Float, nullable=False)
+    
     
     vehicle = relationship("Vehicle", back_populates="sts")
     sts_manager = relationship("STSmanager", back_populates="sts")
