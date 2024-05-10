@@ -108,7 +108,8 @@ async def get_all_collections(user: User = Depends(get_user_from_session)):
         collections = db.query(GarbageCollection).all()
 
         if user["role"]["id"] == 2:
-            collections = db.query(GarbageCollection).filter(GarbageCollection.sts_id == user["id"]).all()
+            user_sts_id = db.query(STS).filter(STS.user_id == user["id"]).first().id
+            collections = db.query(GarbageCollection).filter(GarbageCollection.sts_id == user_sts_id).all()
 
         response = []
 
