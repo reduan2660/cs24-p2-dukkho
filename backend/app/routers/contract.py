@@ -172,17 +172,16 @@ class ContractManagerRequest(BaseModel):
     user_id: List[int]
 
 @router.post("/manager")
-async def add_contract_manager(manager: ContractManagerRequest, user: User = Depends(get_user_from_session)):
+async def add_contract_manager(contrantManagerReq: ContractManagerRequest, user: User = Depends(get_user_from_session)):
 
     if "assign_role_to_user" not in user["role"]["permissions"]:
         return JSONResponse(status_code=401, content={"message": "Not enough permissions"})
     
     with SessionLocal() as db:
-        contract = db.query(Contract).filter(Contract.id == manager.contract_id).first()
-        if not contract:
-            return JSONResponse(status_code=404, content={"message": "Contract not found"})
-        
-        for user_id in manager.user_id:
+        # delete all previous managers but dont commit
+        db.query(ContractManager).filter(ContractManager.contract_id == contrantManagerReq.contract_id).delete()
+
+        for user_id in contrantManagerReq.user_id:
             user = db.query(User).filter(User.id == user_id).first()
             if not user:
                 return JSONResponse(status_code=404, content={"message": "User not found"})
@@ -201,7 +200,7 @@ async def add_contract_manager(manager: ContractManagerRequest, user: User = Dep
                 db.query(User).filter(User.id == user_id).update({"role_id": 4})
 
             contract_manager = ContractManager(
-                contract_id=manager.contract_id,
+                contract_id=contrantManagerReq.contract_id,
                 user_id=user_id
             )
             db.add(contract_manager)
