@@ -8,6 +8,7 @@ import { useGlobalState } from "../GlobalStateProvider";
 import { GoGraph } from "react-icons/go";
 import { FaRegNewspaper } from "react-icons/fa6";
 import { PiBuildings, PiUsersThree } from "react-icons/pi";
+import { CiTrash } from "react-icons/ci";
 import {
   RiKeyLine,
   RiShieldKeyholeLine,
@@ -186,6 +187,14 @@ const Sidebar = () => {
             <FaRegNewspaper className="text-xgray" />
             <div onClick={() => to("plans")} className="ml-2">
               Collection Plans
+            </div>
+          </div>
+        )}
+        {globalState.user?.role.permissions.includes("view_collection") && (
+          <div className="menu-item -mt-8">
+            <CiTrash className="text-xgray" />
+            <div onClick={() => to("garbage")} className="ml-2">
+              Garbage Collection
             </div>
           </div>
         )}

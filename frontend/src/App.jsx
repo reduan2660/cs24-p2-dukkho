@@ -17,6 +17,7 @@ import Gmap from "./pages/Gmap";
 import Contractors from "./pages/Contractors";
 import Plans from "./pages/Plans";
 import Employee from "./pages/Employee";
+import Garbage from "./pages/Garbage";
 
 const App = () => {
   return (
@@ -41,6 +42,7 @@ const App = () => {
               <Route path="/contractors" element={<Contractors />} />
               <Route path="/plans" element={<Plans />} />
               <Route path="/employees" element={<Employee />} />
+              <Route path="/garbage" element={<Garbage />} />
               <Route path="/transfer/sts" element={<TransferSTS />} />
               <Route path="/transfer/landfill" element={<TransferLandfill />} />
               <Route path="/transfer/fleet" element={<Fleet />} />

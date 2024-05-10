@@ -43,6 +43,14 @@ const Employees = () => {
   const [employees, setEmployees] = useState([]);
   const [searchValue, setSearchValue] = useState("");
   const [searchOption, setSearchOption] = useState("name");
+  const [openAbsent, setOpenAbsent] = useState(false);
+  const [employee, setEmployee] = useState("");
+  const [openLeave, setOpenLeave] = useState(false);
+  const [leaveStartDate, setLeaveStartDate] = useState("");
+  const [leaveEndDate, setLeaveEndDate] = useState("");
+  const [absentDate, setAbsentDate] = useState("");
+  const [openActivity, setOpenActivity] = useState(false);
+  const [activity, setActivity] = useState([]);
 
   const showModal = () => {
     setOpenCreate(true);
@@ -54,6 +62,45 @@ const Employees = () => {
       .then((res) => setPlan(res.data))
       .catch((err) => {
         toast.error(err.response.data?.message);
+      });
+  };
+
+  const absent = () => {
+    api
+      .post("/activity/absent", {
+        employee_id: parseInt(employee),
+        day_of_absence: parseInt(absentDate),
+      })
+      .then((res) => {
+        if (res.status === 201) {
+          toast.success("Absent marked successfully");
+        }
+      })
+      .catch((err) => {
+        toast.error(err.response.data?.message);
+      })
+      .finally(() => {
+        setOpenAbsent(false);
+      });
+  };
+
+  const leave = () => {
+    api
+      .post("/activity/leave", {
+        employee_id: parseInt(employee),
+        start_date: parseInt(leaveStartDate),
+        end_date: parseInt(leaveEndDate),
+      })
+      .then((res) => {
+        if (res.status === 201) {
+          toast.success("Leave marked successfully");
+        }
+      })
+      .catch((err) => {
+        toast.error(err.response.data?.message);
+      })
+      .finally(() => {
+        setOpenLeave(false);
       });
   };
 
@@ -195,7 +242,7 @@ const Employees = () => {
       setUpdateDateOfHire(updateEmployees.date_of_hire);
       setUpdateJobTitle(updateEmployees.job_title);
       setUpdatePayPerHour(updateEmployees.pay_per_hour);
-      setUpdatePlanId(updateEmployees.plan_id);
+      setUpdatePlanId(updateEmployees.plan_id.id);
     }
     if (openCreate) {
       setCreateName("");
@@ -235,27 +282,59 @@ const Employees = () => {
           <div className="flex w-full flex-col">
             <Navbar />
             <div className="mx-2 mt-4 flex flex-col gap-y-4 lg:mx-16 lg:mt-16 lg:gap-y-12">
-              <div className="mx-2 flex items-center justify-between">
-                <div className="text-lg font-light text-xlightgray lg:text-3xl">
+              <div className="mx-2 flex flex-wrap items-center gap-x-6 lg:justify-between lg:gap-x-0">
+                <div className="w-fit text-lg font-light text-xlightgray lg:text-3xl">
                   All Employees
                 </div>
-                {globalState.user?.role.permissions.includes(
-                  "create_employee",
-                ) ? (
-                  <div>
-                    <button
-                      type="button"
-                      onClick={showModal}
-                      className="rounded-md bg-xblue px-3 py-1 font-medium text-white transition-all duration-300 hover:bg-blue-600 lg:rounded-lg lg:px-5 lg:py-2"
-                    >
-                      Create Employees
-                    </button>
-                  </div>
-                ) : (
-                  <div></div>
-                )}
+                <div className="flex flex-row-reverse items-center gap-x-2">
+                  {globalState.user?.role.permissions.includes(
+                    "create_employee",
+                  ) ? (
+                    <div>
+                      <button
+                        type="button"
+                        onClick={showModal}
+                        className="rounded-md bg-xblue px-3 py-1 font-medium text-white transition-all duration-300 hover:bg-blue-600 lg:rounded-lg lg:px-5 lg:py-2"
+                      >
+                        Create Employees
+                      </button>
+                    </div>
+                  ) : (
+                    <div></div>
+                  )}
+                  {globalState.user?.role.permissions.includes(
+                    "edit_employee",
+                  ) ? (
+                    <div>
+                      <button
+                        type="button"
+                        onClick={() => setOpenAbsent(true)}
+                        className="rounded-md bg-xyellow px-3 py-1 font-medium text-white transition-all duration-300 hover:bg-yellow-600 lg:rounded-lg lg:px-5 lg:py-2"
+                      >
+                        Manage Absent
+                      </button>
+                    </div>
+                  ) : (
+                    <div></div>
+                  )}
+                  {globalState.user?.role.permissions.includes(
+                    "edit_employee",
+                  ) ? (
+                    <div>
+                      <button
+                        type="button"
+                        onClick={() => setOpenLeave(true)}
+                        className="rounded-md bg-xred px-3 py-1 font-medium text-white transition-all duration-300 hover:bg-red-600 lg:rounded-lg lg:px-5 lg:py-2"
+                      >
+                        Manage Leave
+                      </button>
+                    </div>
+                  ) : (
+                    <div></div>
+                  )}
+                </div>
               </div>
-              <div className="flex items-center justify-end gap-x-2">
+              <div className="flex items-center gap-x-2 lg:justify-end">
                 <Tooltip
                   placement="top"
                   title={
@@ -268,7 +347,7 @@ const Employees = () => {
                   <input
                     type="text"
                     placeholder="Search Employees"
-                    className="w-[300px] rounded-md border border-[#DED2D9] px-2 py-1.5 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
+                    className="w-[200px] rounded-md border border-[#DED2D9] px-2 py-1.5 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue lg:w-[300px]"
                     onChange={(e) => setSearchValue(e.target.value)}
                     onBlur={() => {
                       const filteredEmployees = employees.filter((employees) =>
@@ -295,7 +374,7 @@ const Employees = () => {
                 </Tooltip>
                 <Select
                   value={searchOption}
-                  className="h-12 w-[200px] py-1"
+                  className="h-12 w-[100px] py-1 lg:w-[200px]"
                   options={[
                     { label: "Name", value: "name" },
                     { label: "Email", value: "email" },
@@ -371,6 +450,41 @@ const Employees = () => {
                     dataIndex="plan_id"
                     render={(plan, record) => {
                       return <div>{record.plan_id.name}</div>;
+                    }}
+                  ></Column>
+                  <Column
+                    title="Status"
+                    dataIndex="status"
+                    sorter={(a, b) => a.status.localeCompare(b.status)}
+                    render={(status, record) => {
+                      return (
+                        <div>
+                          {record.activities[0].is_absent === 1
+                            ? "Absent"
+                            : record.activities[0].is_on_leave === 1
+                              ? "On Leave"
+                              : record.activities[0].logout === null
+                                ? "On Duty"
+                                : "Off Duty"}
+                        </div>
+                      );
+                    }}
+                  ></Column>
+                  <Column
+                    title="Activity"
+                    dataIndex="activity"
+                    render={(status, record) => {
+                      return (
+                        <button
+                          onClick={() => {
+                            setActivity(record.activities);
+                            setOpenActivity(true);
+                          }}
+                          className="w-fit rounded-md border border-xblue px-2 py-1 text-xblue transition-all duration-300 hover:bg-xblue hover:text-white"
+                        >
+                          Activities
+                        </button>
+                      );
                     }}
                   ></Column>
                   {(globalState.user?.role.permissions.includes(
@@ -595,6 +709,142 @@ const Employees = () => {
                       }))}
                       onChange={(value) => setUpdatePlanId(value)}
                     />
+                  </div>
+                </Modal>
+                <Modal
+                  title="Manage Absent"
+                  open={openAbsent}
+                  onOk={absent}
+                  onCancel={() => setOpenAbsent(false)}
+                  closable={false}
+                  centered
+                >
+                  <div className="mx-2 my-4 flex flex-col gap-y-4 lg:mx-4 lg:my-8">
+                    <Select
+                      className="w-full"
+                      options={employees.map((employee) => ({
+                        label: employee.id,
+                        value: employee.name,
+                      }))}
+                      onChange={(value) => setEmployee(value)}
+                    />
+                    <DatePicker
+                      onChange={(date, dateString) =>
+                        setAbsentDate(
+                          Math.floor(new Date(dateString).getTime() / 1000),
+                        )
+                      }
+                      placeholder="Pick Date"
+                    />
+                  </div>
+                </Modal>
+                <Modal
+                  title="Manage Leave"
+                  open={openLeave}
+                  onOk={leave}
+                  onCancel={() => setOpenLeave(false)}
+                  closable={false}
+                  centered
+                >
+                  <div className="mx-2 my-4 flex flex-col gap-y-4 lg:mx-4 lg:my-8">
+                    <Select
+                      className="w-full"
+                      options={employees.map((employee) => ({
+                        label: employee.id,
+                        value: employee.name,
+                      }))}
+                      onChange={(value) => setEmployee(value)}
+                    />
+                    <DatePicker
+                      onChange={(date, dateString) =>
+                        setLeaveStartDate(
+                          Math.floor(new Date(dateString).getTime() / 1000),
+                        )
+                      }
+                      placeholder="Start Date"
+                    />
+                    <DatePicker
+                      onChange={(date, dateString) =>
+                        setLeaveEndDate(
+                          Math.floor(new Date(dateString).getTime() / 1000),
+                        )
+                      }
+                      placeholder="End Date"
+                    />
+                  </div>
+                </Modal>
+                <Modal
+                  title="Employee Activity"
+                  open={openActivity}
+                  okButtonProps={{ hidden: true }}
+                  onCancel={() => setOpenActivity(false)}
+                  centered
+                >
+                  <div className="overflow-x-auto">
+                    <Table
+                      dataSource={activity}
+                      rowKey="id"
+                      style={{ overflowX: "auto" }}
+                      pagination={{
+                        defaultPageSize: 10,
+                        showSizeChanger: true,
+                        pageSizeOptions: ["10", "20", "30"],
+                      }}
+                    >
+                      <Column title="Activity ID" dataIndex="id"></Column>
+                      <Column
+                        title="Date"
+                        dataIndex="date"
+                        render={(date) => {
+                          return (
+                            <div>
+                              {new Date(date * 1000).toLocaleDateString()}
+                            </div>
+                          );
+                        }}
+                      ></Column>
+                      <Column
+                        title="Absent"
+                        dataIndex="is_absent"
+                        render={(is_absent) => {
+                          return <div>{is_absent === 1 ? "Yes" : "No"}</div>;
+                        }}
+                      ></Column>
+                      <Column
+                        title="Leave"
+                        dataIndex="is_on_leave"
+                        render={(is_on_leave) => {
+                          return <div>{is_on_leave === 1 ? "Yes" : "No"}</div>;
+                        }}
+                      ></Column>
+                      <Column
+                        title="Logout"
+                        dataIndex="logout"
+                        render={(logout) => {
+                          return (
+                            <div>
+                              {new Date(logout * 1000).toLocaleDateString()}
+                            </div>
+                          );
+                        }}
+                      ></Column>
+                      <Column
+                        title="Login"
+                        dataIndex="login"
+                        render={(login) => {
+                          return (
+                            <div>
+                              {new Date(login * 1000).toLocaleDateString()}
+                            </div>
+                          );
+                        }}
+                      ></Column>
+                      <Column
+                        title="Work Duration"
+                        dataIndex="work_duration"
+                      ></Column>
+                      <Column title="Plan ID" dataIndex="plan"></Column>
+                    </Table>
                   </div>
                 </Modal>
               </div>
