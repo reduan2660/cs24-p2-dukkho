@@ -3,12 +3,14 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import SidePanel from "../components/SidePanel";
 import Navbar from "../components/Navbar";
-import { Modal, Table } from "antd";
+import { DatePicker, Modal, Table } from "antd";
 import Column from "antd/es/table/Column";
 import api from "../api";
 import { Select } from "antd";
 import { useGlobalState } from "../GlobalStateProvider";
 import { useNavigate } from "react-router-dom";
+import PdfGenerator from "../components/PDFGenerator";
+import BillGenerator from "../components/BillGenerator";
 
 const Garbage = () => {
   const navigate = useNavigate();
@@ -29,9 +31,25 @@ const Garbage = () => {
   const [garbageRecords, setGarbageRecords] = useState([]);
   const [viewEmployee, setViewEmployee] = useState(false);
   const [viewPlan, setViewPlan] = useState(false);
+  const [openPDF, setOpenPDF] = useState(false);
+  const [date, setDate] = useState("");
+  const [bill, setBill] = useState({});
 
   const showModal = () => {
     setOpenCreate(true);
+  };
+
+  const getBill = (date) => {
+    api
+      .get(`/billi?from_date=${date}`)
+      .then((res) => {
+        if (res.status === 200) {
+          setBill(res.data);
+        }
+      })
+      .catch((err) => {
+        toast.error(err.response.data?.message);
+      });
   };
 
   const convertUTC = (time) => {
@@ -445,6 +463,13 @@ const Garbage = () => {
                               End Collection
                             </button>
                           </div>
+                        ) : record.status === 2 ? (
+                          <button
+                            className="w-fit rounded-md border border-xblue px-2 py-1 text-xblue transition-all duration-300 hover:bg-xblue hover:text-white"
+                            onClick={() => setOpenPDF(true)}
+                          >
+                            Generate PDF
+                          </button>
                         ) : (
                           <div></div>
                         )
@@ -564,6 +589,28 @@ const Garbage = () => {
                         </div>
                       );
                     })}
+                  </div>
+                </Modal>
+                <Modal
+                  title="Generate PDF"
+                  open={openPDF}
+                  onOk={() => setOpenPDF(false)}
+                  okText="Close"
+                  cancelButtonProps={{ style: { display: "none" } }}
+                  closable={false}
+                  centered
+                >
+                  <div className="mx-2 my-4 gap-y-4 lg:mx-4 lg:my-8">
+                    <DatePicker
+                      className="w-full"
+                      onChange={(date, dateString) => {
+                        setDate(new Date(dateString).getTime() / 1000);
+                        getBill(new Date(dateString).getTime() / 1000);
+                      }}
+                    />
+                    <div className="mt-3 flex justify-center">
+                      {date && <BillGenerator data={bill} date={date} />}
+                    </div>
                   </div>
                 </Modal>
               </div>
