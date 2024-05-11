@@ -31,7 +31,7 @@ async def get_contract(user: User = Depends(get_user_from_session)):
             employee_count = 0
             for all_plans in plans:
                 employee = db.query(Employee).filter(Employee.plan_id == all_plans.id).all()
-                employee_count = len(employee)
+                employee_count += len(employee)
                 
 
 
