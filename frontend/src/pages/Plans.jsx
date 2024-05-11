@@ -1,9 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import SidePanel from "../components/SidePanel";
 import Navbar from "../components/Navbar";
-import { DatePicker, Modal, Table, TimePicker, Tooltip } from "antd";
+import { Modal, Table, TimePicker, Tooltip } from "antd";
 import Column from "antd/es/table/Column";
 import api from "../api";
 import { Select } from "antd";
@@ -16,12 +16,14 @@ const Plans = () => {
   const [createStartHr, setCreateStartHr] = useState("");
   const [createStartMin, setCreateStartMin] = useState("");
   const [createDuration, setCreateDuration] = useState("");
+  const [createWard, setCreateWard] = useState("");
   const [createNoOfVehicle, setCreateNoOfVehicle] = useState("");
   const [createDailyWasteTon, setCreateDailyWasteTon] = useState("");
   const [updateAreaOfCollection, setUpdateAreaOfCollection] = useState("");
   const [updateStartHr, setUpdateStartHr] = useState("");
   const [updateStartMin, setUpdateStartMin] = useState("");
   const [updateDuration, setUpdateDuration] = useState("");
+  const [updateWard, setUpdateWard] = useState("");
   const [updateNoOfVehicle, setUpdateNoOfVehicle] = useState("");
   const [updateDailyWasteTon, setUpdateDailyWasteTon] = useState("");
   const [profileLoading, setProfileLoading] = useState(false);
@@ -59,6 +61,7 @@ const Plans = () => {
         area_of_collection: updateAreaOfCollection,
         start_time_hr: parseInt(updateStartHr),
         start_time_min: parseInt(updateStartMin),
+        ward: updateWard,
         duration: parseFloat(updateDuration),
         no_of_vehicle: parseInt(updateNoOfVehicle),
         daily_waste_ton: parseFloat(updateDailyWasteTon),
@@ -85,6 +88,7 @@ const Plans = () => {
         area_of_collection: createAreaOfCollection,
         start_time_hr: parseInt(createStartHr),
         start_time_min: parseInt(createStartMin),
+        ward: createWard,
         duration: parseFloat(createDuration),
         no_of_vehicle: parseInt(createNoOfVehicle),
         daily_waste_ton: parseFloat(createDailyWasteTon),
@@ -177,6 +181,7 @@ const Plans = () => {
       setUpdateAreaOfCollection(updatePlans.area_of_collection);
       setUpdateStartHr(updatePlans.start_time_hr);
       setUpdateStartMin(updatePlans.start_time_min);
+      setUpdateWard(updatePlans.ward);
       setUpdateDuration(updatePlans.duration);
       setUpdateNoOfVehicle(updatePlans.no_of_vehicle);
       setUpdateDailyWasteTon(updatePlans.daily_waste_ton);
@@ -185,6 +190,7 @@ const Plans = () => {
       setCreateAreaOfCollection("");
       setCreateStartHr("");
       setCreateStartMin("");
+      setCreateWard("");
       setCreateDuration("");
       setCreateNoOfVehicle("");
       setCreateDailyWasteTon("");
@@ -345,6 +351,11 @@ const Plans = () => {
                     sorter={(a, b) => a.duration - b.duration}
                   />
                   <Column
+                    title="Ward"
+                    dataIndex="ward"
+                    sorter={(a, b) => a.duration.localeCompare(b.duration)}
+                  />
+                  <Column
                     title="Number of Vehicles"
                     dataIndex="no_of_vehicle"
                     sorter={(a, b) => a.no_of_vehicle - b.no_of_vehicle}
@@ -436,6 +447,13 @@ const Plans = () => {
                     />
                     <input
                       type="number"
+                      placeholder="Ward"
+                      value={createWard}
+                      className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
+                      onChange={(e) => setCreateWard(e.target.value)}
+                    />
+                    <input
+                      type="number"
                       placeholder="Number of Vehicles"
                       value={createNoOfVehicle}
                       className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
@@ -470,16 +488,20 @@ const Plans = () => {
                         setUpdateAreaOfCollection(e.target.value)
                       }
                     />
-                    <TimePicker
-                      format={"HH:mm"}
-                      onChange={handleUpdateTime}
-                    />
+                    <TimePicker format={"HH:mm"} onChange={handleUpdateTime} />
                     <input
                       type="number"
                       placeholder="Duration"
                       value={updateDuration}
                       className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
                       onChange={(e) => setUpdateDuration(e.target.value)}
+                    />
+                    <input
+                      type="number"
+                      placeholder="Ward"
+                      value={updateWard}
+                      className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
+                      onChange={(e) => setUpdateWard(e.target.value)}
                     />
                     <input
                       type="number"
