@@ -221,23 +221,31 @@ const Garbage = () => {
                 <div className="text-lg font-light text-xlightgray lg:text-3xl">
                   All Garbage Collections
                 </div>
-                {globalState.user?.role.permissions.includes(
-                  "start_collection",
-                ) ? (
-                  <div>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        showModal();
-                      }}
-                      className="rounded-md bg-xblue px-3 py-1 font-medium text-white transition-all duration-300 hover:bg-blue-600 lg:rounded-lg lg:px-5 lg:py-2"
-                    >
-                      Create Garbage Collection
-                    </button>
-                  </div>
-                ) : (
-                  <div></div>
-                )}
+                <div className="flex items-center gap-x-2">
+                  <button
+                    className="w-fit rounded-md border border-xblue px-2 py-1 text-xblue transition-all duration-300 hover:bg-xblue hover:text-white"
+                    onClick={() => setOpenPDF(true)}
+                  >
+                    Generate Bill
+                  </button>
+                  {globalState.user?.role.permissions.includes(
+                    "start_collection",
+                  ) ? (
+                    <div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          showModal();
+                        }}
+                        className="rounded-md bg-xblue px-3 py-1 font-medium text-white transition-all duration-300 hover:bg-blue-600 lg:rounded-lg lg:px-5 lg:py-2"
+                      >
+                        Create Garbage Collection
+                      </button>
+                    </div>
+                  ) : (
+                    <div></div>
+                  )}
+                </div>
               </div>
               {/* <div className="flex items-center justify-end gap-x-2">
                 <Tooltip
@@ -463,13 +471,6 @@ const Garbage = () => {
                               End Collection
                             </button>
                           </div>
-                        ) : record.status === 2 ? (
-                          <button
-                            className="w-fit rounded-md border border-xblue px-2 py-1 text-xblue transition-all duration-300 hover:bg-xblue hover:text-white"
-                            onClick={() => setOpenPDF(true)}
-                          >
-                            Generate PDF
-                          </button>
                         ) : (
                           <div></div>
                         )
@@ -592,7 +593,7 @@ const Garbage = () => {
                   </div>
                 </Modal>
                 <Modal
-                  title="Generate PDF"
+                  title="Generate Bill"
                   open={openPDF}
                   onOk={() => setOpenPDF(false)}
                   okText="Close"
