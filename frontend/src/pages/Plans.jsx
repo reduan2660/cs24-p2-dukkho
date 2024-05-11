@@ -62,7 +62,7 @@ const Plans = () => {
         start_time_hr: parseInt(updateStartHr),
         start_time_min: parseInt(updateStartMin),
         ward: updateWard,
-        duration: parseFloat(updateDuration),
+        duration: parseInt(updateDuration),
         no_of_vehicle: parseInt(updateNoOfVehicle),
         daily_waste_ton: parseFloat(updateDailyWasteTon),
       })
@@ -89,7 +89,7 @@ const Plans = () => {
         start_time_hr: parseInt(createStartHr),
         start_time_min: parseInt(createStartMin),
         ward: createWard,
-        duration: parseFloat(createDuration),
+        duration: parseInt(createDuration),
         no_of_vehicle: parseInt(createNoOfVehicle),
         daily_waste_ton: parseFloat(createDailyWasteTon),
       })
@@ -440,13 +440,13 @@ const Plans = () => {
                     <TimePicker format={"HH:mm"} onChange={handleCreateTime} />
                     <input
                       type="number"
-                      placeholder="Duration (hours)"
+                      placeholder="Duration (minutes)"
                       value={createDuration}
                       className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
                       onChange={(e) => setCreateDuration(e.target.value)}
                     />
                     <input
-                      type="number"
+                      type="text"
                       placeholder="Ward"
                       value={createWard}
                       className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
@@ -491,7 +491,7 @@ const Plans = () => {
                     <TimePicker format={"HH:mm"} onChange={handleUpdateTime} />
                     <input
                       type="number"
-                      placeholder="Duration"
+                      placeholder="Duration (minutes)"
                       value={updateDuration}
                       className="w-full rounded-md border border-[#DED2D9] px-2 py-1 focus:border-transparent focus:outline-none focus:ring-1 focus:ring-xblue"
                       onChange={(e) => setUpdateDuration(e.target.value)}
