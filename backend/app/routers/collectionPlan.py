@@ -128,7 +128,7 @@ class CollectionPlanUpdateRequest(BaseModel):
 @router.put("/{plan_id}")
 async def update_collection_plan(
     plan_id: int,
-    collection_plan: CollectionPlanUpdateRequest,
+    collection_plan_req: CollectionPlanUpdateRequest,
     user: User = Depends(get_user_from_session)
 ):
 
@@ -147,13 +147,15 @@ async def update_collection_plan(
         if not collection_plan:
             return JSONResponse(status_code=400, content={"message": "Collection Plan not found"})
         
-        collection_plan.area_of_collection = collection_plan.area_of_collection
-        collection_plan.start_time_hr = collection_plan.start_time_hr
-        collection_plan.start_time_min = collection_plan.start_time_min
-        collection_plan.duration = collection_plan.duration
-        collection_plan.no_of_vehicle = collection_plan.no_of_vehicle
-        collection_plan.daily_waste_ton = collection_plan.daily_waste_ton
-        collection_plan.ward = collection_plan.ward
+        collection_plan.area_of_collection = collection_plan_req.area_of_collection
+        collection_plan.start_time_hr = collection_plan_req.start_time_hr
+        collection_plan.start_time_min = collection_plan_req.start_time_min
+        collection_plan.duration = collection_plan_req.duration
+        collection_plan.no_of_vehicle = collection_plan_req.no_of_vehicle
+        collection_plan.daily_waste_ton = collection_plan_req.daily_waste_ton
+        collection_plan.ward = collection_plan_req.ward
+
+        
 
         db.commit()
 

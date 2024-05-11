@@ -130,7 +130,7 @@ class ContractUpdateRequest(BaseModel):
     area_of_collection: str
 
 @router.put("/{contract_id}")
-async def update_contract(contract_id: int, contract: ContractUpdateRequest, user: User = Depends(get_user_from_session)):
+async def update_contract(contract_id: int, contractReq: ContractUpdateRequest, user: User = Depends(get_user_from_session)):
 
     if "edit_contract" not in user["role"]["permissions"]:
         return JSONResponse(status_code=401, content={"message": "Not enough permissions"})
@@ -144,17 +144,17 @@ async def update_contract(contract_id: int, contract: ContractUpdateRequest, use
         if sts is None:
             return JSONResponse(status_code=404, content={"message": "STS not found"})
         db.query(Contract).filter(Contract.id == contract_id).update({
-            "name": contract.name,
-            "sts_id": contract.sts_id,
-            "reg_id": contract.reg_id,
-            "reg_date": contract.reg_date,
-            "tin": contract.tin,
-            "contact": contract.contact,
-            "workforce_size": contract.workforce_size,
-            "pay_per_ton": contract.pay_per_ton,
-            "required_waste_ton": contract.required_waste_ton,
+            "name": contractReq.name,
+            "sts_id": contractReq.sts_id,
+            "reg_id": contractReq.reg_id,
+            "reg_date": contractReq.reg_date,
+            "tin": contractReq.tin,
+            "contact": contractReq.contact,
+            "workforce_size": contractReq.workforce_size,
+            "pay_per_ton": contractReq.pay_per_ton,
+            "required_waste_ton": contractReq.required_waste_ton,
             "contract_duration": contract.contract_duration,
-            "area_of_collection": contract.area_of_collection
+            "area_of_collection": contractReq.area_of_collection
         })
         db.commit()
         return JSONResponse(status_code=200, content={"message": "Contract updated successfully"})
