@@ -121,7 +121,9 @@ function BillPDF({ data, date }) {
                     <Text style={styles.tableCell}>
                       {profit?.contract?.name}
                     </Text>
-                    <Text style={styles.tableCell}>{profit.profit}</Text>
+                    <Text style={styles.tableCell}>
+                      {parseFloat(profit.profit).toFixed(2)}
+                    </Text>
                   </View>
                 );
               })}
@@ -148,7 +150,9 @@ function BillPDF({ data, date }) {
                     <Text style={styles.tableCell}>
                       {deficit?.contract?.name}
                     </Text>
-                    <Text style={styles.tableCell}>{deficit.deficit}</Text>
+                    <Text style={styles.tableCell}>
+                      {parseFloat(deficit.deficit).toFixed(2)}
+                    </Text>
                   </View>
                 );
               })}
