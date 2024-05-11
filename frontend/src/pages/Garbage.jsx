@@ -3,7 +3,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import SidePanel from "../components/SidePanel";
 import Navbar from "../components/Navbar";
-import { Modal, Table, Tooltip } from "antd";
+import { Modal, Table } from "antd";
 import Column from "antd/es/table/Column";
 import api from "../api";
 import { Select } from "antd";
@@ -29,8 +29,6 @@ const Garbage = () => {
   const [garbageRecords, setGarbageRecords] = useState([]);
   const [viewEmployee, setViewEmployee] = useState(false);
   const [viewPlan, setViewPlan] = useState(false);
-  const [searchValue, setSearchValue] = useState("");
-  const [searchOption, setSearchOption] = useState("employee");
 
   const showModal = () => {
     setOpenCreate(true);
@@ -170,10 +168,6 @@ const Garbage = () => {
         setProfileLoading(false);
       });
   };
-
-  useEffect(() => {
-    if (searchValue === "") getCollections();
-  }, [searchValue]);
 
   useEffect(() => {
     if (openCreate) {

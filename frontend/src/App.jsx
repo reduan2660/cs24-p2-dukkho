@@ -13,7 +13,6 @@ import TransferLandfill from "./pages/TransferLandfill";
 import Dashboard from "./pages/Dashboard";
 import Fleet from "./pages/Fleet";
 import Sidebar from "./components/Sidebar";
-import Gmap from "./pages/Gmap";
 import Contractors from "./pages/Contractors";
 import Plans from "./pages/Plans";
 import Employee from "./pages/Employee";
