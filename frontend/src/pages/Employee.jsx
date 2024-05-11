@@ -779,6 +779,7 @@ const Employees = () => {
                   okButtonProps={{ hidden: true }}
                   onCancel={() => setOpenActivity(false)}
                   centered
+                  width={800}
                 >
                   {activity.length === 0 ? (
                     <div>No activities yet</div>
