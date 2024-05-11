@@ -3,7 +3,7 @@ import { PDFDownloadLink } from "@react-pdf/renderer";
 import BillPDF from "./BillPDF";
 import { ImSpinner5 } from "react-icons/im";
 
-const BillGenerator = ({ data, oil }) => {
+const BillGenerator = ({ data, date }) => {
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -14,8 +14,8 @@ const BillGenerator = ({ data, oil }) => {
     <div>
       {isClient && (
         <PDFDownloadLink
-          document={<BillPDF data={data} />}
-          fileName={`report_${data.vehicle?.reg_no}_${data.sts.name}_${data.landfill.name}`}
+          document={<BillPDF data={data} date={date}/>}
+          fileName={`report_${date}`}
         >
           {({ loading }) =>
             loading ? (

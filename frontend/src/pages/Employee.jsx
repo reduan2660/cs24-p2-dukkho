@@ -802,7 +802,9 @@ const Employees = () => {
                           render={(date) => {
                             return (
                               <div>
-                                {new Date(date * 1000).toLocaleDateString()}
+                                {date
+                                  ? new Date(date * 1000).toLocaleDateString()
+                                  : "N/A"}
                               </div>
                             );
                           }}
@@ -829,7 +831,9 @@ const Employees = () => {
                           render={(logout) => {
                             return (
                               <div>
-                                {new Date(logout * 1000).toLocaleDateString()}
+                                {logout
+                                  ? new Date(logout * 1000).toLocaleDateString()
+                                  : "N/A"}
                               </div>
                             );
                           }}
@@ -840,7 +844,9 @@ const Employees = () => {
                           render={(login) => {
                             return (
                               <div>
-                                {new Date(login * 1000).toLocaleDateString()}
+                                {login
+                                  ? new Date(login * 1000).toLocaleDateString()
+                                  : "N/A"}
                               </div>
                             );
                           }}
