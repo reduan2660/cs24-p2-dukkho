@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from typing import List
 from app.dependencies import get_user_from_session
-from app.models import User, STS, Contract, ContractManager
+from app.models import User, STS, Contract, ContractManager, CollectionPlan, Employee
 from app.config import SessionLocal
 from datetime import datetime
 
@@ -27,6 +27,14 @@ async def get_contract(user: User = Depends(get_user_from_session)):
         
         response = []
         for contract in contracts:
+            plans = db.query(CollectionPlan).filter(CollectionPlan.contract_id == contract.id).all()
+            employee_count = 0
+            for all_plans in plans:
+                employee = db.query(Employee).filter(Employee.plan_id == all_plans.id).all()
+                employee_count = len(employee)
+                
+
+
             response.append({
                 "id": contract.id,
                 "sts": {
@@ -38,7 +46,7 @@ async def get_contract(user: User = Depends(get_user_from_session)):
                 "reg_date": contract.reg_date,
                 "tin": contract.tin,
                 "contact": contract.contact,
-                "workforce_size": contract.workforce_size,
+                "workforce_size": employee_count,
                 "pay_per_ton": contract.pay_per_ton,
                 "required_waste_ton": contract.required_waste_ton,
                 "contract_duration": contract.contract_duration,
