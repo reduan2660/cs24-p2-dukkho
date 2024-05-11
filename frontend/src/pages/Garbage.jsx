@@ -222,12 +222,16 @@ const Garbage = () => {
                   All Garbage Collections
                 </div>
                 <div className="flex items-center gap-x-2">
-                  <button
-                    className="w-fit rounded-md border border-xblue px-2 py-1 text-xblue transition-all duration-300 hover:bg-xblue hover:text-white"
-                    onClick={() => setOpenPDF(true)}
-                  >
-                    Generate Bill
-                  </button>
+                  {globalState.user?.role.permissions.includes(
+                    "end_collection",
+                  ) && (
+                    <button
+                      className="w-fit rounded-md border border-xblue px-2 py-1 text-xblue transition-all duration-300 hover:bg-xblue hover:text-white"
+                      onClick={() => setOpenPDF(true)}
+                    >
+                      Generate Bill
+                    </button>
+                  )}
                   {globalState.user?.role.permissions.includes(
                     "start_collection",
                   ) ? (
