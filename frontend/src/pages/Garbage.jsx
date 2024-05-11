@@ -223,7 +223,7 @@ const Garbage = () => {
                 </div>
                 <div className="flex items-center gap-x-2">
                   {globalState.user?.role.permissions.includes(
-                    "end_collection",
+                    "arrived_collection",
                   ) && (
                     <button
                       className="w-fit rounded-md border border-xblue px-2 py-1 text-xblue transition-all duration-300 hover:bg-xblue hover:text-white"
