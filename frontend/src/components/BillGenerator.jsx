@@ -14,7 +14,7 @@ const BillGenerator = ({ data, date }) => {
     <div>
       {isClient && (
         <PDFDownloadLink
-          document={<BillPDF data={data} date={date}/>}
+          document={<BillPDF data={data} date={date} />}
           fileName={`report_${date}`}
         >
           {({ loading }) =>
@@ -24,7 +24,7 @@ const BillGenerator = ({ data, date }) => {
               </button>
             ) : (
               <button className="w-fit rounded-md border border-xblue px-2 py-1 text-xblue transition-all duration-300 hover:bg-xblue hover:text-white">
-                Download Report
+                Download Bill Report
               </button>
             )
           }
