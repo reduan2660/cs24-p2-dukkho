@@ -111,6 +111,10 @@ async def get_all_collections(user: User = Depends(get_user_from_session)):
             user_sts_id = db.query(STSmanager).filter(STSmanager.user_id == user["id"]).first().sts_id
             collections = db.query(GarbageCollection).filter(GarbageCollection.sts_id == user_sts_id).all()
 
+        if user["role"]["id"] == 4:
+            user_contract_id = db.query(ContractManager).filter(ContractManager.user_id == user["id"]).first().contract_id
+            collections = db.query(GarbageCollection).filter(GarbageCollection.contract_id == user_contract_id).all()
+
         response = []
 
         for c in collections:
