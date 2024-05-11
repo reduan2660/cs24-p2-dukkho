@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from typing import List
 from app.dependencies import get_user_from_session
-from app.models import User, STS, Contract, CollectionPlan, ContractManager
+from app.models import User, STS, Contract, CollectionPlan, ContractManager, Employee
 from app.config import SessionLocal
 from datetime import datetime
 
@@ -37,6 +37,8 @@ async def get_collection_plan(user: User = Depends(get_user_from_session)):
         
         response = []
         for collection_plan in collection_plans:
+            employee = db.query(Employee).filter(Employee.plan_id == collection_plan.id).all()
+            employee_count = len(employee)
             response.append({
                 "id": collection_plan.id,
                 "area_of_collection": collection_plan.area_of_collection,
@@ -51,6 +53,7 @@ async def get_collection_plan(user: User = Depends(get_user_from_session)):
                 "no_of_labour": collection_plan.no_of_labour,
                 "no_of_vehicle": collection_plan.no_of_vehicle,
                 "daily_waste_ton": collection_plan.daily_waste_ton,
+                "employee_count": employee_count
 
             })
 
